@@ -6,14 +6,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import '../../css/Media.css';
-import AnnouncementIcon from '@mui/icons-material/Announcement';
-import ComputerIcon from '@mui/icons-material/Computer';
-import EventIcon from '@mui/icons-material/Event';
-import PersonIcon from '@mui/icons-material/Person';
-import Announcement from "../home/Announcement";
-import Event from "../home/Event";
-import Profile from "../home/Profile";
-import Program from "../home/Program"
+import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
+import ReportCheck from "../censor/ReportCheck";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -53,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
     width: '15%',
-    bottom: '-30%',
+    bottom: '-85%',
     left: '10%',
     position: 'relative',
     // backgroundColor: theme.palette.background.paper,
@@ -82,24 +76,11 @@ export default function ScrollableTabsButtonForce() {
               aria-label="scrollable force tabs example"
               orientation="vertical"
           >
-            <Tab label="Program der Woche" icon={<EventIcon/>} {...a11yProps(0)} />
-            <Tab label="Veranstaltung" icon={<ComputerIcon/>} {...a11yProps(1)} />
-            <Tab label="Ankündingung" icon={<AnnouncementIcon/>} {...a11yProps(2)} />
-            <Tab label="Mein Profil" icon={<PersonIcon/>} {...a11yProps(3)} />
+            <Tab label="Berichte Überprüfen" icon={<ScreenSearchDesktopIcon/>} {...a11yProps(0)} />
 
           </Tabs>
           <TabPanel value={value} index={0}>
-            <div><Program/></div>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <div><Event/></div>
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <div><Announcement/></div>
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            <div><Profile/></div>
-
+            <div><ReportCheck/></div>
           </TabPanel>
 
         </AppBar>

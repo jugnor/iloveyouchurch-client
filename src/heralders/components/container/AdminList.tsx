@@ -9,11 +9,9 @@ import '../../css/Media.css';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ComputerIcon from '@mui/icons-material/Computer';
 import EventIcon from '@mui/icons-material/Event';
-import PersonIcon from '@mui/icons-material/Person';
-import Announcement from "../home/Announcement";
-import Event from "../home/Event";
-import Profile from "../home/Profile";
-import Program from "../home/Program"
+import Announcement from "../admin/Announcement";
+import Event from "../admin/Event";
+import Program from "../admin/Program"
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -82,24 +80,19 @@ export default function ScrollableTabsButtonForce() {
               aria-label="scrollable force tabs example"
               orientation="vertical"
           >
-            <Tab label="Program der Woche" icon={<EventIcon/>} {...a11yProps(0)} />
-            <Tab label="Veranstaltung" icon={<ComputerIcon/>} {...a11yProps(1)} />
+            <Tab label="Program der Woche" icon={<ComputerIcon/>} {...a11yProps(0)} />
+            <Tab label="Veranstaltung" icon={<EventIcon/>} {...a11yProps(1)} />
             <Tab label="Ankündingung" icon={<AnnouncementIcon/>} {...a11yProps(2)} />
-            <Tab label="Mein Profil" icon={<PersonIcon/>} {...a11yProps(3)} />
-
           </Tabs>
           <TabPanel value={value} index={0}>
             <div><Program/></div>
           </TabPanel>
           <TabPanel value={value} index={1}>
+
             <div><Event/></div>
           </TabPanel>
           <TabPanel value={value} index={2}>
             <div><Announcement/></div>
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            <div><Profile/></div>
-
           </TabPanel>
 
         </AppBar>
