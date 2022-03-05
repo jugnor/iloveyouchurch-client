@@ -1,0 +1,6 @@
+export enum ActivityType{
+  PROGRAM='PROGRAM',
+  EVENT='EVENT',
+  ANNOUNCEMENT='ANNOUNCEMENT',
+  PENALTY='PENALTY'
+}
