@@ -5,14 +5,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 //import "animate.css/animate.min.css";
-import '../../css/Progress.css';
-
-
+//import '../../css/Progress.css';
+import Logo from "../image/logo_cmci.jpeg";
 import {useSpring} from 'react-spring'
-
-
-import clsx from 'clsx';
 import {useKeycloak} from "@react-keycloak/web";
+import {Box, IconButton, Menu, MenuItem} from "@mui/material";
+import {AccountCircle} from "@material-ui/icons";
+
 
 const drawerWidth = 340;
 const drawerBackgroundColor = 'rgba(255,255,255,0.8)';
@@ -174,10 +173,22 @@ export default function Header() {
     from: {opacity: 0},
   })
 
-  const { keycloak } = useKeycloak();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
+  const {keycloak} = useKeycloak();
 
   const logout = useCallback(() => {
-    keycloak?.logout({
+    keycloak.logout({
       redirectUri: process.env.REACT_APP_KEYCLOAK_REDIRECT
     });
   }, [keycloak]);
@@ -187,49 +198,49 @@ export default function Header() {
   const classes = useStyles();
   return (
     <div className={classes.grow}>
-      <AppBar position="static"
-              className={clsx(classes1.appBar, {
-                [classes1.appBarShift]: open,
-              })}
-      >
+      <AppBar position="static">
         <Toolbar>
-          <Header
-            logo={
-              <img
-                alt={'Freistaat Thüringen Logo'}
-                height="32"
-                src="/freistaat-thueringen-logo-behoerdenclient.svg"
-              />
-            }
-            menu={
-              <Menu>
-                {keycloak.authenticated && (
-                  <MenuItem
-                    appearance="light"
-                    href={process.env.REACT_APP_DOCS}
-                    icon="help-outline"
-                    label={'Abmelden'}
-                    onClick={logout}
-                  />
-                )}
-              </Menu>
-            }
-            navigation={
-              <Stack orientation="horizontal">
-                {keycloak.authenticated && (
-                  <Button
-                    id="buttonLogout"
-                    appearance="primary-link"
-                    label={'Abmelden'}
-                    onClick={logout}
-                  />
-                )}
-              </Stack>
-            }
-          ></Header>
-          );
+          <Box
+            component="img"
+            sx={{
+              height: 64,
+            }}
+            alt="Heralder"
+            src={Logo}
+          />
           <div className={classes.grow}/>
           <Typography variant="h6" noWrap>Willkommen Zu Hause Heralders</Typography>
+          <div className={classes.grow}/>
+          {keycloak.authenticated && (
+            <div>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle/>
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={logout}>Abmelden</MenuItem>
+              </Menu>
+            </div>
+          )}
         </Toolbar>
 
       </AppBar>

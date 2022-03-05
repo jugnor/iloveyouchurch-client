@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import AccountGiving from "../heralders/PageTsx/AccountGiving";
+import Body from "../heralders/PageTsx/Body";
 
 export enum RouteKey {
   ACCOUNTGIVING,
@@ -16,11 +16,11 @@ export const routes: {
   [key in RouteKey]: Route;
 } = {
   [RouteKey.HOME]: {
-    element:  <AccountGiving/>,
+    element:  <Body/>,
     path: '/'
   },
   [RouteKey.ACCOUNTGIVING]: {
-    element:  <AccountGiving/>,
+    element:  <Body/>,
     path: '/'
   }
 };
