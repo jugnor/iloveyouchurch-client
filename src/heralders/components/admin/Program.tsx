@@ -3,7 +3,7 @@ import {useCallback, useMemo, useState} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from "@material-ui/core/Container";
-import WeekPicker from "../util/WeekPicker";
+import WeekPicker, {calendar} from "../util/WeekPicker";
 import TextField from "@material-ui/core/TextField";
 import {Divider} from "@material-ui/core";
 import Button from "@mui/material/Button";
@@ -18,6 +18,8 @@ import {
   UpdateActivityRequest,
   UpdateActivityRequestSchema
 } from "../../models/Activity";
+import {ActivityType} from "../../models/ActivityType";
+import {ActivityOrder} from "../../models/ActivityOrder";
 
 export interface UpsertActivityFormData {
   activity: Partial<CreateActivityRequest | UpdateActivityRequest>
@@ -45,7 +47,10 @@ export function UpsertCaseModal({
   const [friday, setFriday] = React.useState("");
   const [saturday, setSaturday] = React.useState("");
   const [sunday, setSunday] = React.useState("");
-  const {createActivity, updateActivity,getActivities} = useActivity(postboxId);
+  const {createActivity, updateActivity, getActivities} = useActivity(postboxId);
+  const weekString = calendar();
+
+
   const {t} = useTranslation();
   const updateMode = useMemo(
     () => instanceOfActivity(activityToUpdate),
@@ -54,13 +59,14 @@ export function UpsertCaseModal({
 
   const [loading, setLoading] = useState(false);
   const [createdActivity, setCreatedActivity] = useState<Activity>();
-  const [ activities, setActivities] = useState<Activity[]>();
+  const [activities, setActivities] = useState<Activity[]>();
   const [formData, setFormData] = useState<UpsertActivityFormData>(
     {
       activity: {
-        description: activityToUpdate?.description,
-        activityType: activityToUpdate?.activityType,
-        week: activityToUpdate?.week
+        description: monday,
+        activityType: ActivityType.PROGRAM,
+        week: weekString.value?.toDateString(),
+        activityOrder: ActivityOrder.Order1
       }
     }
   );
@@ -84,45 +90,14 @@ export function UpsertCaseModal({
 
   const onGetActivities = useCallback(async () => {
 
-      const newActivities = await getActivities();
-      if (newActivities  !== undefined) {
-        setActivities(newActivities)
-        setLoading(false);
-      }
+    const newActivities = await getActivities();
+    if (newActivities !== undefined) {
+      setActivities(newActivities)
+      setLoading(false);
+    }
 
   }, [activities]);
 
-  const onUpdate = useCallback(async () => {
-    if (
-      activityToUpdate &&
-      !UpdateActivityRequestSchema.validate(formData.activity).error
-    ) {
-      setLoading(true);
-
-      const updatedActivity = await updateActivity(
-        activityToUpdate.id,
-        formData.activity as UpdateActivityRequest,
-        true
-      );
-
-      if (updatedActivity !== undefined) {
-
-
-        setLoading(false);
-
-        alert('success: Änderungen gespeichert.');
-
-        onClose();
-      }
-    }
-  }, [
-    alert,
-    activityToUpdate,
-    formData.activity,
-    onClose,
-    t,
-    updateActivity
-  ]);
 
   return (
     <Box sx={{width: '100%', maxWidth: 500}}>
@@ -175,7 +150,7 @@ export function UpsertCaseModal({
             onChange={wed => {
               setWednesday(wed.target.value)
             }
-            }   value={activities?.at(2)?.description}
+            } value={activities?.at(2)?.description}
           />
           <Divider/>
           <Typography variant="h4" gutterBottom component="div">
@@ -246,7 +221,7 @@ export function UpsertCaseModal({
               color="primary"
               size="large"
               startIcon={<SaveIcon/>}
-              onClick={onCreate}
+              onClick={()=>onCreate()}
             >
               Speichern
             </Button>
