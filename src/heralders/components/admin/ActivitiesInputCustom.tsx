@@ -8,13 +8,13 @@ export const getActivityOrder = (
     return ActivityOrder.ORDER1;
   } else if (order == 2) {
     return ActivityOrder.ORDER2
-  } else if (order == 1) {
+  } else if (order == 3) {
     return ActivityOrder.ORDER3;
-  } else if (order == 2) {
+  } else if (order == 4) {
     return ActivityOrder.ORDER4
-  } else if (order == 1) {
+  } else if (order == 5) {
     return ActivityOrder.ORDER5;
-  } else if (order == 2) {
+  } else if (order == 6) {
     return ActivityOrder.ORDER6
   }
 

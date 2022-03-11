@@ -69,15 +69,17 @@ export default function ScrollableTabsButtonForce() {
   const {makeRequest, makeRequestWithFullResponse} = useApi();
   const {
     getActivities
-  } = useActivity('197d3420-d2bb-4979-8a07-93533836da4f');
+  } = useActivity('3f3739b6-449c-4933-8524-47cea512cee7');
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [getAllActivities, setGetAllActivities] = useState<Activity[]>();
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
      setValue(newValue)
   };
-
-  const {data:results} = useSWR<Activity[]>(`/postboxes/197d3420-d2bb-4979-8a07-93533836da4f/activity-results?type=${ActivityType.PROGRAM}&week=2022-03-05T23:00:00.000Z 2022-03-12T22:59:59.999Z`)
+  const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag","Samstag","Sontag"];
+  const events = ["Event1", "Event2", "Event3", "Event4"];
+  const announcements = ["Ankündigung1", "Ankündigung2", "Ankündigung3", "Ankündigung4"];
+  const {data:results} = useSWR<Activity[]>(`/postboxes/3f3739b6-449c-4933-8524-47cea512cee7/activity-results?type=${ActivityType.PROGRAM}`)
 
   return results ? (
     <div className={classes.root}>
@@ -97,8 +99,9 @@ export default function ScrollableTabsButtonForce() {
           <Tab label="Ankündingung" icon={<AnnouncementIcon/>} {...a11yProps(2)} />
         </Tabs>
         <TabPanel value={value} index={0}>
-          <UpsertActivity postboxId={'197d3420-d2bb-4979-8a07-93533836da4f'}
+          <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
                                activities={results}
+                               labels={days}
                                type={ActivityType.PROGRAM}/>
         </TabPanel>
         <TabPanel value={value} index={1}>

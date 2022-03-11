@@ -7,7 +7,6 @@ export interface Activity {
   id: string;
   description?: string;
   postboxId: string;
-  week: String;
   activityOrder: ActivityOrder;
   activityType: ActivityType;
   createdAt?: string;
@@ -21,8 +20,7 @@ export type UpdateActivityRequest = CreateActivityRequest;
 export const CreateActivityRequestSchema: Schema = Joi.object({
   description: Joi.string().required(),
   activityType: Joi.string().required(),
-  week: Joi.string().required(),
-  activityOrder: Joi.string().optional().allow('')
+  activityOrder: Joi.string().required()
 });
 
 export const UpdateActivityRequestSchema = CreateActivityRequestSchema;
@@ -32,7 +30,7 @@ export function instanceOfActivity(object?: any): object is Activity {
     return false;
   }
   return ('postboxId' in object &&
-    'week' in object &&
+    'activityOrder' in object &&
     'description' in object &&
     'activityType' in object);
 }

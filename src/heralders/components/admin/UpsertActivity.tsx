@@ -3,12 +3,10 @@ import {Fragment, useCallback, useState} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from "@material-ui/core/Container";
-import WeekPicker, {calendarWeek} from "../util/WeekPicker";
 import TextField from "@material-ui/core/TextField";
 import {Divider} from "@material-ui/core";
 import Button from "@mui/material/Button";
 import SaveIcon from "@material-ui/icons/Save";
-import {useTranslation} from 'react-i18next';
 import {useActivity} from "../../hooks/useActivity";
 import {
   Activity,
@@ -18,7 +16,7 @@ import {
 } from "../../models/Activity";
 import {ActivityType} from "../../models/ActivityType";
 import {ActivityOrder} from "../../models/ActivityOrder";
-import {getActivityOrder, getDayOfTheWeek} from "./ActivitiesInputCustom";
+import {getActivityOrder} from "./ActivitiesInputCustom";
 
 export interface UpsertActivityFormData {
   activity: Partial<CreateActivityRequest | UpdateActivityRequest>
@@ -27,40 +25,35 @@ export interface UpsertActivityFormData {
 interface UpsertActivityProps {
   postboxId: string,
   activities: Activity[],
+  labels: string[],
   type: ActivityType,
 }
 
-export function UpsertActivity({postboxId, activities, type}: UpsertActivityProps) {
-console.log(activities)
+export function UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
+
   const {
-    createActivity,
-    getActivities
+    createActivity
   } = useActivity(postboxId);
 
 
-
   const [loading, setLoading] = useState(false);
+  const [description, setDescription] = useState("");
   const [createdActivity, setCreatedActivity] = useState<Activity>();
   const [formData, setFormData] = useState<UpsertActivityFormData>(
     {
       activity: {
         description: '',
         activityType: ActivityType.PROGRAM,
-        week: '',
         activityOrder: ActivityOrder.ORDER1
       }
     }
   );
 
   const onCreate = useCallback(async () => {
-
     if (
       !CreateActivityRequestSchema.validate(formData.activity).error
     ) {
-
-      console.log(calendarWeek());
       setLoading(true);
-
       const newActivity = await createActivity(
         formData.activity as CreateActivityRequest,
         true
@@ -69,54 +62,56 @@ console.log(activities)
 
         setCreatedActivity(newActivity);
         setLoading(false);
-      //  alert("Das neues program wurde erfolgreich gespeichert");
+        //  alert("Das neues program wurde erfolgreich gespeichert");
       }
     } else {
       alert("Das neues Program konnte nicht gespeichert werden");
     }
   }, [createActivity, formData]);
 
-  return activities ? (
+  return activities ?(
     <> <Box sx={{width: '100%', maxWidth: 500}}>
       <Container>
         <Typography component="div" className={"program"} style={
           {overflowY: 'auto'}}>
-              <WeekPicker/>
-
-          {activities.map((activity, index) => (
+          {labels.map((label, index) => (
             <Fragment>
-           <Typography variant="h3" gutterBottom component="div">
-            </Typography><TextField
+              <Typography variant="h3" gutterBottom component="div">
+              </Typography><TextField
               id="outlined-textarea"
               fullWidth={true}
-              label={getDayOfTheWeek(index + 1)}
-              placeholder=""
+              label={label}
+              placeholder={activities[index]!==undefined?activities[index].description:" "}
               multiline
               variant="outlined"
-              onChange={(data) => setFormData({
-                activity: {
-                  description: data.target.value,
-                  activityType: type,
-                  week: calendarWeek(), activityOrder: getActivityOrder(index + 1)
-                }
-              })} value={activity.description}/><Divider/>
+              onChange={(data) => {
+                setFormData({
+                  activity: {
+                    description: data.target.value,
+                    activityType: type,
+                    activityOrder: getActivityOrder(index + 1)
+                  }
+                });
+                setDescription(data.target.value)
+              }}/>
+
+              <br/>
+              <br/>
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={<SaveIcon/>}
+                  onClick={() => onCreate()}
+                >
+                  Speichern
+                </Button>
+              </div>
+              <Divider/>
             </Fragment>
           ))}
 
-
-          <br/>
-          <br/>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              startIcon={<SaveIcon/>}
-              onClick={() => onCreate()}
-            >
-              Speichern
-            </Button>
-          </div>
         </Typography>
       </Container>
     </Box>
