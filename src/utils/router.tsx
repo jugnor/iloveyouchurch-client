@@ -3,7 +3,9 @@ import Body from "../heralders/PageTsx/Body";
 
 export enum RouteKey {
   ACCOUNTGIVING,
-  HOME
+  HOME,
+  POSTBOXES,
+  POSTBOX
 }
 
 export interface Route {
@@ -22,5 +24,15 @@ export const routes: {
   [RouteKey.ACCOUNTGIVING]: {
     element:  <Body/>,
     path: '/'
+  }
+  ,
+  [RouteKey.POSTBOXES]: {
+    element:  <Body/>,
+    path: 'postboxes'
+  }
+  ,
+  [RouteKey.POSTBOX]: {
+    element:  <Body/>,
+    path: 'postboxes/:postboxId'
   }
 };

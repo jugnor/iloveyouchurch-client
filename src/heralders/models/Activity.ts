@@ -7,7 +7,7 @@ export interface Activity {
   id: string;
   description?: string;
   postboxId: string;
-  week: string;
+  week: String;
   activityOrder: ActivityOrder;
   activityType: ActivityType;
   createdAt?: string;

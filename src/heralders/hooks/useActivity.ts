@@ -1,10 +1,10 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Activity, CreateActivityRequest,UpdateActivityRequest} from "../models/Activity";
+import {Activity, CreateActivityRequest, UpdateActivityRequest} from "../models/Activity";
 import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
 import {mutate} from "swr";
-import {List} from "@mui/material";
+import {ActivityType} from "../models/ActivityType";
 
 export function useActivity(postboxId: string) {
   const {makeRequest, makeRequestWithFullResponse} = useApi();
@@ -30,7 +30,7 @@ export function useActivity(postboxId: string) {
         }
         setLoading(false);
 
-        return makeRequest<Activity>(newActivityResponse.headers.location, 'GET');
+        return newActivityResponse.data;
       } catch (e) {
         alert('error: Da ist leider etwas schiefgelaufen.');
         setLoading(false);
@@ -42,13 +42,12 @@ export function useActivity(postboxId: string) {
   );
 
   const getActivities = useCallback(
-    async () => {
+    async (activityType: ActivityType, week?: string) => {
       setLoading(true);
-
       try {
-        const  activities = await makeRequest<Activity[]>(`/postboxes/${postboxId}/activities`, 'GET');
+        const activities = await makeRequest<Activity[]>(`/postboxes/${postboxId}/activity-results?type=${activityType}&week=${week}`, 'GET');
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activity-results.*$`));
 
         await matchMutate(
           new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
@@ -128,7 +127,6 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return { createActivity, deleteActivity, getActivities,loading, updateActivity };
-
+  return {createActivity,  getActivities, loading};
 }
 

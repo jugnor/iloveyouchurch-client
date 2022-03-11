@@ -1,26 +1,28 @@
-import axios, { Method, ResponseType } from 'axios';
-import { useCallback } from 'react';
+import axios, {Method, ResponseType} from 'axios';
+import {useCallback} from 'react';
 
-import { useKeycloak } from '@react-keycloak/web';
+import {useKeycloak} from '@react-keycloak/web';
 
-interface RequestOptions {
+export interface RequestOptions {
   onUploadProgress?: (progressEvent: ProgressEvent) => void;
   responseType?: ResponseType;
 }
 
 export function useApi() {
-  const { keycloak } = useKeycloak();
 
+  const {keycloak} = useKeycloak();
+  const apiUrl = process.env.REACT_APP_API_URL;
   const makeRequestWithFullResponse = useCallback(
     async <T>(
       url: string,
       method: Method,
       data?: any,
-      options?: RequestOptions
+      optionsUpload?: (progressEvent: ProgressEvent) => void,
+      optionsResponseType?: ResponseType
     ) => {
-      const response = await axios.request<T>({
+      return await axios.request<T>({
         data,
-      //  onUploadProgress: options?.onUploadProgress,
+        onUploadProgress: optionsUpload,
         headers: {
           Authorization: keycloak.token
             ? `Bearer ${keycloak.token}`
@@ -32,13 +34,11 @@ export function useApi() {
             : undefined
         },
         method,
-       // responseType: options?.responseType || 'json',
-        url: `${process.env.REACT_APP_API_URL}${url}`
+        responseType: optionsResponseType || 'json',
+        url: `${apiUrl}${encodeURI(url)}`
       });
-
-      return response;
     },
-    [keycloak.token]
+    [keycloak.token, apiUrl]
   );
 
   const makeRequest = useCallback(
@@ -46,13 +46,16 @@ export function useApi() {
       url: string,
       method: Method,
       data?: any,
-      options?: RequestOptions
+      optionsUpload?: (progressEvent: ProgressEvent) => void,
+      optionsResponseType?: ResponseType
     ) => {
-      return (await makeRequestWithFullResponse<T>(url, method, data, options))
+      return (await makeRequestWithFullResponse<T>(url, method, data,optionsUpload,optionsResponseType ))
+        // return (await makeRequestWithFullResponse<T>(url, method, data))
         .data;
     },
     [makeRequestWithFullResponse]
   );
 
-  return { makeRequest, makeRequestWithFullResponse };
+  return {makeRequest, makeRequestWithFullResponse};
+
 }

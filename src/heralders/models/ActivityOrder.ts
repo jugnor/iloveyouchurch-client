@@ -1,11 +1,12 @@
-export enum ActivityOrder{
-  Order1='Order1',
-  Order2='Order2',
-  Order3='Order3',
-  Order4='Order4',
-  Order5='Order5',
-  Order6='Order6',
-  Order7='Order7',
+export enum ActivityOrder {
+  ORDER1 = 'ORDER1',
+  ORDER2 = 'ORDER2',
+  ORDER3 = 'ORDER3',
+  ORDER4 = 'ORDER4',
+  ORDER5 = 'ORDER5',
+  ORDER6 = 'ORDER6',
+  ORDER7 = 'ORDER7',
+
 }
 
 

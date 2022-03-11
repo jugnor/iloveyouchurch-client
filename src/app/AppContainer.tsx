@@ -14,7 +14,6 @@ const METHODE = 'GET';
 
 export function AppContainer({ children }: AppContainerProps) {
  // const { alert, renderAlertContainer } = useAlerts();
-
   const { makeRequest } = useApi();
   const swrConfig = useMemo<Partial<Configuration>>(
     () => ({
@@ -27,7 +26,7 @@ export function AppContainer({ children }: AppContainerProps) {
           (String(error.status).startsWith('4') ||
             String(error.status).startsWith('5'))
         ) {
-      //    alert('error', 'Da ist leider etwas schiefgelaufen.');
+          alert('error,Da ist leider etwas schiefgelaufen.');
           throw new Error(error);
         }
       },
