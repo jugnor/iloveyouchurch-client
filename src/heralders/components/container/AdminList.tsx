@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {useState} from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, Theme} from "@material-ui/core/styles";
@@ -9,16 +9,15 @@ import '../../css/Media.css';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import ComputerIcon from '@mui/icons-material/Computer';
 import EventIcon from '@mui/icons-material/Event';
-import Announcement from "../admin/Announcement";
-import Event from "../admin/Event";
 import {ActivityType} from "../../models/ActivityType";
-import {calendarWeek} from "../util/WeekPicker";
 import {useActivity} from "../../hooks/useActivity";
 import {UpsertActivity} from "../admin/UpsertActivity";
 import {Activity} from "../../models/Activity";
 import {useApi} from "../../hooks/useApi";
 import useSWR from 'swr'
 import {ResultsObject} from "../util/ResultsObject";
+import GavelIcon from '@mui/icons-material/Gavel';
+import {getActivities} from "../admin/CallActivity";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -68,21 +67,23 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function ScrollableTabsButtonForce() {
   const {makeRequest, makeRequestWithFullResponse} = useApi();
-  const {
-    getActivities
-  } = useActivity('3f3739b6-449c-4933-8524-47cea512cee7');
+
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const [getAllActivities, setGetAllActivities] = useState<Activity[]>();
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-     setValue(newValue)
+    setValue(newValue)
   };
-  const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag","Samstag","Sontag"];
+  const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sontag"];
   const events = ["Event1", "Event2", "Event3", "Event4"];
   const announcements = ["Ankündigung1", "Ankündigung2", "Ankündigung3", "Ankündigung4"];
-  const {data:results} = useSWR<ResultsObject<Activity>>(`/postboxes/3f3739b6-449c-4933-8524-47cea512cee7/activity-results?type=${ActivityType.PROGRAM}`)
+  const penalties = ["Straffe1", "Straffe2", "Straffe3", "Straffe4"];
+  const {data: programResults} = getActivities("3f3739b6-449c-4933-8524-47cea512cee7",ActivityType.PROGRAM)
+  const {data: eventResults} = getActivities("3f3739b6-449c-4933-8524-47cea512cee7",ActivityType.EVENT)
+  const {data: announcementResults} = getActivities("3f3739b6-449c-4933-8524-47cea512cee7",ActivityType.ANNOUNCEMENT)
+  const {data: penaltyResults} =getActivities("3f3739b6-449c-4933-8524-47cea512cee7",ActivityType.PENALTY)
 
-  return results ? (
+  return (
     <div className={classes.root}>
       <AppBar position="relative" color="transparent">
         <Tabs
@@ -98,24 +99,48 @@ export default function ScrollableTabsButtonForce() {
           <Tab label="Program der Woche" icon={<ComputerIcon/>} {...a11yProps(0)} />
           <Tab label="Veranstaltung" icon={<EventIcon/>} {...a11yProps(1)} />
           <Tab label="Ankündingung" icon={<AnnouncementIcon/>} {...a11yProps(2)} />
+          <Tab label="Straffe" icon={<GavelIcon/>} {...a11yProps(3)} />
         </Tabs>
         <TabPanel value={value} index={0}>
-          <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
-                               activities={results.items}
-                               labels={days}
-                               type={ActivityType.PROGRAM}/>
+          {programResults ? (
+            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+                            activities={programResults.items}
+                            labels={days}
+                            type={ActivityType.PROGRAM}/>) : (
+            <p> Es ist einen Fehler aufgetretten: Das Program der Woche kann nicht angezeigt
+              werden.</p>
+          )}
         </TabPanel>
         <TabPanel value={value} index={1}>
-
-          <div><Event/></div>
+          {eventResults ? (
+            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+                            activities={eventResults.items}
+                            labels={events}
+                            type={ActivityType.EVENT}/>) : (
+            <p> Es ist einen Fehler aufgetretten: Die Veranstaltungen können nicht angezeigt
+              werden.</p>
+          )}
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <div><Announcement/></div>
+          {announcementResults ? (
+            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+                            activities={announcementResults.items}
+                            labels={announcements}
+                            type={ActivityType.ANNOUNCEMENT}/>) : (
+            <p> Es ist einen Fehler aufgetretten: Die Ankündigungen können nicht angezeigt
+              werden.</p>
+          )}
         </TabPanel>
 
+        <TabPanel value={value} index={3}>
+          {penaltyResults ? (
+            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+                            activities={penaltyResults.items}
+                            labels={penalties}
+                            type={ActivityType.PENALTY}/>) : (
+            <p> Es ist einen Fehler aufgetretten: Die Straffen können nicht angezeigt werden.</p>)}
+        </TabPanel>
       </AppBar>
     </div>
-  ) : (
-    <p> Es ist einen Fehler aufgetretten</p>
   );
 }

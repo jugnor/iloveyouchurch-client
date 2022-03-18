@@ -23,7 +23,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-import {AlertDialog} from "../material/AlertDialog";
+import {getActivity} from "./CallActivity";
+import {SWRResponse} from "swr";
+import validate = WebAssembly.validate;
 
 export interface UpsertActivityFormData {
   activity: Partial<CreateActivityRequest | UpdateActivityRequest>
@@ -35,15 +37,20 @@ interface UpsertActivityProps {
   labels: string[],
   type: ActivityType,
 }
-export const toLoad = (load: boolean): boolean =>{
-  return load}
-export function UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
+
+export const toLoad = (load: boolean): boolean => {
+  return load
+}
+
+export function
+
+UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
 
   const {
     createActivity
   } = useActivity(postboxId);
 
- const Transition = React.forwardRef(function Transition(
+  const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
       children: React.ReactElement<any, any>;
     },
@@ -66,6 +73,22 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
 
   const handleCloseLoading = () => {
     setOpen(false);
+  };
+
+  const getDescription= (response: any|undefined): string => {
+
+      if(response===""){
+        console.log("FFFF")
+        return "";
+      }
+    if (response!== undefined) {
+      if (response.description !== undefined) {
+        return response.description;
+        console.log("WWWWW")
+      }
+    }
+
+    return "";
   };
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState("");
@@ -93,12 +116,12 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
 
         setCreatedActivity(newActivity);
 
-       // alert("Das neues program wurde erfolgreich gespeichert");
+        // alert("Das neues program wurde erfolgreich gespeichert");
         setOpen(false);
         setLoading(true);
       }
     } else {
-      if(description!==''){
+      if (description !== '') {
         alert(CreateActivityRequestSchema.validate(formData.activity).error);
       }
       setOpen(false);
@@ -106,7 +129,7 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
     }
   }, [createActivity, formData]);
 
-  return activities ? (
+  return  (
     <> <Box sx={{width: '100%', maxWidth: 500}}>
       <Container>
         <Typography component="div" className={"program"} style={
@@ -132,8 +155,8 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
                 setDescription(data.target.value)
                 setLoading(true)
               }}
-              defaultValue={activities[index] !== undefined ? activities[index].description : ""}/>
-
+              // defaultValue={activities[index] !== undefined ? activities[index].description : ""}/>
+              defaultValue={getDescription(getActivity(postboxId, type, getActivityOrder(index + 1))?getActivity(postboxId, type, getActivityOrder(index + 1)):"")}/>
               <br/>
               <br/>
               <div style={{float: 'right'}}>
@@ -152,30 +175,30 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
             </Fragment>
           ))}
         </Typography>
-        {open&&description!==''&&(
-        <div>
-        <Dialog
-          open={open}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={handleClose}
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle>{"Änderung Übernehmen"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              Willst du wirklich die Änderung speichern ?
-              Die aktuelle Information wird überschrieben
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Nein Zurück</Button>
-            <Button onClick={() => onCreate()}>Ja ich will</Button>
-          </DialogActions>
-        </Dialog>
-        </div>)}
+        {open && description !== '' && (
+          <div>
+            <Dialog
+              open={open}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={handleClose}
+              aria-describedby="alert-dialog-slide-description"
+            >
+              <DialogTitle>{"Änderung Übernehmen"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                  Willst du wirklich die Änderung speichern ?
+                  Die aktuelle Information wird überschrieben
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Nein Zurück</Button>
+                <Button onClick={() => onCreate()}>Ja ich will</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
       </Container>
     </Box>
     </>
-  ) : null;
+  );
 }
