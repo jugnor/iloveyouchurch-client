@@ -18,6 +18,7 @@ import {UpsertActivity} from "../admin/UpsertActivity";
 import {Activity} from "../../models/Activity";
 import {useApi} from "../../hooks/useApi";
 import useSWR from 'swr'
+import {ResultsObject} from "../util/ResultsObject";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -79,7 +80,7 @@ export default function ScrollableTabsButtonForce() {
   const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag","Samstag","Sontag"];
   const events = ["Event1", "Event2", "Event3", "Event4"];
   const announcements = ["Ankündigung1", "Ankündigung2", "Ankündigung3", "Ankündigung4"];
-  const {data:results} = useSWR<Activity[]>(`/postboxes/3f3739b6-449c-4933-8524-47cea512cee7/activity-results?type=${ActivityType.PROGRAM}`)
+  const {data:results} = useSWR<ResultsObject<Activity>>(`/postboxes/3f3739b6-449c-4933-8524-47cea512cee7/activity-results?type=${ActivityType.PROGRAM}`)
 
   return results ? (
     <div className={classes.root}>
@@ -100,7 +101,7 @@ export default function ScrollableTabsButtonForce() {
         </Tabs>
         <TabPanel value={value} index={0}>
           <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
-                               activities={results}
+                               activities={results.items}
                                labels={days}
                                type={ActivityType.PROGRAM}/>
         </TabPanel>

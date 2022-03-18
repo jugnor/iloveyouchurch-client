@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
-import {Divider} from "@material-ui/core";
 import Button from "@mui/material/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import {useActivity} from "../../hooks/useActivity";
@@ -17,6 +16,14 @@ import {
 import {ActivityType} from "../../models/ActivityType";
 import {ActivityOrder} from "../../models/ActivityOrder";
 import {getActivityOrder} from "./ActivitiesInputCustom";
+import {TransitionProps} from "@mui/material/transitions";
+import Slide from "@mui/material/Slide";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import {AlertDialog} from "../material/AlertDialog";
 
 export interface UpsertActivityFormData {
   activity: Partial<CreateActivityRequest | UpdateActivityRequest>
@@ -28,14 +35,38 @@ interface UpsertActivityProps {
   labels: string[],
   type: ActivityType,
 }
-
+export const toLoad = (load: boolean): boolean =>{
+  return load}
 export function UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
 
   const {
     createActivity
   } = useActivity(postboxId);
 
+ const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+      children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+  ) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCloseLoading = () => {
+    setOpen(false);
+  };
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState("");
   const [createdActivity, setCreatedActivity] = useState<Activity>();
@@ -43,7 +74,7 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
     {
       activity: {
         description: '',
-        activityType: ActivityType.PROGRAM,
+        activityType: type,
         activityOrder: ActivityOrder.ORDER1
       }
     }
@@ -53,7 +84,7 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
     if (
       !CreateActivityRequestSchema.validate(formData.activity).error
     ) {
-      setLoading(true);
+
       const newActivity = await createActivity(
         formData.activity as CreateActivityRequest,
         true
@@ -61,15 +92,21 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
       if (newActivity !== undefined) {
 
         setCreatedActivity(newActivity);
-        setLoading(false);
-        //  alert("Das neues program wurde erfolgreich gespeichert");
+
+       // alert("Das neues program wurde erfolgreich gespeichert");
+        setOpen(false);
+        setLoading(true);
       }
     } else {
-      alert("Das neues Program konnte nicht gespeichert werden");
+      if(description!==''){
+        alert(CreateActivityRequestSchema.validate(formData.activity).error);
+      }
+      setOpen(false);
+      setLoading(true);
     }
   }, [createActivity, formData]);
 
-  return activities ?(
+  return activities ? (
     <> <Box sx={{width: '100%', maxWidth: 500}}>
       <Container>
         <Typography component="div" className={"program"} style={
@@ -81,7 +118,7 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
               id="outlined-textarea"
               fullWidth={true}
               label={label}
-              placeholder={activities[index]!==undefined?activities[index].description:" "}
+              //placeholder={activities[index]!==undefined?activities[index].description:" "}
               multiline
               variant="outlined"
               onChange={(data) => {
@@ -93,26 +130,50 @@ export function UpsertActivity({postboxId, activities, labels, type}: UpsertActi
                   }
                 });
                 setDescription(data.target.value)
-              }}/>
+                setLoading(true)
+              }}
+              defaultValue={activities[index] !== undefined ? activities[index].description : ""}/>
 
               <br/>
               <br/>
-              <div>
+              <div style={{float: 'right'}}>
                 <Button
                   variant="contained"
                   color="primary"
                   size="large"
                   startIcon={<SaveIcon/>}
-                  onClick={() => onCreate()}
+                  onClick={handleClickOpen}
                 >
                   Speichern
                 </Button>
               </div>
-              <Divider/>
+              <br/>
+              <br/>
             </Fragment>
           ))}
-
         </Typography>
+        {open&&description!==''&&(
+        <div>
+        <Dialog
+          open={open}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={handleClose}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle>{"Änderung Übernehmen"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              Willst du wirklich die Änderung speichern ?
+              Die aktuelle Information wird überschrieben
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Nein Zurück</Button>
+            <Button onClick={() => onCreate()}>Ja ich will</Button>
+          </DialogActions>
+        </Dialog>
+        </div>)}
       </Container>
     </Box>
     </>
