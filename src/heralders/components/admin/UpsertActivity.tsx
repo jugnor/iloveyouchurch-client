@@ -23,9 +23,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-import {getActivity} from "./CallActivity";
-import {SWRResponse} from "swr";
-import validate = WebAssembly.validate;
 
 export interface UpsertActivityFormData {
   activity: Partial<CreateActivityRequest | UpdateActivityRequest>
@@ -33,7 +30,6 @@ export interface UpsertActivityFormData {
 
 interface UpsertActivityProps {
   postboxId: string,
-  activities: Activity[],
   labels: string[],
   type: ActivityType,
 }
@@ -44,10 +40,10 @@ export const toLoad = (load: boolean): boolean => {
 
 export function
 
-UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
+UpsertActivity({postboxId, labels, type}: UpsertActivityProps) {
 
   const {
-    createActivity
+    createActivity,activityByTypeAndOrder
   } = useActivity(postboxId);
 
   const Transition = React.forwardRef(function Transition(
@@ -76,20 +72,15 @@ UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
   };
 
   const getDescription= (response: any|undefined): string => {
-
-      if(response===""){
-        console.log("FFFF")
-        return "";
-      }
     if (response!== undefined) {
       if (response.description !== undefined) {
         return response.description;
-        console.log("WWWWW")
       }
     }
 
     return "";
   };
+
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState("");
   const [createdActivity, setCreatedActivity] = useState<Activity>();
@@ -104,8 +95,9 @@ UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
   );
 
   const onCreate = useCallback(async () => {
+
     if (
-      !CreateActivityRequestSchema.validate(formData.activity).error
+      !CreateActivityRequestSchema.validate(formData.activity).error||description===''
     ) {
 
       const newActivity = await createActivity(
@@ -121,9 +113,6 @@ UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
         setLoading(true);
       }
     } else {
-      if (description !== '') {
-        alert(CreateActivityRequestSchema.validate(formData.activity).error);
-      }
       setOpen(false);
       setLoading(true);
     }
@@ -155,8 +144,7 @@ UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
                 setDescription(data.target.value)
                 setLoading(true)
               }}
-              // defaultValue={activities[index] !== undefined ? activities[index].description : ""}/>
-              defaultValue={getDescription(getActivity(postboxId, type, getActivityOrder(index + 1))?getActivity(postboxId, type, getActivityOrder(index + 1)):"")}/>
+              defaultValue={getDescription(activityByTypeAndOrder(type, getActivityOrder(index + 1)))}/>
               <br/>
               <br/>
               <div style={{float: 'right'}}>
@@ -175,7 +163,7 @@ UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
             </Fragment>
           ))}
         </Typography>
-        {open && description !== '' && (
+        {open  && (
           <div>
             <Dialog
               open={open}
@@ -192,8 +180,8 @@ UpsertActivity({postboxId, activities, labels, type}: UpsertActivityProps) {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleClose}>Nein Zurück</Button>
-                <Button onClick={() => onCreate()}>Ja ich will</Button>
+                <Button onClick={handleClose}>Nein, Zurück</Button>
+                <Button onClick={() => onCreate()}>Ja, ich will</Button>
               </DialogActions>
             </Dialog>
           </div>)}

@@ -3,14 +3,30 @@ import {useTranslation} from 'react-i18next';
 import {Activity, CreateActivityRequest, UpdateActivityRequest} from "../models/Activity";
 import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
-import {mutate} from "swr";
+import useSWR, {mutate, SWRResponse} from "swr";
 import {ActivityType} from "../models/ActivityType";
+import {ActivityOrder} from "../models/ActivityOrder";
+import {ResultsObject} from "../components/util/ResultsObject";
+
 
 export function useActivity(postboxId: string) {
-  const {makeRequest, makeRequestWithFullResponse} = useApi();
+  const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
   const {t} = useTranslation();
 
   const [loading, setLoading] = useState(false);
+
+  const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
+    const {
+      data,
+      error
+    } = useSWR<Activity>(`/postboxes/${postboxId}?type=${type}&order=${order}`, fetcher);
+    return data;
+  }
+
+  const activitiesByType = ( type: ActivityType): SWRResponse<ResultsObject<Activity>, Error> => {
+    return useSWR<ResultsObject<Activity>>(`/postboxes/${postboxId}/activity-results?type=${type}`);
+  }
+
 
   const createActivity = useCallback(async (data: CreateActivityRequest, silent?: boolean) => {
       setLoading(true);
@@ -127,6 +143,6 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createActivity,  getActivities, loading};
+  return {createActivity, activityByTypeAndOrder, getActivities, activitiesByType, loading};
 }
 

@@ -18,7 +18,7 @@ export type UpdateActivityRequest = CreateActivityRequest;
 
 
 export const CreateActivityRequestSchema: Schema = Joi.object({
-  description: Joi.string().required(),
+  description: Joi.string().optional(),
   activityType: Joi.string().required(),
   activityOrder: Joi.string().required()
 });

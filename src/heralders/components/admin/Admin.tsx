@@ -3,9 +3,9 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import '../../css/Media.css';
-import AdminList from "../container/AdminList";
+import AdminTabPanel from "./AdminTabPanel";
 import { Suspense } from 'react';
-export default function CreateModuleTest() {
+export default function AdminTab() {
   return (
       <React.Fragment>
         <CssBaseline/>
@@ -13,7 +13,7 @@ export default function CreateModuleTest() {
           <Typography component="div" className={"test"} style={
             {overflowY: 'auto', overflowX: 'auto'}}>
             <Suspense fallback={null}>
-              <AdminList/>
+              <AdminTabPanel/>
             </Suspense>
 
           </Typography>

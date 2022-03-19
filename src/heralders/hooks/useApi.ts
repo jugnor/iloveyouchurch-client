@@ -8,10 +8,28 @@ export interface RequestOptions {
   responseType?: ResponseType;
 }
 
-export function useApi() {
 
+export function useApi() {
   const {keycloak} = useKeycloak();
   const apiUrl = process.env.REACT_APP_API_URL;
+  const fetcher = (url: string) => axios.request({
+    headers: {
+      Authorization: keycloak.token
+        ? `Bearer ${keycloak.token}`
+        : undefined,
+      'Content-type': 'application/json',
+    },
+    method: "GET",
+    responseType: 'json',
+    url: `${apiUrl}${encodeURI(url)}`
+  })
+  .then(res => {
+      return res.data
+  }).catch(err => {
+    // Do something for an error here
+    console.log("Error Reading data " + err);
+    return ""
+  });
   const makeRequestWithFullResponse = useCallback(
     async <T>(
       url: string,
@@ -49,13 +67,13 @@ export function useApi() {
       optionsUpload?: (progressEvent: ProgressEvent) => void,
       optionsResponseType?: ResponseType
     ) => {
-      return (await makeRequestWithFullResponse<T>(url, method, data,optionsUpload,optionsResponseType ))
+      return (await makeRequestWithFullResponse<T>(url, method, data, optionsUpload, optionsResponseType))
         // return (await makeRequestWithFullResponse<T>(url, method, data))
         .data;
     },
     [makeRequestWithFullResponse]
   );
 
-  return {makeRequest, makeRequestWithFullResponse};
+  return {makeRequest, makeRequestWithFullResponse,fetcher};
 
 }
