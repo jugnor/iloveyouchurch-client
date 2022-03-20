@@ -91,22 +91,22 @@ export default function HomeTabPanel() {
           <Tab label="Straffe" icon={<GavelIcon/>} {...a11yProps(3)} />
         </Tabs>
         <TabPanel value={value} index={0}>
-          <ActivityRender postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+          <ActivityRender postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                           labels={days}
                           type={ActivityType.PROGRAM}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <ActivityRender postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+          <ActivityRender postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                           labels={events}
                           type={ActivityType.EVENT}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <ActivityRender postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+          <ActivityRender postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                           labels={announcements}
                           type={ActivityType.ANNOUNCEMENT}/>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <ActivityRender postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+          <ActivityRender postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                           labels={penalties}
                           type={ActivityType.PENALTY}/>
         </TabPanel>

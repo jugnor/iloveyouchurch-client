@@ -93,25 +93,25 @@ export default function AdminTabPanel() {
           <Tab label="Straffe" icon={<GavelIcon/>} {...a11yProps(3)} />
         </Tabs>
         <TabPanel value={value} index={0}>
-            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+            <UpsertActivity postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                             labels={days}
                             type={ActivityType.PROGRAM}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
 
-            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+            <UpsertActivity postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                             labels={events}
                             type={ActivityType.EVENT}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
-            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+            <UpsertActivity postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                             labels={announcements}
                             type={ActivityType.ANNOUNCEMENT}/>
         </TabPanel>
 
         <TabPanel value={value} index={3}>
 
-            <UpsertActivity postboxId={'3f3739b6-449c-4933-8524-47cea512cee7'}
+            <UpsertActivity postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                             labels={penalties}
                             type={ActivityType.PENALTY}/>
         </TabPanel>
