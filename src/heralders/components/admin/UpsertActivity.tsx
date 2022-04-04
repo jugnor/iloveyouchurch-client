@@ -38,9 +38,7 @@ export const toLoad = (load: boolean): boolean => {
   return load
 }
 
-export function
-
-UpsertActivity({postboxId, labels, type}: UpsertActivityProps) {
+export function UpsertActivity({postboxId, labels, type}: UpsertActivityProps) {
 
   const {
     createActivity,activityByTypeAndOrder
@@ -60,7 +58,6 @@ UpsertActivity({postboxId, labels, type}: UpsertActivityProps) {
 
   const handleClickOpen = () => {
     setOpen(true);
-
   };
 
   const handleClose = () => {

@@ -6,7 +6,7 @@ export interface GodGiving {
   id: string;
   amount: number;
   postboxId: string;
-  godGivingType: string;
+  type: string;
   userTime: UserTime;
   createdAt?: string;
 }
@@ -17,9 +17,9 @@ export type UpdateGodGivingRequest = CreateGodGivingRequest;
 
 
 export const CreateGodGivingRequestSchema: Schema = Joi.object({
-  amount: Joi.string().required(),
-  godGivingType: Joi.string().required(),
-  userTime: Joi.string().required()
+  amount: Joi.number().required(),
+  type: Joi.string().optional(),
+  userTime: Joi.object().required()
 });
 
 export const UpdateGodGivingRequestSchema = CreateGodGivingRequestSchema;

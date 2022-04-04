@@ -1,22 +1,20 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Activity, CreateActivityRequest, UpdateActivityRequest} from "../models/Activity";
+import {Activity, UpdateActivityRequest} from "../models/Activity";
 import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
-import useSWR, {mutate, SWRResponse} from "swr";
-import {ActivityType} from "../models/ActivityType";
-import {ActivityOrder} from "../models/ActivityOrder";
+import useSWR, {mutate} from "swr";
 import {ResultsObject} from "../components/util/ResultsObject";
 import {CreateGodGivingRequest, GodGiving} from "../models/GodGiving";
 
 
-export function useGodGiving(postboxId: string,userId:string) {
+export function useGodGiving(postboxId: string, userId: string) {
   const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
   const {t} = useTranslation();
 
   const [loading, setLoading] = useState(false);
 
- /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
+  /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
     const {
       data,
       error
@@ -24,9 +22,22 @@ export function useGodGiving(postboxId: string,userId:string) {
     return data;
   }*/
 
-  const godGivingsByWeek = ( week: string): SWRResponse<ResultsObject<GodGiving>, Error> => {
-    return useSWR<ResultsObject<GodGiving>>(`/postboxes/${postboxId}/users/${userId}/god-giving-results?week=${week}`);
-  }
+  const godGivingsByWeek = useCallback(async (week: string, silent?: boolean) => {
+    try {
+      const {
+        data,
+        error
+      } =  await useSWR<ResultsObject<GodGiving>>(`/postboxes/${postboxId}/users/${userId}/god-giving-results?week=${week}`);
+      if(data===undefined){
+        console.log("aaaaddddd")
+      }
+      return data;
+    } catch (e) {
+      alert('error: Da ist leider etwas schiefgelaufen.');
+      setLoading(false);
+      throw e;
+    }
+  }, [alert, postboxId, t]);
 
 
   const createGodGiving = useCallback(async (data: CreateGodGivingRequest, silent?: boolean) => {
@@ -119,6 +130,6 @@ export function useGodGiving(postboxId: string,userId:string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createGodGiving,  godGivingsByWeek, deleteGodGiving, updateGodGiving, loading};
+  return {createGodGiving, godGivingsByWeek, deleteGodGiving, updateGodGiving, loading};
 }
 
