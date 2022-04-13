@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Suspense} from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, Theme} from "@material-ui/core/styles";
@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '15%',
     bottom: '-30%',
     left: '10%',
-    position: 'relative',
+    position: 'revert',
     // backgroundColor: theme.palette.background.paper,
     backgroundColor: theme.palette.background.paper,
   },
@@ -73,8 +73,9 @@ export default function HomeTabPanel() {
   };
 
   return (
+    <Suspense fallback={null}>
     <div className={classes.root}>
-      <AppBar position="relative" color="transparent">
+      <AppBar position="static" color="transparent">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -89,11 +90,14 @@ export default function HomeTabPanel() {
           <Tab label="Veranstaltung" icon={<ComputerIcon/>} {...a11yProps(1)} />
           <Tab label="Ankündingung" icon={<AnnouncementIcon/>} {...a11yProps(2)} />
           <Tab label="Straffe" icon={<GavelIcon/>} {...a11yProps(3)} />
+
         </Tabs>
         <TabPanel value={value} index={0}>
+
           <ActivityRender postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
                           labels={days}
                           type={ActivityType.PROGRAM}/>
+
         </TabPanel>
         <TabPanel value={value} index={1}>
           <ActivityRender postboxId={'4e949cda-fc03-4b66-8743-3edae335d4ea'}
@@ -110,9 +114,8 @@ export default function HomeTabPanel() {
                           labels={penalties}
                           type={ActivityType.PENALTY}/>
         </TabPanel>
-
       </AppBar>
     </div>
-
+</Suspense>
   );
 }

@@ -5,7 +5,7 @@ import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
 import useSWR, {mutate} from "swr";
 import {ResultsObject} from "../components/util/ResultsObject";
-import {CreateGodGivingRequest, GodGiving} from "../models/GodGiving";
+import {CreateGodGivingRequest, GodGiving, UpdateGodGivingRequest} from "../models/GodGiving";
 
 
 export function useGodGiving(postboxId: string, userId: string) {
@@ -51,7 +51,7 @@ export function useGodGiving(postboxId: string, userId: string) {
         await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings.*$`));
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-giving-results.*$`)
         );
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
@@ -81,8 +81,6 @@ export function useGodGiving(postboxId: string, userId: string) {
         await matchMutate(
           new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-giving-results.*$`)
         );
-
-        alert('success: Fall gelöscht.');
         setLoading(false);
       } catch (e) {
         alert('error: Da ist leider etwas schiefgelaufen.');
@@ -95,11 +93,11 @@ export function useGodGiving(postboxId: string, userId: string) {
   );
 
   const updateGodGiving = useCallback(
-    async (godGivingId: string, data: UpdateActivityRequest, silent?: boolean) => {
+    async (godGivingId: string, data: UpdateGodGivingRequest, silent?: boolean) => {
       setLoading(true);
 
       try {
-        const updatedCase = await makeRequest<Activity>(
+        const updatedGodGiving = await makeRequest<GodGiving>(
           `/postboxes/${postboxId}/god-givings/${godGivingId}`,
           'PUT',
           data
@@ -108,7 +106,7 @@ export function useGodGiving(postboxId: string, userId: string) {
         await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings.*$`));
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-giving-results.*$`)
         );
 
         await mutate(`/postboxes/${postboxId}/god-givings/${godGivingId}`);
@@ -119,7 +117,7 @@ export function useGodGiving(postboxId: string, userId: string) {
 
         setLoading(false);
 
-        return updatedCase;
+        return updatedGodGiving;
       } catch (e) {
         alert('error: Da ist leider etwas schiefgelaufen.');
         setLoading(false);

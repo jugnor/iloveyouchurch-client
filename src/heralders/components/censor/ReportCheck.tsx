@@ -9,7 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import WeekPicker from "../util/WeekPicker";
+
 
 interface Column {
   id: 'woche' | 'name' | 'meditation' | 'gebetAllein'|'gebetInGroup'| 'bibelLesen'| 'danksagung';
@@ -106,7 +106,7 @@ export default function ColumnGroupingTable() {
 
           <Typography component="div" className={"censor"} style={
             {overflowY: 'auto'}}>
-            <WeekPicker/>
+
             <TableContainer sx={{maxHeight: 440}}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>

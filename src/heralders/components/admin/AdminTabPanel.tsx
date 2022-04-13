@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {Suspense, useState} from "react";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import {makeStyles, Theme} from "@material-ui/core/styles";
@@ -54,8 +54,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     width: '15%',
     bottom: '-30%',
-    left: '10%',
-    position: 'relative',
+    left: '11%',
+    position: 'revert',
     // backgroundColor: theme.palette.background.paper,
     backgroundColor: theme.palette.background.paper,
   },
@@ -75,8 +75,9 @@ export default function AdminTabPanel() {
   const penalties = ["Straffe1", "Straffe2", "Straffe3", "Straffe4"];
 
   return (
+    <Suspense fallback={null}>
     <div className={classes.root}>
-      <AppBar position="relative" color="transparent">
+      <AppBar position="static" color="transparent">
         <Tabs
           value={value}
           onChange={handleChange}
@@ -117,5 +118,6 @@ export default function AdminTabPanel() {
         </TabPanel>
       </AppBar>
     </div>
+    </Suspense>
   );
 }

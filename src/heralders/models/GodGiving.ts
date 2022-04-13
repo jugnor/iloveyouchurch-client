@@ -18,12 +18,14 @@ export type UpdateGodGivingRequest = CreateGodGivingRequest;
 
 export const CreateGodGivingRequestSchema: Schema = Joi.object({
   amount: Joi.number().required(),
-  type: Joi.string().optional(),
+  type: Joi.string().optional().empty(''),
   userTime: Joi.object().required()
 });
 
-export const UpdateGodGivingRequestSchema = CreateGodGivingRequestSchema;
-
+export const UpdateGodGivingRequestSchema  : Schema = Joi.object({
+  amount: Joi.number().required(),
+  type: Joi.string().optional().empty(''),
+});
 export function instanceOfActivity(object?: any): object is GodGiving {
   if (!object) {
     return false;
