@@ -6,9 +6,10 @@ import {useApi} from './useApi';
 import useSWR, {mutate} from "swr";
 import {ResultsObject} from "../components/util/ResultsObject";
 import {UpsertGodGivingRequest, GodGiving, UpdateGodGivingRequest} from "../models/GodGiving";
+import {Reading, UpsertReadingRequest} from "../models/Reading";
 
 
-export function useGodGiving(postboxId: string, userId: string) {
+export function useDiscipline(postboxId:string, userId:string,path:string) {
   const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
   const {t} = useTranslation();
 
@@ -22,43 +23,25 @@ export function useGodGiving(postboxId: string, userId: string) {
     return data;
   }*/
 
-  const godGivingsByWeek = useCallback(async (week: string, silent?: boolean) => {
-    try {
-      const {
-        data,
-        error
-      } =  await useSWR<ResultsObject<GodGiving>>(`/postboxes/${postboxId}/users/${userId}/god-giving-results?week=${week}`);
-      if(data===undefined){
-        console.log("aaaaddddd")
-      }
-      return data;
-    } catch (e) {
-      alert('error: Da ist leider etwas schiefgelaufen.');
-      setLoading(false);
-      throw e;
-    }
-  }, [alert, postboxId, t]);
-
-
-  const createGodGiving = useCallback(async (data: UpsertGodGivingRequest, silent?: boolean) => {
+  const createDiscipline = useCallback(async (data: UpsertReadingRequest, silent?: boolean) => {
       setLoading(true);
       try {
-        const newActivityResponse = await makeRequestWithFullResponse<GodGiving>(
-          `/postboxes/${postboxId}/god-givings`,
+        const newUseDisciplineResponse = await makeRequestWithFullResponse<Reading>(
+          `/postboxes/${postboxId}/${path}s`,
           'POST',
           data);
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings.*$`));
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`));
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-giving-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`)
         );
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
         }
         setLoading(false);
 
-        return newActivityResponse.data;
+        return newUseDisciplineResponse.data;
       } catch (e) {
         alert('error: Da ist leider etwas schiefgelaufen.');
         setLoading(false);
@@ -69,17 +52,17 @@ export function useGodGiving(postboxId: string, userId: string) {
     [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
-  const deleteGodGiving = useCallback(
+  const deleteDiscipline= useCallback(
     async (godGivingId: string) => {
       setLoading(true);
 
       try {
-        await makeRequest(`/postboxes/${postboxId}/god-givings/${godGivingId}`, 'DELETE');
+        await makeRequest(`/postboxes/${postboxId}/${path}s/${godGivingId}`, 'DELETE');
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings.*$`));
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`));
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-giving-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`)
         );
         setLoading(false);
       } catch (e) {
@@ -92,24 +75,24 @@ export function useGodGiving(postboxId: string, userId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  const updateGodGiving = useCallback(
-    async (godGivingId: string, data: UpdateGodGivingRequest, silent?: boolean) => {
+  const updateDiscipline = useCallback(
+    async (clrId: string, data: UpsertReadingRequest, silent?: boolean) => {
       setLoading(true);
 
       try {
-        const updatedGodGiving = await makeRequest<GodGiving>(
-          `/postboxes/${postboxId}/god-givings/${godGivingId}`,
+        const updatedUseDiscipline = await makeRequest<Reading>(
+          `/postboxes/${postboxId}/${path}s/${clrId}`,
           'PUT',
           data
         );
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-givings.*$`));
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`));
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/god-giving-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`)
         );
 
-        await mutate(`/postboxes/${postboxId}/god-givings/${godGivingId}`);
+        await mutate(`/postboxes/${postboxId}/${path}s/${clrId}`);
 
         if (!silent) {
           alert('success: Änderungen gespeichert.');
@@ -117,7 +100,7 @@ export function useGodGiving(postboxId: string, userId: string) {
 
         setLoading(false);
 
-        return updatedGodGiving;
+        return updatedUseDiscipline;
       } catch (e) {
         alert('error: Da ist leider etwas schiefgelaufen.');
         setLoading(false);
@@ -128,6 +111,6 @@ export function useGodGiving(postboxId: string, userId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createGodGiving, godGivingsByWeek, deleteGodGiving, updateGodGiving, loading};
+  return { createDiscipline, deleteDiscipline, updateDiscipline, loading};
 }
 

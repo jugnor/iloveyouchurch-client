@@ -11,9 +11,9 @@ export interface GodGiving {
   createdAt?: string;
 }
 
-export type CreateGodGivingRequest = Except<GodGiving, 'id' | 'postboxId' | 'createdAt'>;
+export type UpsertGodGivingRequest = Except<GodGiving, 'id' | 'postboxId' | 'createdAt'>;
 
-export type UpdateGodGivingRequest = CreateGodGivingRequest;
+export type UpdateGodGivingRequest = UpsertGodGivingRequest;
 
 
 export const CreateGodGivingRequestSchema: Schema = Joi.object({
