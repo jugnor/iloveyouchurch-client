@@ -4,21 +4,17 @@ import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
 import {startWeekString} from "../../../container/TaskRender";
-import {
-  CreateReadingRequestSchema,
-  Reading,
-  UpdateReadingRequestSchema
-} from "../../../../models/Reading";
-import {GodGiving} from "../../../../models/GodGiving";
 import {ResultsObject} from "../../../util/ResultsObject";
 import toNumber from "@mui/x-data-grid/lib/lodash/toNumber";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
+import {
+  CreateMeditationRequestSchema,
+  Meditation,
+  UpdateMeditationRequestSchema
+} from "../../../../models/Meditation";
 
-export interface Discipline {
-  discipline: Partial<Reading | GodGiving>
-}
 
-export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefined, start: Date | null, methode: string) => {
+export const meditationRowsRendererByWeek = (data: ResultsObject<Meditation> | undefined, start: Date | null, methode: string) => {
 
   let resultMap: readonly { [key: string]: any; }[] = []
   if (methode === "get" + startWeekString(start) || methode === "" || methode === "createGet") {
@@ -28,13 +24,11 @@ export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefin
         oId: x.id,
         postboxId: x.userTime.postboxId,
         userId: x.userTime.userId,
-        readingType: x.readingType,
-        totalCap: x.totalCap,
-        title: x.title,
-        referenceEnd: x.referenceEnd,
-        timeInMinute: x.timeInMinute,
+        retreatType: x.retreatType,
         timeInHour: x.timeInHour,
-        theEnd: x.theEnd,
+        timeInMinute: x.timeInMinute,
+        verse: x.verse,
+        total: x.total,
         theme: x.theme,
         startW: x.userTime.startWeek,
         week: "von " + toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() + " bis " + toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
@@ -45,11 +39,9 @@ export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefin
   if (methode === 'create') {
     return [{
       id: randomId(),
-      totalCap: 0,
-      title: '',
-      referenceEnd: '',
       timeInMinute: 0,
-      theEnd: false,
+      total: 0,
+      verse: '',
       theme: '',
     }]
   }
@@ -58,17 +50,15 @@ export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefin
   return allRows;
 };
 
-export const upsertReadingFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams) => {
+export const upsertMeditationFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams) => {
   const oId = params.row.oId;
   const postboxId = params.row.postboxId;
-  const readingType = params.row.readingType;
+  const retreatType = params.row.prayerType;
   const userId = params.row.userId;
-  let totalCap = toNumber(params.getValue(params.id, "totalCap"));
-  const title = "" + params.getValue(params.id, "title");
   let timeInMinute = toNumber(params.getValue(params.id, "timeInMinute"));
-  const referenceEnd = "" + params.getValue(params.id, "referenceEnd");
-  let theEnd: boolean = params.value(params.id, "theEnd");
+  let total = toNumber(params.getValue(params.id, "total"));
   const theme = "" + params.getValue(params.id, "theme");
+  const verse = "" + params.getValue(params.id, "verse");
   if (oId === undefined || oId === '') {
     if (create) {
       return {
@@ -79,35 +69,31 @@ export const upsertReadingFormData = (start: string, end: string, create: boolea
           endWeek: end,
           week: start + "/" + end
         },
-        totalCap: totalCap,
-        title: title,
-        referenceEnd: referenceEnd,
         timeInMinute: timeInMinute,
-        theEnd: theEnd,
+        verse: verse,
+        total: total,
         theme: theme,
-        readingType: readingType
+        retreatType: retreatType
       }
     }
     return {
-      totalCap: totalCap,
-      title: title,
-      referenceEnd: referenceEnd,
       timeInMinute: timeInMinute,
-      theEnd: theEnd,
+      verse: verse,
+      total: total,
       theme: theme,
-      readingType: readingType
+      retreatType: retreatType
     }
   }
 }
 
-export const validateReading = (upsertReading: {}, create: boolean): boolean => {
+export const validateMeditation = (upsertMeditation: {}, create: boolean): boolean => {
   if (create) {
-    return upsertReading !== undefined && !CreateReadingRequestSchema.validate(upsertReading).error
+    return upsertMeditation !== undefined && !CreateMeditationRequestSchema.validate(upsertMeditation).error
   }
-  return upsertReading !== undefined && !UpdateReadingRequestSchema.validate(upsertReading).error
+  return upsertMeditation !== undefined && !UpdateMeditationRequestSchema.validate(upsertMeditation).error
 }
 
-export const readingColumns: GridColumns = [
+export const meditationColumns = (disciplineType: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',
@@ -115,15 +101,12 @@ export const readingColumns: GridColumns = [
     editable: false,
   },
   {
-    field: 'title', headerName: 'Titel',
-    editable: true, resizable: true, width: 300,
-  },
-  {
-    field: 'total', headerName: 'TotalKap', type: 'number',
-    editable: true, resizable: true, width: 300,
-  },
-  {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
+    editable: true, resizable: true, width: 300,
+  },
+
+  {
+    field: 'total', headerName: 'Total', type: 'number',
     editable: true, resizable: true, width: 300,
   },
   {
@@ -131,14 +114,6 @@ export const readingColumns: GridColumns = [
     editable: true, resizable: true, width: 300,
   },
   {
-    field: 'theEnd', headerName: 'Ende', type: 'boolean',
+    field: 'verse', headerName: 'Verse',
     editable: true, resizable: true, width: 300,
-  },
-  {
-    field: 'referenceEnd',
-    headerName: 'ReferenzEnde',
-    width: 200,
-    editable: true,
-    maxWidth: 300,
-    resizable: true,
   }];

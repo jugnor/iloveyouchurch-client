@@ -1,8 +1,17 @@
-
 import {Reading, UpsertReadingRequest} from "./Reading";
-import {UpsertGodGivingRequest, GodGiving} from "./GodGiving";
+import {GodGiving, UpsertGodGivingRequest} from "./GodGiving";
+import {Prayer, UpsertPrayerRequest} from "./Prayer";
+import {Meditation, UpsertMeditationRequest} from "./Meditation";
+import {Gospel, UpsertGospelRequest} from "./Gospel";
+import {Fasting, UpsertFastingRequest} from "./Fasting";
 
-export type Discipline = Reading&GodGiving
+export type Discipline = Reading & GodGiving & Prayer & Meditation & Gospel & Fasting
 
-export type UpsertDisciplineRequest = UpsertReadingRequest&UpsertGodGivingRequest
+export type UpsertDisciplineRequest =
+  UpsertReadingRequest
+  & UpsertGodGivingRequest
+  & UpsertPrayerRequest
+  & UpsertMeditationRequest
+  & UpsertGospelRequest
+  & UpsertFastingRequest
 

@@ -1,30 +1,69 @@
 import Joi, {Schema} from 'joi';
 import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
+import {GospelType} from "./Gospel";
 
+export enum GodGivingType{
+  CHORE="chore",
+  MONEY="money",
+  THANKS="thanks"
+}
 export interface GodGiving {
   id: string;
+  godGivingType:GodGivingType;
   amount: number;
-  postboxId: string;
-  type: string;
+  total:number;
+  timeInMinute:number;
+  timeInHour:number;
+  description:string;
+  presence:boolean;
   userTime: UserTime;
   createdAt?: string;
 }
 
-export type UpsertGodGivingRequest = Except<GodGiving, 'id' | 'postboxId' | 'createdAt'>;
+export type UpsertGodGivingRequest = Except<GodGiving, 'id' | 'createdAt'>;
 
-export type UpdateGodGivingRequest = UpsertGodGivingRequest;
 
 
 export const CreateGodGivingRequestSchema: Schema = Joi.object({
-  amount: Joi.number().required(),
-  type: Joi.string().optional().empty(''),
+  amount: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.MONEY ,
+    then: Joi.number().min(0).required()
+  }),
+  total: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.THANKS ,
+    then: Joi.number().min(0).required()
+  }),
+  timeInMinute: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.THANKS ,
+    then: Joi.number().min(0).optional().allow(0)
+  }),
+  presence: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.CHORE ,
+    then: Joi.boolean().optional().allow(false)
+  }),
+  description: Joi.string().optional().empty(''),
   userTime: Joi.object().required()
 });
 
 export const UpdateGodGivingRequestSchema  : Schema = Joi.object({
-  amount: Joi.number().required(),
-  type: Joi.string().optional().empty(''),
+  amount: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.MONEY ,
+    then: Joi.number().min(0).required()
+  }),
+  total: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.THANKS ,
+    then: Joi.number().min(0).required()
+  }),
+  timeInMinute: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.THANKS ,
+    then: Joi.number().min(0).optional().allow(0)
+  }),
+  presence: Joi.alternatives().conditional('godGivingType', {
+    is: GodGivingType.CHORE ,
+    then: Joi.boolean().optional().allow(false)
+  }),
+  description: Joi.string().optional().empty(''),
 });
 export function instanceOfActivity(object?: any): object is GodGiving {
   if (!object) {

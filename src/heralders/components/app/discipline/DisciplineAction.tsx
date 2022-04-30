@@ -103,7 +103,7 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
       if (oId === undefined || oId === '') {
         let upsertDiscipline = upsertDisciplineFormData(startWeekString(valueDate), endWeekString(valueDate), true, params, disciplineType)
         if (
-          validateDiscipline(upsertDiscipline, disciplineType)
+          validateDiscipline(upsertDiscipline, disciplineType,true)
         ) {
 
           createDiscipline(
@@ -128,7 +128,7 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
       } else {
         let upsertDiscipline = upsertDisciplineFormData(startWeekString(valueDate), endWeekString(valueDate), false, params, disciplineType)
         if (
-          validateDiscipline(upsertDiscipline, disciplineType)
+          validateDiscipline(upsertDiscipline, disciplineType,false)
 
         ) {
           updateDiscipline(oId,

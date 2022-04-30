@@ -1,6 +1,7 @@
 import Joi, {Schema} from 'joi';
 import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
+import {GospelType} from "./Gospel";
 
 export enum ReadingType{
   BIBLE='bible',
@@ -24,14 +25,32 @@ export interface Reading {
 export type UpsertReadingRequest = Except<Reading, 'id'  | 'createdAt'>;
 
 
-export const UpsertReadingRequestSchema  : Schema = Joi.object({
+export const CreateReadingRequestSchema  : Schema = Joi.object({
   readingType:Joi.string().required(),
-  totalCap:Joi.number().positive().required().min(0),
-  referenceEnd:Joi.string().optional().empty(''),
+  totalCap:Joi.number().positive().min(0).required(),
+  referenceEnd:Joi.string().optional().allow(''),
   timeInMinute: Joi.number().optional().min(0),
-  theme: Joi.string().optional().empty(''),
-  theEnd:Joi.boolean().optional().default(false),
-  title:Joi.string().required(),
-  userTime: Joi.object().optional()
+  theme: Joi.string().optional().allow(''),
+  theEnd:Joi.boolean().optional().allow(false),
+  title:Joi.alternatives().conditional('readingType', {
+    is: ReadingType.C_BOOK,
+    then: Joi.string().required(),
+    otherwise:Joi.string().optional().allow('')
+  }),
+  userTime: Joi.object().required()
+});
+
+export const UpdateReadingRequestSchema  : Schema = Joi.object({
+  readingType:Joi.string().required(),
+  totalCap:Joi.number().positive().min(0).required(),
+  referenceEnd:Joi.string().optional().allow(''),
+  timeInMinute: Joi.number().optional().min(0),
+  theme: Joi.string().optional().allow(''),
+  theEnd:Joi.boolean().optional().allow(false),
+  title:Joi.alternatives().conditional('readingType', {
+    is: ReadingType.C_BOOK,
+    then: Joi.string().required(),
+    otherwise:Joi.string().optional().allow('')
+  }),
 });
 
