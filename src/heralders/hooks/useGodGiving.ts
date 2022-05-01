@@ -1,11 +1,10 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Activity, UpdateActivityRequest} from "../models/Activity";
 import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
 import useSWR, {mutate} from "swr";
 import {ResultsObject} from "../components/util/ResultsObject";
-import {UpsertGodGivingRequest, GodGiving, UpdateGodGivingRequest} from "../models/GodGiving";
+import {UpsertGodGivingRequest, GodGiving} from "../models/GodGiving";
 
 
 export function useGodGiving(postboxId: string, userId: string) {
@@ -93,7 +92,7 @@ export function useGodGiving(postboxId: string, userId: string) {
   );
 
   const updateGodGiving = useCallback(
-    async (godGivingId: string, data: UpdateGodGivingRequest, silent?: boolean) => {
+    async (godGivingId: string, data: UpsertGodGivingRequest, silent?: boolean) => {
       setLoading(true);
 
       try {

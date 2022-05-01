@@ -3,8 +3,8 @@ import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
 
 export enum FastingType {
-  COMPLETE = 'complete',
-  PARTIAL = 'partial'
+  COMPLETE = 'COMPLETE',
+  PARTIAL = 'PARTIAL'
 }
 
 export interface Fasting {

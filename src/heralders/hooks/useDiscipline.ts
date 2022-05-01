@@ -1,15 +1,12 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Activity, UpdateActivityRequest} from "../models/Activity";
 import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
-import useSWR, {mutate} from "swr";
-import {ResultsObject} from "../components/util/ResultsObject";
-import {UpsertGodGivingRequest, GodGiving, UpdateGodGivingRequest} from "../models/GodGiving";
+import {mutate} from "swr";
 import {Reading, UpsertReadingRequest} from "../models/Reading";
 
 
-export function useDiscipline(postboxId:string, userId:string,path:string) {
+export function useDiscipline(postboxId: string, userId: string, path: string) {
   const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
   const {t} = useTranslation();
 
@@ -52,7 +49,7 @@ export function useDiscipline(postboxId:string, userId:string,path:string) {
     [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
-  const deleteDiscipline= useCallback(
+  const deleteDiscipline = useCallback(
     async (godGivingId: string) => {
       setLoading(true);
 
@@ -111,6 +108,6 @@ export function useDiscipline(postboxId:string, userId:string,path:string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return { createDiscipline, deleteDiscipline, updateDiscipline, loading};
+  return {createDiscipline, deleteDiscipline, updateDiscipline, loading};
 }
 

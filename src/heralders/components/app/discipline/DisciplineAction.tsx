@@ -35,23 +35,29 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import {useDiscipline} from "../../../hooks/useDiscipline";
 import {
-  disciplineColumns,
   disciplineRowsRendererByWeek,
   upsertDisciplineFormData,
   validateDiscipline
-} from "./DisciplineRender";
+} from "./DisciplineRenderer";
 import {Discipline, UpsertDisciplineRequest} from "../../../models/Discipline";
-import {endWeekString, startWeekString, Transition, useStyles} from "../../container/TaskRender";
+import {endWeekString, startWeekString, Transition, useStyles} from "../TimeHandlingRender";
 
 
-interface CLReadingActionProps {
+interface DisciplineActionProps {
   postboxId: string,
   userId: string,
   path: string
   disciplineType: string
+  columns: GridColumns
 }
 
-export function DisciplineAction({postboxId, userId, path, disciplineType}: CLReadingActionProps) {
+export function DisciplineAction({
+                                   postboxId,
+                                   userId,
+                                   path,
+                                   disciplineType,
+                                   columns
+                                 }: DisciplineActionProps) {
   const classes = useStyles();
   const {
     createDiscipline,
@@ -103,7 +109,7 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
       if (oId === undefined || oId === '') {
         let upsertDiscipline = upsertDisciplineFormData(startWeekString(valueDate), endWeekString(valueDate), true, params, disciplineType)
         if (
-          validateDiscipline(upsertDiscipline, disciplineType,true)
+          validateDiscipline(upsertDiscipline, disciplineType, true)
         ) {
 
           createDiscipline(
@@ -128,7 +134,7 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
       } else {
         let upsertDiscipline = upsertDisciplineFormData(startWeekString(valueDate), endWeekString(valueDate), false, params, disciplineType)
         if (
-          validateDiscipline(upsertDiscipline, disciplineType,false)
+          validateDiscipline(upsertDiscipline, disciplineType, false)
 
         ) {
           updateDiscipline(oId,
@@ -184,7 +190,7 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
     }
   };
 
-  const columns: GridColumns = disciplineColumns(disciplineType).concat(
+  const columnsAction = columns.concat(
     {
       field: 'actions',
       type: 'actions',
@@ -242,7 +248,10 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
     mutate
   } =
     useSWR<ResultsObject<Discipline>>
-    (`/postboxes/${postboxId}/users/${userId}/${path}-results?week=${startWeekString(valueDate) === '' ? start : startWeekString(valueDate)}/${endWeekString(valueDate) === '' ? end : endWeekString(valueDate)}&page=${page}`)
+    (`/postboxes/${postboxId}/users/${userId}/${path}-results?` +
+      `week=${startWeekString(valueDate) === '' ? start : startWeekString(valueDate)}/${endWeekString(valueDate) === '' ? end : endWeekString(valueDate)}` +
+      `&type=${disciplineType}&page=${page}`);
+
   return data ? (
     <> <Container>
       <Typography component="div" className={"program"} style={
@@ -271,7 +280,7 @@ export function DisciplineAction({postboxId, userId, path, disciplineType}: CLRe
         <Suspense fallback={null}>
           <DataGrid
             rows={disciplineRowsRendererByWeek(data, valueDate, methode, disciplineType)}
-            columns={columns}
+            columns={columnsAction}
             editMode="row"
             onRowEditStart={handleRowEditStart}
             componentsProps={{

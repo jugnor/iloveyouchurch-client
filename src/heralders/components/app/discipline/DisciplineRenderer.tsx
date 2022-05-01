@@ -39,21 +39,28 @@ import {
   upsertGodGivingFormData,
   validateGodGiving
 } from "./godGiving/GodGivingRender";
+import {ReadingType} from "../../../models/Reading";
+import {PrayerType} from "../../../models/Prayer";
+import {RetreatType} from "../../../models/Meditation";
+import {GospelType} from "../../../models/Gospel";
+import {FastingType} from "../../../models/Fasting";
+import {GodGivingType} from "../../../models/GodGiving";
 
 
 export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | undefined, start: Date | null, methode: string, disciplineType: string): GridRowsProp => {
+  console.log("check"+methode)
   switch (disciplineType) {
-    case "bible" || "cBook":
+    case ReadingType.BIBLE||ReadingType.C_BOOK:
       return readingRowsRendererByWeek(data, start, methode)
-    case "alone" || "group":
+    case PrayerType.ALONE || PrayerType.GROUP:
       return prayerRowsRendererByWeek(data, start, methode)
-    case "meditation" || "retreat":
+    case RetreatType.MEDITATION || RetreatType.RETREAT:
       return meditationRowsRendererByWeek(data, start, methode)
-    case "gospel" || "support" || "contact":
+    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
       return gospelRowsRendererByWeek(data, start, methode)
-    case "complete" || "partial":
+    case FastingType.COMPLETE || FastingType.PARTIAL:
       return fastingRowsRendererByWeek(data, start, methode)
-    case "money" || "chore" || "thanks":
+    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
       return godGivingRowsRendererByWeek(data, start, methode)
     default:
       return []
@@ -62,17 +69,17 @@ export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | u
 
 export const upsertDisciplineFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
   switch (disciplineType) {
-    case "bible" || "cBook":
+    case ReadingType.BIBLE||ReadingType.C_BOOK:
       return upsertReadingFormData(start, end, create, params)
-    case "alone" || "group":
+    case PrayerType.ALONE || PrayerType.GROUP:
       return upsertPrayerFormData(start, end, create, params, disciplineType)
-    case "meditation" || "retreat":
+    case RetreatType.MEDITATION || RetreatType.RETREAT:
       return upsertMeditationFormData(start, end, create, params)
-    case "gospel" || "support" || "contact":
+    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
       return upsertGospelFormData(start, end, create, params, disciplineType)
-    case "complete" || "partial":
+    case FastingType.COMPLETE || FastingType.PARTIAL:
       return upsertFastingFormData(start, end, create, params, disciplineType)
-    case "money" || "chore" || "thanks":
+    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
       return upsertGodGivingFormData(start, end, create, params, disciplineType)
     default:
       return undefined
@@ -81,17 +88,17 @@ export const upsertDisciplineFormData = (start: string, end: string, create: boo
 
 export const validateDiscipline = (upsertDiscipline: any, disciplineType: string, create: boolean): boolean => {
   switch (disciplineType) {
-    case "bible" || "cBook":
+    case ReadingType.BIBLE||ReadingType.C_BOOK:
       return validateReading(upsertDiscipline, create)
-    case "alone" || "group":
+    case PrayerType.ALONE || PrayerType.GROUP:
       return validatePrayer(upsertDiscipline, create)
-    case "meditation" || "retreat":
+    case RetreatType.MEDITATION || RetreatType.RETREAT:
       return validateMeditation(upsertDiscipline, create)
-    case "gospel" || "support" || "contact":
+    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
       return validateGospel(upsertDiscipline, create)
-    case "complete" || "partial":
+    case FastingType.COMPLETE || FastingType.PARTIAL:
       return validateFasting(upsertDiscipline, create)
-    case "money" || "chore" || "thanks":
+    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
       return validateGodGiving(upsertDiscipline, create)
     default:
       return false
@@ -100,17 +107,17 @@ export const validateDiscipline = (upsertDiscipline: any, disciplineType: string
 
 export const disciplineColumns = (disciplineType: string): GridColumns => {
   switch (disciplineType) {
-    case "bible" || "cBook":
+    case ReadingType.BIBLE||ReadingType.C_BOOK:
       return readingColumns
-    case "alone" || "group":
+    case PrayerType.ALONE || PrayerType.GROUP:
       return prayerColumns(disciplineType)
-    case "meditation" || "retreat":
+    case RetreatType.MEDITATION || RetreatType.RETREAT:
       return meditationColumns(disciplineType)
-    case "gospel" || "support" || "contact":
+    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
       return gospelColumns(disciplineType)
-    case "complete" || "partial":
+    case FastingType.COMPLETE || FastingType.PARTIAL:
       return fastingColumns(disciplineType)
-    case "money" || "chore" || "thanks":
+    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
       return godGivingColumns(disciplineType)
     default:
       return []

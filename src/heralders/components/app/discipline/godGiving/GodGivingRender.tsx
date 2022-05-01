@@ -3,7 +3,7 @@ import {GridColumns, GridRowsProp,} from '@mui/x-data-grid';
 import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
-import {startWeekString} from "../../../container/TaskRender";
+import {startWeekString} from "../../TimeHandlingRender";
 import {ResultsObject} from "../../../util/ResultsObject";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
 import {
@@ -12,6 +12,7 @@ import {
   GodGivingType,
   UpdateGodGivingRequestSchema
 } from "../../../../models/GodGiving";
+import toNumber from "@mui/x-data-grid/lib/lodash/toNumber";
 
 
 export const godGivingRowsRendererByWeek = (data: ResultsObject<GodGiving> | undefined, start: Date | null, methode: string) => {
@@ -57,11 +58,11 @@ export const upsertGodGivingFormData = (start: string, end: string, create: bool
   const postboxId = params.row.postboxId;
   const godGivingType = params.row.godGivingType;
   const userId = params.row.userId;
-  let timeInMinute: number = params.value(params.id, "timeInMinute");
-  let amount: number = params.value(params.id, "amount");
-  let total: number = params.value(params.id, "total");
-  let description: number = params.value(params.id, "description");
-  let presence: number = params.value(params.id, "presence");
+  const timeInMinute: number = toNumber(params.getValue(params.id, "timeInMinute"));
+  const amount: number = toNumber(params.getValue(params.id, "amount"));
+  const total: number = toNumber(params.getValue(params.id, "total"));
+  const description: string = ""+params.getValue(params.id, "description");
+  const presence: boolean = params.getValue(params.id, "presence");
 
   if (oId === undefined || oId === '') {
     if (create) {
@@ -112,15 +113,15 @@ export const godGivingColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'amount', headerName: 'Betrag', type: 'number',
-    editable: true, resizable: true, width: 300,hide:disciplineType!==GodGivingType.MONEY
+    editable: true, resizable: true, width: 100,hide:disciplineType!==GodGivingType.MONEY
   },
   {
     field: 'total', headerName: 'Total', type: 'number',
-    editable: true, resizable: true, width: 300,hide:disciplineType!==GodGivingType.THANKS
+    editable: true, resizable: true, width: 100,hide:disciplineType!==GodGivingType.THANKS
   },
   {
     field: 'presence', headerName: 'Teilnahme', type: 'boolean',
-    editable: true, resizable: true, width: 300,hide:disciplineType!==GodGivingType.CHORE
+    editable: true, resizable: true, width: 100,hide:disciplineType!==GodGivingType.CHORE
   },
   {
     field: 'description', headerName: 'Beschreibung',

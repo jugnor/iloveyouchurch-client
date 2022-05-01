@@ -3,8 +3,8 @@ import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
 
 export enum PrayerType {
-  ALONE = 'alone',
-  GROUP = 'group'
+  ALONE = 'ALONE',
+  GROUP = 'GROUP'
 }
 
 export interface Prayer {

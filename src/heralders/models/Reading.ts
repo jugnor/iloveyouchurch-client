@@ -4,8 +4,8 @@ import {UserTime} from "./UserTime";
 import {GospelType} from "./Gospel";
 
 export enum ReadingType{
-  BIBLE='bible',
-  C_BOOK='cBook'
+  BIBLE='BIBLE',
+  C_BOOK='CBOOK'
 }
 
 export interface Reading {

@@ -3,8 +3,8 @@ import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
 
 export enum RetreatType {
-  ALONE = 'meditation',
-  GROUP = 'retreat'
+  MEDITATION = 'MEDITATION',
+  RETREAT = 'RETREAT'
 }
 
 export interface Meditation {

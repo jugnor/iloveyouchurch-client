@@ -3,7 +3,7 @@ import {GridColumns, GridRowsProp,} from '@mui/x-data-grid';
 import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
-import {startWeekString} from "../../../container/TaskRender";
+import {startWeekString} from "../../TimeHandlingRender";
 import {ResultsObject} from "../../../util/ResultsObject";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
 import {

@@ -4,9 +4,9 @@ import {UserTime} from "./UserTime";
 import {GospelType} from "./Gospel";
 
 export enum GodGivingType{
-  CHORE="chore",
-  MONEY="money",
-  THANKS="thanks"
+  CHORE="CHORE",
+  MONEY="MONEY",
+  THANKS="THANKS"
 }
 export interface GodGiving {
   id: string;

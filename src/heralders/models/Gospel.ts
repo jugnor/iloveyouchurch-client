@@ -3,9 +3,9 @@ import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
 
 export enum GospelType {
-  GOSPEL = 'gospel',
-  CONTACT = 'contact',
-  SUPPORT = 'support'
+  GOSPEL = 'GOSPEL',
+  CONTACT = 'CONTACT',
+  SUPPORT = 'SUPPORT'
 }
 
 export interface Gospel {
