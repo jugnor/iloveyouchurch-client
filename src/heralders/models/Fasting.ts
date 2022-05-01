@@ -20,19 +20,19 @@ export type UpsertFastingRequest = Except<Fasting, 'id' | 'createdAt'>;
 
 
 export const CreateFastingRequestSchema: Schema = Joi.object({
-  retreatType: Joi.string()
+  fastingType: Joi.string()
   .valid(...Object.values(FastingType))
   .required(),
-  days: Joi.number().min(0).required(),
+  days: Joi.number().positive().required(),
   goal: Joi.string().optional().allow(''),
   userTime: Joi.object().required()
 });
 
 export const UpdateFastingRequestSchema: Schema = Joi.object({
-  retreatType: Joi.string()
+  fastingType: Joi.string()
   .valid(...Object.values(FastingType))
   .required(),
-  days: Joi.number().min(0).required(),
+  days: Joi.number().positive().required(),
   goal: Joi.string().optional().allow(''),
 });
 

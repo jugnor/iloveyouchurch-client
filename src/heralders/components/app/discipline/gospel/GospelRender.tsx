@@ -12,6 +12,7 @@ import {
   GospelType,
   UpdateGospelRequestSchema
 } from "../../../../models/Gospel";
+import toNumber from "@mui/x-data-grid/lib/lodash/toNumber";
 
 
 export const gospelRowsRendererByWeek = (data: ResultsObject<Gospel> | undefined, start: Date | null, methode: string) => {
@@ -60,62 +61,67 @@ export const gospelRowsRendererByWeek = (data: ResultsObject<Gospel> | undefined
   return allRows;
 };
 
-export const upsertGospelFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
-  const oId = params.row.oId;
-  const postboxId = params.row.postboxId;
-  const prayerType = params.row.prayerType;
-  const userId = params.row.userId;
-  let timeInMinute: number = params.value(params.id, "total");
-  let goal: string = params.value(params.id, "goal");
-  let total: number = params.value(params.id, "total");
-  let name: string = params.value(params.id, "name");
-  let email: string = params.value(params.id, "email");
-  let telephone: string = params.value(params.id, "telephone");
-  let city: string = params.value(params.id, "city");
-  let title: string = params.value(params.id, "title");
-  let supportType: string = params.value(params.id, "supportType");
-  if (oId === undefined || oId === '') {
-    if (create) {
-      return {
-        userTime: {
-          userId: userId,
-          postboxId: postboxId,
-          startWeek: start,
-          endWeek: end,
-          week: start + "/" + end
-        },
-        timeInMinute: disciplineType === GospelType.GOSPEL ? timeInMinute : null,
-        goal: disciplineType === GospelType.GOSPEL ? goal : null,
-        total: disciplineType === GospelType.GOSPEL || GospelType.SUPPORT ? total : null,
-        name: disciplineType === GospelType.CONTACT ? name : null,
-        email: disciplineType === GospelType.CONTACT ? email : null,
-        telephone: disciplineType === GospelType.CONTACT ? telephone : null,
-        city: disciplineType === GospelType.CONTACT ? city : null,
-        title: disciplineType === GospelType.SUPPORT ? title : null,
-        supportType: disciplineType === GospelType.SUPPORT ? supportType : null,
-        prayerType: prayerType
-      }
-    }
+export const upsertGospelFormData = (postboxId: string, userId: string, start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+  const gospelType = disciplineType;
+  let timeInMinute: number = toNumber(params.getValue(params.id, "total"));
+  let goal: string = "" + params.getValue(params.id, "goal");
+  let total: number = toNumber(params.getValue(params.id, "total"));
+  let name: string = "" + params.getValue(params.id, "name");
+  let email: string = "" + params.getValue(params.id, "email");
+  let telephone: string = "" + params.getValue(params.id, "telephone");
+  let city: string = "" + params.getValue(params.id, "city");
+  let title: string = "" + params.getValue(params.id, "title");
+  let supportType: string = "" + params.getValue(params.id, "supportType");
+  if (create) {
     return {
+      userTime: {
+        userId: userId,
+        postboxId: postboxId,
+        startWeek: start,
+        endWeek: end,
+        week: start + "/" + end
+      },
       timeInMinute: disciplineType === GospelType.GOSPEL ? timeInMinute : null,
       goal: disciplineType === GospelType.GOSPEL ? goal : null,
       total: disciplineType === GospelType.GOSPEL || GospelType.SUPPORT ? total : null,
-      name: disciplineType === GospelType.CONTACT ? name : null,
-      email: disciplineType === GospelType.CONTACT ? email : null,
-      telephone: disciplineType === GospelType.CONTACT ? telephone : null,
-      city: disciplineType === GospelType.CONTACT ? city : null,
-      title: disciplineType === GospelType.SUPPORT ? title : null,
-      supportType: disciplineType === GospelType.SUPPORT ? supportType : null,
-      prayerType: prayerType
+      gospelContact: disciplineType === GospelType.CONTACT ? {
+        name: name,
+        email: email,
+        telephone: telephone,
+        city: city
+      } : null,
+      gospelSupport: disciplineType === GospelType.SUPPORT ? {
+        title: title,
+        supportType: supportType
+      } : null,
+      gospelType: gospelType
     }
+  }
+  return {
+    timeInMinute: disciplineType === GospelType.GOSPEL ? timeInMinute : null,
+    goal: disciplineType === GospelType.GOSPEL ? goal : null,
+    total: disciplineType === GospelType.GOSPEL || GospelType.SUPPORT ? total : null,
+    gospelContact: disciplineType === GospelType.CONTACT ? {
+      name: name,
+      email: email,
+      telephone: telephone,
+      city: city
+    } : null,
+    gospelSupport: disciplineType === GospelType.SUPPORT ? {
+      title: title,
+      supportType: supportType
+    } : null,
+    gospelType: gospelType
   }
 }
 
-export const validateGospel = (upsertPrayer: {}, create: boolean): boolean => {
+export const validateGospel = (upsertGospel: {}, create: boolean): boolean => {
   if (create) {
-    return upsertPrayer !== undefined && !CreateGospelRequestSchema.validate(upsertPrayer).error
+    console.log(upsertGospel);
+    console.log(CreateGospelRequestSchema.validate(upsertGospel).error)
+    return upsertGospel !== undefined && !CreateGospelRequestSchema.validate(upsertGospel).error
   }
-  return upsertPrayer !== undefined && !UpdateGospelRequestSchema.validate(upsertPrayer).error
+  return upsertGospel !== undefined && !UpdateGospelRequestSchema.validate(upsertGospel).error
 }
 
 export const gospelColumns = (disciplineType: string): GridColumns => [
@@ -127,7 +133,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.GOSPEL
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GospelType.GOSPEL
   },
   {
     field: 'total',
@@ -135,34 +141,34 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     type: 'number',
     editable: true,
     resizable: true,
-    width: 300,
-    hide: disciplineType === GospelType.GOSPEL || disciplineType === GospelType.SUPPORT
+    width: 100,
+    hide: disciplineType !== GospelType.GOSPEL && disciplineType !== GospelType.SUPPORT
   },
   {
     field: 'goal', headerName: 'Ziel',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.GOSPEL
+    editable: true, resizable: true, width: 500, hide: disciplineType !== GospelType.GOSPEL
   },
   {
     field: 'name', headerName: 'Name',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.CONTACT
+    editable: true, resizable: true, width: 200, hide: disciplineType !== GospelType.CONTACT
   },
   {
     field: 'email', headerName: 'Email',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.CONTACT
+    editable: true, resizable: true, width: 200, hide: disciplineType !== GospelType.CONTACT
   },
   {
     field: 'telephone', headerName: 'Telephone',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.CONTACT
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GospelType.CONTACT
   },
   {
     field: 'city', headerName: 'Stadt',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.CONTACT
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GospelType.CONTACT
   },
   {
     field: 'title', headerName: 'Titel',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.SUPPORT
+    editable: true, resizable: true, width: 200, hide: disciplineType !== GospelType.SUPPORT
   },
   {
     field: 'supportType', headerName: 'SupportType',
-    editable: true, resizable: true, width: 300, hide: disciplineType === GospelType.SUPPORT
+    editable: true, resizable: true, width: 150, hide: disciplineType !== GospelType.SUPPORT
   }];

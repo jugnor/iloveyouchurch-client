@@ -48,7 +48,6 @@ import {GodGivingType} from "../../../models/GodGiving";
 
 
 export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | undefined, start: Date | null, methode: string, disciplineType: string): GridRowsProp => {
-  console.log("check"+methode)
   switch (disciplineType) {
     case ReadingType.BIBLE||ReadingType.C_BOOK:
       return readingRowsRendererByWeek(data, start, methode)
@@ -67,20 +66,20 @@ export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | u
   }
 };
 
-export const upsertDisciplineFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+export const upsertDisciplineFormData = (postboxId:string,userId:string,start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
   switch (disciplineType) {
     case ReadingType.BIBLE||ReadingType.C_BOOK:
-      return upsertReadingFormData(start, end, create, params)
+      return upsertReadingFormData(postboxId,userId,start, end, create, params,disciplineType)
     case PrayerType.ALONE || PrayerType.GROUP:
-      return upsertPrayerFormData(start, end, create, params, disciplineType)
+      return upsertPrayerFormData(postboxId,userId,start, end, create, params, disciplineType)
     case RetreatType.MEDITATION || RetreatType.RETREAT:
-      return upsertMeditationFormData(start, end, create, params)
+      return upsertMeditationFormData(postboxId,userId,start, end, create, params,disciplineType)
     case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
-      return upsertGospelFormData(start, end, create, params, disciplineType)
+      return upsertGospelFormData(postboxId,userId,start, end, create, params, disciplineType)
     case FastingType.COMPLETE || FastingType.PARTIAL:
-      return upsertFastingFormData(start, end, create, params, disciplineType)
+      return upsertFastingFormData(postboxId,userId,start, end, create, params, disciplineType)
     case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
-      return upsertGodGivingFormData(start, end, create, params, disciplineType)
+      return upsertGodGivingFormData(postboxId,userId,start, end, create, params, disciplineType)
     default:
       return undefined
   }
@@ -108,7 +107,7 @@ export const validateDiscipline = (upsertDiscipline: any, disciplineType: string
 export const disciplineColumns = (disciplineType: string): GridColumns => {
   switch (disciplineType) {
     case ReadingType.BIBLE||ReadingType.C_BOOK:
-      return readingColumns
+      return readingColumns(disciplineType)
     case PrayerType.ALONE || PrayerType.GROUP:
       return prayerColumns(disciplineType)
     case RetreatType.MEDITATION || RetreatType.RETREAT:

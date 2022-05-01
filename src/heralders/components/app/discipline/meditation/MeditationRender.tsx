@@ -50,16 +50,16 @@ export const meditationRowsRendererByWeek = (data: ResultsObject<Meditation> | u
   return allRows;
 };
 
-export const upsertMeditationFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams) => {
-  const oId = params.row.oId;
-  const postboxId = params.row.postboxId;
-  const retreatType = params.row.prayerType;
-  const userId = params.row.userId;
+export const upsertMeditationFormData = (postboxId:string,userId:string,start: string, end: string, create: boolean, params: GridRenderCellParams,disciplineType:string) => {
+
+
+  const retreatType = disciplineType;
+
   let timeInMinute = toNumber(params.getValue(params.id, "timeInMinute"));
   let total = toNumber(params.getValue(params.id, "total"));
   const theme = "" + params.getValue(params.id, "theme");
   const verse = "" + params.getValue(params.id, "verse");
-  if (oId === undefined || oId === '') {
+
     if (create) {
       return {
         userTime: {
@@ -83,13 +83,13 @@ export const upsertMeditationFormData = (start: string, end: string, create: boo
       theme: theme,
       retreatType: retreatType
     }
-  }
 }
 
 export const validateMeditation = (upsertMeditation: {}, create: boolean): boolean => {
   if (create) {
     return upsertMeditation !== undefined && !CreateMeditationRequestSchema.validate(upsertMeditation).error
   }
+  console.log(UpdateMeditationRequestSchema.validate(upsertMeditation).error)
   return upsertMeditation !== undefined && !UpdateMeditationRequestSchema.validate(upsertMeditation).error
 }
 
@@ -102,18 +102,18 @@ export const meditationColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   },
 
   {
     field: 'total', headerName: 'Total', type: 'number',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'theme', headerName: 'Thema',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 200,
   },
   {
     field: 'verse', headerName: 'Verse',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   }];

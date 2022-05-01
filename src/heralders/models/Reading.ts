@@ -27,9 +27,9 @@ export type UpsertReadingRequest = Except<Reading, 'id'  | 'createdAt'>;
 
 export const CreateReadingRequestSchema  : Schema = Joi.object({
   readingType:Joi.string().required(),
-  totalCap:Joi.number().positive().min(0).required(),
+  totalCap:Joi.number().positive().required(),
   referenceEnd:Joi.string().optional().allow(''),
-  timeInMinute: Joi.number().optional().min(0),
+  timeInMinute: Joi.number().positive().optional(),
   theme: Joi.string().optional().allow(''),
   theEnd:Joi.boolean().optional().allow(false),
   title:Joi.alternatives().conditional('readingType', {
@@ -42,9 +42,9 @@ export const CreateReadingRequestSchema  : Schema = Joi.object({
 
 export const UpdateReadingRequestSchema  : Schema = Joi.object({
   readingType:Joi.string().required(),
-  totalCap:Joi.number().positive().min(0).required(),
+  totalCap:Joi.number().positive().required(),
   referenceEnd:Joi.string().optional().allow(''),
-  timeInMinute: Joi.number().optional().min(0),
+  timeInMinute: Joi.number().positive().optional(),
   theme: Joi.string().optional().allow(''),
   theEnd:Joi.boolean().optional().allow(false),
   title:Joi.alternatives().conditional('readingType', {

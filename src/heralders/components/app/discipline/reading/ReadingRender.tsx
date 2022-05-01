@@ -6,7 +6,7 @@ import {toDate} from "date-fns";
 import {startWeekString} from "../../TimeHandlingRender";
 import {
   CreateReadingRequestSchema,
-  Reading,
+  Reading, ReadingType,
   UpdateReadingRequestSchema
 } from "../../../../models/Reading";
 import {GodGiving} from "../../../../models/GodGiving";
@@ -58,18 +58,17 @@ export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefin
   return allRows;
 };
 
-export const upsertReadingFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams) => {
-  const oId = params.row.oId;
-  const postboxId = params.row.postboxId;
-  const readingType = params.row.readingType;
-  const userId = params.row.userId;
+export const upsertReadingFormData = (postboxId: string, userId: string, start: string, end: string,
+                                      create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+
+  const readingType = disciplineType;
+
   let totalCap = toNumber(params.getValue(params.id, "totalCap"));
   const title = "" + params.getValue(params.id, "title");
   let timeInMinute = toNumber(params.getValue(params.id, "timeInMinute"));
   const referenceEnd = "" + params.getValue(params.id, "referenceEnd");
-  let theEnd: boolean = params.value(params.id, "theEnd");
+  let theEnd: any = params.getValue(params.id, "theEnd");
   const theme = "" + params.getValue(params.id, "theme");
-  if (oId === undefined || oId === '') {
     if (create) {
       return {
         userTime: {
@@ -97,17 +96,18 @@ export const upsertReadingFormData = (start: string, end: string, create: boolea
       theme: theme,
       readingType: readingType
     }
-  }
 }
 
 export const validateReading = (upsertReading: {}, create: boolean): boolean => {
   if (create) {
+    console.log(upsertReading)
+    console.log(CreateReadingRequestSchema.validate(upsertReading).error)
     return upsertReading !== undefined && !CreateReadingRequestSchema.validate(upsertReading).error
   }
   return upsertReading !== undefined && !UpdateReadingRequestSchema.validate(upsertReading).error
 }
 
-export const readingColumns: GridColumns = [
+export const readingColumns= (disciplineType: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',
@@ -116,23 +116,23 @@ export const readingColumns: GridColumns = [
   },
   {
     field: 'title', headerName: 'Titel',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 200,hide:disciplineType!==ReadingType.C_BOOK
   },
   {
-    field: 'total', headerName: 'TotalKap', type: 'number',
-    editable: true, resizable: true, width: 300,
+    field: 'totalCap', headerName: 'TotalKap', type: 'number',
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'theme', headerName: 'Thema',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 200,
   },
   {
     field: 'theEnd', headerName: 'Ende', type: 'boolean',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'referenceEnd',

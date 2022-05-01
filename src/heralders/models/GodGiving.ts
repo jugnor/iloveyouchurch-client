@@ -26,42 +26,56 @@ export type UpsertGodGivingRequest = Except<GodGiving, 'id' | 'createdAt'>;
 
 
 export const CreateGodGivingRequestSchema: Schema = Joi.object({
+  godGivingType: Joi.string()
+  .valid(...Object.values(GodGivingType))
+  .required(),
   amount: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.MONEY ,
-    then: Joi.number().min(0).required()
+    then: Joi.number().positive().required(),
+    otherwise:null
   }),
   total: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS ,
-    then: Joi.number().min(0).required()
+    then: Joi.number().positive().required(),
+    otherwise:null
   }),
   timeInMinute: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS ,
-    then: Joi.number().min(0).optional().allow(0)
+    then: Joi.number().positive().optional(),
+    otherwise:null
   }),
   presence: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.CHORE ,
-    then: Joi.boolean().optional().allow(false)
+    then: Joi.boolean().optional().allow(false),
+    otherwise:null
   }),
   description: Joi.string().optional().empty(''),
-  userTime: Joi.object().required()
+  userTime: Joi.object().required(),
 });
 
 export const UpdateGodGivingRequestSchema  : Schema = Joi.object({
+  godGivingType: Joi.string()
+  .valid(...Object.values(GodGivingType))
+  .required(),
   amount: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.MONEY ,
-    then: Joi.number().min(0).required()
+    then: Joi.number().positive().required(),
+    otherwise:null
   }),
   total: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS ,
-    then: Joi.number().min(0).required()
+    then: Joi.number().positive().required(),
+    otherwise:null
   }),
   timeInMinute: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS ,
-    then: Joi.number().min(0).optional().allow(0)
+    then: Joi.number().positive().optional(),
+    otherwise:null
   }),
   presence: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.CHORE ,
-    then: Joi.boolean().optional().allow(false)
+    then: Joi.boolean().optional().allow(false),
+    otherwise:null
   }),
   description: Joi.string().optional().empty(''),
 });

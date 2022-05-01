@@ -53,18 +53,15 @@ export const godGivingRowsRendererByWeek = (data: ResultsObject<GodGiving> | und
   return allRows;
 };
 
-export const upsertGodGivingFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
-  const oId = params.row.oId;
-  const postboxId = params.row.postboxId;
-  const godGivingType = params.row.godGivingType;
-  const userId = params.row.userId;
+export const upsertGodGivingFormData = (postboxId: string, userId: string, start: string,
+                                        end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+  const godGivingType = disciplineType;
   const timeInMinute: number = toNumber(params.getValue(params.id, "timeInMinute"));
   const amount: number = toNumber(params.getValue(params.id, "amount"));
   const total: number = toNumber(params.getValue(params.id, "total"));
-  const description: string = ""+params.getValue(params.id, "description");
-  const presence: boolean = params.getValue(params.id, "presence");
+  const description: string = "" + params.getValue(params.id, "description");
+  const presence: any = params.getValue(params.id, "presence");
 
-  if (oId === undefined || oId === '') {
     if (create) {
       return {
         userTime: {
@@ -90,7 +87,6 @@ export const upsertGodGivingFormData = (start: string, end: string, create: bool
       description: description,
       godGivingType: godGivingType
     }
-  }
 }
 
 export const validateGodGiving = (upsertGodGiving: {}, create: boolean): boolean => {
@@ -109,19 +105,19 @@ export const godGivingColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
-    editable: true, resizable: true, width: 300,hide:disciplineType!==GodGivingType.THANKS
+    editable: true, resizable: true, width: 300, hide: disciplineType !== GodGivingType.THANKS
   },
   {
     field: 'amount', headerName: 'Betrag', type: 'number',
-    editable: true, resizable: true, width: 100,hide:disciplineType!==GodGivingType.MONEY
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GodGivingType.MONEY
   },
   {
     field: 'total', headerName: 'Total', type: 'number',
-    editable: true, resizable: true, width: 100,hide:disciplineType!==GodGivingType.THANKS
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GodGivingType.THANKS
   },
   {
     field: 'presence', headerName: 'Teilnahme', type: 'boolean',
-    editable: true, resizable: true, width: 100,hide:disciplineType!==GodGivingType.CHORE
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GodGivingType.CHORE
   },
   {
     field: 'description', headerName: 'Beschreibung',

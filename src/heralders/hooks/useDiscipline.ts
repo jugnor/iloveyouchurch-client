@@ -4,6 +4,7 @@ import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
 import {mutate} from "swr";
 import {Reading, UpsertReadingRequest} from "../models/Reading";
+import {Discipline, UpsertDisciplineRequest} from "../models/Discipline";
 
 
 export function useDiscipline(postboxId: string, userId: string, path: string) {
@@ -20,7 +21,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
     return data;
   }*/
 
-  const createDiscipline = useCallback(async (data: UpsertReadingRequest, silent?: boolean) => {
+  const createDiscipline = useCallback(async (data: UpsertDisciplineRequest, silent?: boolean) => {
       setLoading(true);
       try {
         const newUseDisciplineResponse = await makeRequestWithFullResponse<Reading>(
@@ -73,11 +74,11 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
   );
 
   const updateDiscipline = useCallback(
-    async (clrId: string, data: UpsertReadingRequest, silent?: boolean) => {
+    async (clrId: string, data: UpsertDisciplineRequest, silent?: boolean) => {
       setLoading(true);
 
       try {
-        const updatedUseDiscipline = await makeRequest<Reading>(
+        const updatedUseDiscipline = await makeRequest<Discipline>(
           `/postboxes/${postboxId}/${path}s/${clrId}`,
           'PUT',
           data

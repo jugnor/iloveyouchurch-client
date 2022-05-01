@@ -25,11 +25,12 @@ export const CreatePrayerRequestSchema: Schema = Joi.object({
   prayerType: Joi.string()
   .valid(...Object.values(PrayerType))
   .required(),
-  timeInMinute: Joi.number().min(0).required(),
+  timeInMinute: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
   fridayPrayer: Joi.alternatives().conditional('prayerType', {
     is: PrayerType.GROUP,
-    then: Joi.boolean().required()
+    then: Joi.boolean().required(),
+    otherwise:null
   }),
   userTime: Joi.object().required()
 });
@@ -38,11 +39,12 @@ export const UpdatePrayerRequestSchema: Schema = Joi.object({
   prayerType: Joi.string()
   .valid(...Object.values(PrayerType))
   .required(),
-  timeInMinute: Joi.number().required().min(0),
+  timeInMinute: Joi.number().positive().required(),
   theme: Joi.string().optional().empty(''),
   fridayPrayer: Joi.alternatives().conditional('prayerType', {
     is: PrayerType.GROUP,
-    then: Joi.boolean().required()
+    then: Joi.boolean().required(),
+    otherwise:null
   }),
 });
 

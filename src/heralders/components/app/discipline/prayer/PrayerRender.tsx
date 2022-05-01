@@ -33,7 +33,6 @@ export const prayerRowsRendererByWeek = (data: ResultsObject<Prayer> | undefined
         startW: x.userTime.startWeek,
         week: "von " + toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() + " bis " + toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
       }));
-      console.log("result " + resultMap)
     }
   }
   if (methode === 'create') {
@@ -49,15 +48,14 @@ export const prayerRowsRendererByWeek = (data: ResultsObject<Prayer> | undefined
   return allRows;
 };
 
-export const upsertPrayerFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
-  const oId = params.row.oId;
-  const postboxId = params.row.postboxId;
-  const prayerType = params.row.prayerType;
-  const userId = params.row.userId;
+export const upsertPrayerFormData = (postboxId: string, userId: string, start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+
+  const prayerType = disciplineType;
+
   let timeInMinute = toNumber(params.getValue(params.id, "timeInMinute"));
-  let fridayPrayer: boolean = params.value(params.id, "fridayPrayer");
+  let fridayPrayer: any = params.getValue(params.id, "fridayPrayer");
   const theme = "" + params.getValue(params.id, "theme");
-  if (oId === undefined || oId === '') {
+
     if (create) {
       return {
         userTime: {
@@ -79,7 +77,6 @@ export const upsertPrayerFormData = (start: string, end: string, create: boolean
       theme: theme,
       prayerType: prayerType
     }
-  }
 }
 
 export const validatePrayer = (upsertPrayer: {}, create: boolean): boolean => {
@@ -98,7 +95,7 @@ export const prayerColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'theme', headerName: 'Thema',
@@ -106,5 +103,5 @@ export const prayerColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'prayerFriday', headerName: 'Gebet(Freitag)', type: 'boolean',
-    editable: true, resizable: true, width: 300, hide: disciplineType != PrayerType.ALONE
+    editable: true, resizable: true, width: 150, hide: disciplineType != PrayerType.ALONE
   }];

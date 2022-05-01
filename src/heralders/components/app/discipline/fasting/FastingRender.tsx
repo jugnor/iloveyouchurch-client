@@ -51,14 +51,10 @@ export const fastingRowsRendererByWeek = (data: ResultsObject<Fasting> | undefin
   return allRows;
 };
 
-export const upsertFastingFormData = (start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
-  const oId = params.row.oId;
-  const postboxId = params.row.postboxId;
-  const fastingType = params.row.prayerType;
-  const userId = params.row.userId;
-  let days :number = params.value(params.id, "days");
-  const goal:string =   params.value(params.id, "goal");
-  if (oId === undefined || oId === '') {
+export const upsertFastingFormData = (postboxId:string,userId:string,start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+  const fastingType = disciplineType;
+  let days :number = toNumber(params.getValue(params.row.id, "days"));
+  const goal:string =  ""+ params.getValue(params.id, "goal");
     if (create) {
       return {
         userTime: {
@@ -77,7 +73,6 @@ export const upsertFastingFormData = (start: string, end: string, create: boolea
       days: days,
       goal: goal,
       fastingType: fastingType
-    }
   }
 }
 

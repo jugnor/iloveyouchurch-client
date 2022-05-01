@@ -26,19 +26,19 @@ export const CreateMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()
   .valid(...Object.values(RetreatType))
   .required(),
-  timeInMinute: Joi.number().min(0).required(),
-  total: Joi.number().min(0).required(),
+  timeInMinute: Joi.number().positive().required(),
+  total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
   verse: Joi.string().optional().allow(''),
   userTime: Joi.object().required()
 });
 
 export const UpdateMeditationRequestSchema: Schema = Joi.object({
-  prayerType: Joi.string()
+  retreatType: Joi.string()
   .valid(...Object.values(RetreatType))
   .required(),
-  timeInMinute: Joi.number().required().min(0),
-  total: Joi.number().min(0).required(),
+  timeInMinute: Joi.number().positive().required(),
+  total: Joi.number().positive().required(),
   theme: Joi.string().optional().empty(''),
   verse: Joi.string().optional().allow(''),
 });

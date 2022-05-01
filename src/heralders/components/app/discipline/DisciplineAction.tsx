@@ -41,6 +41,7 @@ import {
 } from "./DisciplineRenderer";
 import {Discipline, UpsertDisciplineRequest} from "../../../models/Discipline";
 import {endWeekString, startWeekString, Transition, useStyles} from "../TimeHandlingRender";
+import {UpdateGodGivingRequestSchema} from "../../../models/GodGiving";
 
 
 interface DisciplineActionProps {
@@ -107,7 +108,7 @@ export function DisciplineAction({
       params.api.commitRowChange(params.row.id)
 
       if (oId === undefined || oId === '') {
-        let upsertDiscipline = upsertDisciplineFormData(startWeekString(valueDate), endWeekString(valueDate), true, params, disciplineType)
+        let upsertDiscipline = upsertDisciplineFormData(postboxId,userId,startWeekString(valueDate), endWeekString(valueDate), true, params, disciplineType)
         if (
           validateDiscipline(upsertDiscipline, disciplineType, true)
         ) {
@@ -132,7 +133,9 @@ export function DisciplineAction({
           setSeverity("error")
         }
       } else {
-        let upsertDiscipline = upsertDisciplineFormData(startWeekString(valueDate), endWeekString(valueDate), false, params, disciplineType)
+        let upsertDiscipline = upsertDisciplineFormData(postboxId,userId,startWeekString(valueDate), endWeekString(valueDate), false, params, disciplineType)
+        console.log("up "+upsertDiscipline)
+        console.log("up "+UpdateGodGivingRequestSchema.validate(upsertDiscipline).error)
         if (
           validateDiscipline(upsertDiscipline, disciplineType, false)
 
@@ -250,7 +253,7 @@ export function DisciplineAction({
     useSWR<ResultsObject<Discipline>>
     (`/postboxes/${postboxId}/users/${userId}/${path}-results?` +
       `week=${startWeekString(valueDate) === '' ? start : startWeekString(valueDate)}/${endWeekString(valueDate) === '' ? end : endWeekString(valueDate)}` +
-      `&type=${disciplineType}&page=${page}`);
+      `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
 
   return data ? (
     <> <Container>
