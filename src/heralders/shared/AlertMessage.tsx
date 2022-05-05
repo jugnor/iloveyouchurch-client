@@ -13,7 +13,7 @@ export const  Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Aler
 });
 
 export let  openAlert = false;
-export function setOpenAlert (op:boolean){
+export function setOpenAler (op:boolean){
   openAlert=op;
 }
 interface CustomizedSnackbarsProps {

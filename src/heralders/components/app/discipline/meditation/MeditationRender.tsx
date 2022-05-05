@@ -3,7 +3,6 @@ import {GridColumns, GridRowsProp,} from '@mui/x-data-grid';
 import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
-import {startWeekString} from "../../TimeHandlingRender";
 import {ResultsObject} from "../../../util/ResultsObject";
 import toNumber from "@mui/x-data-grid/lib/lodash/toNumber";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
@@ -14,10 +13,10 @@ import {
 } from "../../../../models/Meditation";
 
 
-export const meditationRowsRendererByWeek = (data: ResultsObject<Meditation> | undefined, start: Date | null, methode: string) => {
+export const meditationRowsRendererByWeek = (data: ResultsObject<Meditation> | undefined, startWeek: string, methode: string) => {
 
   let resultMap: readonly { [key: string]: any; }[] = []
-  if (methode === "get" + startWeekString(start) || methode === "" || methode === "createGet") {
+  if (methode === "get" + startWeek || methode === "" || methode === "createGet") {
     if (data !== undefined) {
       resultMap = data.items.map(x => ({
         id: randomId(),
@@ -50,7 +49,7 @@ export const meditationRowsRendererByWeek = (data: ResultsObject<Meditation> | u
   return allRows;
 };
 
-export const upsertMeditationFormData = (postboxId:string,userId:string,start: string, end: string, create: boolean, params: GridRenderCellParams,disciplineType:string) => {
+export const upsertMeditationFormData = (postboxId: string, userId: string, start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
 
 
   const retreatType = disciplineType;
@@ -60,29 +59,29 @@ export const upsertMeditationFormData = (postboxId:string,userId:string,start: s
   const theme = "" + params.getValue(params.id, "theme");
   const verse = "" + params.getValue(params.id, "verse");
 
-    if (create) {
-      return {
-        userTime: {
-          userId: userId,
-          postboxId: postboxId,
-          startWeek: start,
-          endWeek: end,
-          week: start + "/" + end
-        },
-        timeInMinute: timeInMinute,
-        verse: verse,
-        total: total,
-        theme: theme,
-        retreatType: retreatType
-      }
-    }
+  if (create) {
     return {
+      userTime: {
+        userId: userId,
+        postboxId: postboxId,
+        startWeek: start,
+        endWeek: end,
+        week: start + "/" + end
+      },
       timeInMinute: timeInMinute,
       verse: verse,
       total: total,
       theme: theme,
       retreatType: retreatType
     }
+  }
+  return {
+    timeInMinute: timeInMinute,
+    verse: verse,
+    total: total,
+    theme: theme,
+    retreatType: retreatType
+  }
 }
 
 export const validateMeditation = (upsertMeditation: {}, create: boolean): boolean => {

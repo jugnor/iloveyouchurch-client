@@ -47,20 +47,20 @@ import {FastingType} from "../../../models/Fasting";
 import {GodGivingType} from "../../../models/GodGiving";
 
 
-export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | undefined, start: Date | null, methode: string, disciplineType: string): GridRowsProp => {
+export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | undefined, startWeek:string, methode: string, disciplineType: string): GridRowsProp => {
   switch (disciplineType) {
     case ReadingType.BIBLE||ReadingType.C_BOOK:
-      return readingRowsRendererByWeek(data, start, methode)
+      return readingRowsRendererByWeek(data, startWeek, methode)
     case PrayerType.ALONE || PrayerType.GROUP:
-      return prayerRowsRendererByWeek(data, start, methode)
+      return prayerRowsRendererByWeek(data, startWeek, methode)
     case RetreatType.MEDITATION || RetreatType.RETREAT:
-      return meditationRowsRendererByWeek(data, start, methode)
+      return meditationRowsRendererByWeek(data, startWeek, methode)
     case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
-      return gospelRowsRendererByWeek(data, start, methode)
+      return gospelRowsRendererByWeek(data, startWeek, methode)
     case FastingType.COMPLETE || FastingType.PARTIAL:
-      return fastingRowsRendererByWeek(data, start, methode)
+      return fastingRowsRendererByWeek(data,startWeek, methode)
     case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
-      return godGivingRowsRendererByWeek(data, start, methode)
+      return godGivingRowsRendererByWeek(data, startWeek, methode)
     default:
       return []
   }

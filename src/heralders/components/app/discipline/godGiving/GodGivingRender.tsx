@@ -3,7 +3,6 @@ import {GridColumns, GridRowsProp,} from '@mui/x-data-grid';
 import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
-import {startWeekString} from "../../TimeHandlingRender";
 import {ResultsObject} from "../../../util/ResultsObject";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
 import {
@@ -15,10 +14,10 @@ import {
 import toNumber from "@mui/x-data-grid/lib/lodash/toNumber";
 
 
-export const godGivingRowsRendererByWeek = (data: ResultsObject<GodGiving> | undefined, start: Date | null, methode: string) => {
+export const godGivingRowsRendererByWeek = (data: ResultsObject<GodGiving> | undefined, startWeek: string, methode: string) => {
 
   let resultMap: readonly { [key: string]: any; }[] = []
-  if (methode === "get" + startWeekString(start) || methode === "" || methode === "createGet") {
+  if (methode === "get" + startWeek || methode === "" || methode === "createGet") {
     if (data !== undefined) {
       resultMap = data.items.map(x => ({
         id: randomId(),
@@ -37,8 +36,7 @@ export const godGivingRowsRendererByWeek = (data: ResultsObject<GodGiving> | und
       }));
       console.log("result " + resultMap)
     }
-  }
-  if (methode === 'create') {
+  } else if (methode === 'create') {
     return [{
       id: randomId(),
       timeInMinute: 0,
@@ -62,24 +60,15 @@ export const upsertGodGivingFormData = (postboxId: string, userId: string, start
   const description: string = "" + params.getValue(params.id, "description");
   const presence: any = params.getValue(params.id, "presence");
 
-    if (create) {
-      return {
-        userTime: {
-          userId: userId,
-          postboxId: postboxId,
-          startWeek: start,
-          endWeek: end,
-          week: start + "/" + end
-        },
-        timeInMinute: disciplineType !== GodGivingType.THANKS ? null : timeInMinute,
-        amount: disciplineType !== GodGivingType.MONEY ? null : amount,
-        total: disciplineType !== GodGivingType.THANKS ? null : total,
-        presence: disciplineType !== GodGivingType.CHORE ? null : presence,
-        description: description,
-        godGivingType: godGivingType
-      }
-    }
+  if (create) {
     return {
+      userTime: {
+        userId: userId,
+        postboxId: postboxId,
+        startWeek: start,
+        endWeek: end,
+        week: start + "/" + end
+      },
       timeInMinute: disciplineType !== GodGivingType.THANKS ? null : timeInMinute,
       amount: disciplineType !== GodGivingType.MONEY ? null : amount,
       total: disciplineType !== GodGivingType.THANKS ? null : total,
@@ -87,6 +76,15 @@ export const upsertGodGivingFormData = (postboxId: string, userId: string, start
       description: description,
       godGivingType: godGivingType
     }
+  }
+  return {
+    timeInMinute: disciplineType !== GodGivingType.THANKS ? null : timeInMinute,
+    amount: disciplineType !== GodGivingType.MONEY ? null : amount,
+    total: disciplineType !== GodGivingType.THANKS ? null : total,
+    presence: disciplineType !== GodGivingType.CHORE ? null : presence,
+    description: description,
+    godGivingType: godGivingType
+  }
 }
 
 export const validateGodGiving = (upsertGodGiving: {}, create: boolean): boolean => {

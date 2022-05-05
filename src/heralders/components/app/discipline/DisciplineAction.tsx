@@ -5,13 +5,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridColumns,
-  GridRowParams,
-  MuiEvent,
-} from '@mui/x-data-grid';
+import {GridActionsCellItem, GridColumns,} from '@mui/x-data-grid';
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Button from "@mui/material/Button";
@@ -21,18 +15,6 @@ import {ResultsObject} from "../../util/ResultsObject";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
 import {AlertColor} from "@mui/material/Alert";
 import {endOfWeek, startOfWeek} from "date-fns";
-import {Snackbar, Stack} from "@mui/material";
-import {Alert} from "../../../shared/AlertMessage";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import StaticDatePicker from "@mui/lab/StaticDatePicker";
-import TextField from "@mui/material/TextField";
-import {customDay} from "../../util/WeekPicker";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogActions from "@mui/material/DialogActions";
 import {useDiscipline} from "../../../hooks/useDiscipline";
 import {
   disciplineRowsRendererByWeek,
@@ -40,42 +22,74 @@ import {
   validateDiscipline
 } from "./DisciplineRenderer";
 import {Discipline, UpsertDisciplineRequest} from "../../../models/Discipline";
-import {endWeekString, startWeekString, Transition, useStyles} from "../TimeHandlingRender";
-import {UpdateGodGivingRequestSchema} from "../../../models/GodGiving";
+import {AlertMessage} from "../ArletMessageRenderer";
+import {DialogMessageRenderer} from "../DialogMessageRenderer"
+import {createTheme} from "@mui/material/styles";
+import {makeStyles} from "@mui/styles";
+import {CalenderWeekRenderer} from "../CalendarWeekRenderer";
+import {DataGridRows} from "../DataGridRows";
+import {SelectItem} from "../SelectItem";
 
 
 interface DisciplineActionProps {
   postboxId: string,
   userId: string,
   path: string
-  disciplineType: string
   columns: GridColumns
+  menuItems: string[]
 }
 
 export function DisciplineAction({
                                    postboxId,
                                    userId,
                                    path,
-                                   disciplineType,
-                                   columns
+                                   columns,
+                                   menuItems
                                  }: DisciplineActionProps) {
-  const classes = useStyles();
+
   const {
     createDiscipline,
     updateDiscipline,
     deleteDiscipline
   } = useDiscipline(postboxId, userId, path);
+  const defaultTheme = createTheme();
 
+  const useStyles = makeStyles(
+    (theme) => ({
+      actions: {
+        color: theme.palette.text.secondary,
+      },
+      textPrimary: {
+        color: theme.palette.text.primary,
+      },
+    }),
+    {defaultTheme},
+  );
+
+  const getDisciplineType = (): string => {
+    const first = menuItems.at(0);
+    if (first !== undefined) {
+      const second = first.split("|").at(0);
+      if (second !== undefined) {
+        return second;
+      }
+    }
+    return "";
+  };
+  const date = new Date();
+  const start = startOfWeek(date).toISOString();
+  const end = endOfWeek(date).toISOString();
+  const classes = useStyles();
   const [params, setParams] = useState<GridRenderCellParams>();
   const [page, setPage] = React.useState(0);
-  const [valueDate, setValueDate] = React.useState<Date | null>(new Date());
+  const [disciplineType, setDisciplineType] = useState<string>(getDisciplineType());
+  const [startWeek, setStartWeek] = React.useState<string>(start);
+  const [endWeek, setEndWeek] = React.useState<string>(end);
   const [messageAlert, setMessageAlert] = useState<string>('');
   const [severity, setSeverity] = useState<AlertColor>('success');
   const [openAlert, setOpenAlert] = React.useState(false);
   const [methode, setMethode] = useState<string>('');
-  const date = new Date();
-  const start = startOfWeek(date).toISOString();
-  const end = endOfWeek(date).toISOString();
+
 
   const [openDialog, setOpenDialog] = React.useState(false);
 
@@ -84,17 +98,11 @@ export function DisciplineAction({
     setParams(params)
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
 
-  const handleRowEditStart = (
-    params: GridRowParams,
-    event: MuiEvent<React.SyntheticEvent>,
-  ) => {
-    event.defaultMuiPrevented = true;
+  const onChangePage = (newPage: number) => {
+    setPage(newPage);
+    setMethode("get" + startWeek)
   };
-
 
   const handleEditClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
     event.stopPropagation();
@@ -107,8 +115,8 @@ export function DisciplineAction({
       event.stopPropagation();
       params.api.commitRowChange(params.row.id)
 
-      if (oId === undefined || oId === '') {
-        let upsertDiscipline = upsertDisciplineFormData(postboxId,userId,startWeekString(valueDate), endWeekString(valueDate), true, params, disciplineType)
+      if (methode === "create") {
+        let upsertDiscipline = upsertDisciplineFormData(postboxId, userId, startWeek, endWeek, true, params, disciplineType)
         if (
           validateDiscipline(upsertDiscipline, disciplineType, true)
         ) {
@@ -133,9 +141,7 @@ export function DisciplineAction({
           setSeverity("error")
         }
       } else {
-        let upsertDiscipline = upsertDisciplineFormData(postboxId,userId,startWeekString(valueDate), endWeekString(valueDate), false, params, disciplineType)
-        console.log("up "+upsertDiscipline)
-        console.log("up "+UpdateGodGivingRequestSchema.validate(upsertDiscipline).error)
+        let upsertDiscipline = upsertDisciplineFormData(postboxId, userId, startWeek, endWeek, false, params, disciplineType)
         if (
           validateDiscipline(upsertDiscipline, disciplineType, false)
 
@@ -237,14 +243,6 @@ export function DisciplineAction({
       }
     });
 
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenAlert(false);
-  };
-
   const {
     data,
     error,
@@ -252,27 +250,14 @@ export function DisciplineAction({
   } =
     useSWR<ResultsObject<Discipline>>
     (`/postboxes/${postboxId}/users/${userId}/${path}-results?` +
-      `week=${startWeekString(valueDate) === '' ? start : startWeekString(valueDate)}/${endWeekString(valueDate) === '' ? end : endWeekString(valueDate)}` +
+      `week=${startWeek}/${endWeek}` +
       `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-
   return data ? (
     <> <Container>
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <StaticDatePicker
-            displayStaticWrapperAs="desktop"
-            label="Week picker"
-            value={valueDate}
-            onChange={(newValue) => {
-              setValueDate(newValue);
-              setMethode("")
-            }}
-            renderDay={customDay(valueDate)}
-            renderInput={(params) => <TextField {...params} />}
-            inputFormat="'Week of' MMM d"
-          />
-        </LocalizationProvider>
+        <CalenderWeekRenderer setMethode={setMethode} setStartWeek={setStartWeek}
+                              setEndWeek={setEndWeek}/>
         <div>
           <Button color="primary" startIcon={<AddIcon/>}
                   onClick={() =>
@@ -280,55 +265,23 @@ export function DisciplineAction({
             Add neues Item
           </Button>
         </div>
+        <div style={{right: 20}}>
+          <SelectItem menuItems={menuItems} setDisciplineType={setDisciplineType}
+                      disciplineType={disciplineType}/>
+        </div>
+
         <Suspense fallback={null}>
-          <DataGrid
-            rows={disciplineRowsRendererByWeek(data, valueDate, methode, disciplineType)}
-            columns={columnsAction}
-            editMode="row"
-            onRowEditStart={handleRowEditStart}
-            componentsProps={{
-              toolbar: {}
-            }}
-            pagination={true}
-            page={data.page}
-            pageSize={data.size}
-            rowCount={data.total}
-            paginationMode="server"
-            onPageChange={(newPage) => {
-              setPage(newPage)
-              setMethode("get" + startWeekString(valueDate))
-            }}
-          />
+          <DataGridRows
+            gridRowsProp={disciplineRowsRendererByWeek(data, startWeek, methode, disciplineType)}
+            gridColumns={columnsAction} page={data.page} pageSize={data.size} total={data.total}
+            onChangePage={onChangePage}/>
         </Suspense>
       </Typography>
-      {openAlert && (<Stack spacing={2} sx={{width: '100%'}}>
-        <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
-          <Alert onClose={handleClose} severity={severity} sx={{width: '100%'}}>
-            {messageAlert}!
-          </Alert>
-        </Snackbar>
-      </Stack>)}
-      {openDialog && params && (
-        <div>
-          <Dialog
-            open={openDialog}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleCloseDialog}
-            aria-describedby="alert-dialog-slide-description"
-          >
-            <DialogTitle>{"Änderung Übernehmen"}</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description">
-                Willst du wirklich die Daten löschen?
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDialog}>Nein, Zurück</Button>
-              <Button onClick={handleDeleteClick(params)}>Ja, ich will</Button>
-            </DialogActions>
-          </Dialog>
-        </div>)}
+      <AlertMessage openAlert={openAlert} setOpenAlert={setOpenAlert} message={messageAlert}
+                    severity={severity}/><DialogMessageRenderer openDialog={openDialog}
+                                                                setOpenDialog={setOpenDialog}
+                                                                params={params}
+                                                                handleDeleteClick={handleDeleteClick}/>
     </Container>
     </>
   ) : (<>Es ist leider etwas schiefgelaufen</>);

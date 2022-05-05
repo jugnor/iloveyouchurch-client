@@ -3,7 +3,6 @@ import {GridColumns, GridRowsProp,} from '@mui/x-data-grid';
 import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
-import {startWeekString} from "../../TimeHandlingRender";
 import {ResultsObject} from "../../../util/ResultsObject";
 import toNumber from "@mui/x-data-grid/lib/lodash/toNumber";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
@@ -15,10 +14,10 @@ import {
 } from "../../../../models/Prayer";
 
 
-export const prayerRowsRendererByWeek = (data: ResultsObject<Prayer> | undefined, start: Date | null, methode: string) => {
+export const prayerRowsRendererByWeek = (data: ResultsObject<Prayer> | undefined, startWeek: string, methode: string) => {
 
   let resultMap: readonly { [key: string]: any; }[] = []
-  if (methode === "get" + startWeekString(start) || methode === "" || methode === "createGet") {
+  if (methode === "get" + startWeek || methode === "" || methode === "createGet") {
     if (data !== undefined) {
       resultMap = data.items.map(x => ({
         id: randomId(),
@@ -56,27 +55,27 @@ export const upsertPrayerFormData = (postboxId: string, userId: string, start: s
   let fridayPrayer: any = params.getValue(params.id, "fridayPrayer");
   const theme = "" + params.getValue(params.id, "theme");
 
-    if (create) {
-      return {
-        userTime: {
-          userId: userId,
-          postboxId: postboxId,
-          startWeek: start,
-          endWeek: end,
-          week: start + "/" + end
-        },
-        timeInMinute: timeInMinute,
-        fridayPrayer: disciplineType == PrayerType.ALONE ? null : fridayPrayer,
-        theme: theme,
-        prayerType: prayerType
-      }
-    }
+  if (create) {
     return {
+      userTime: {
+        userId: userId,
+        postboxId: postboxId,
+        startWeek: start,
+        endWeek: end,
+        week: start + "/" + end
+      },
       timeInMinute: timeInMinute,
       fridayPrayer: disciplineType == PrayerType.ALONE ? null : fridayPrayer,
       theme: theme,
       prayerType: prayerType
     }
+  }
+  return {
+    timeInMinute: timeInMinute,
+    fridayPrayer: disciplineType == PrayerType.ALONE ? null : fridayPrayer,
+    theme: theme,
+    prayerType: prayerType
+  }
 }
 
 export const validatePrayer = (upsertPrayer: {}, create: boolean): boolean => {

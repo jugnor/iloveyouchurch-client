@@ -3,10 +3,10 @@ import {GridColumns, GridRowsProp,} from '@mui/x-data-grid';
 import {randomId} from '@mui/x-data-grid-generator';
 
 import {toDate} from "date-fns";
-import {startWeekString} from "../../TimeHandlingRender";
 import {
   CreateReadingRequestSchema,
-  Reading, ReadingType,
+  Reading,
+  ReadingType,
   UpdateReadingRequestSchema
 } from "../../../../models/Reading";
 import {GodGiving} from "../../../../models/GodGiving";
@@ -18,10 +18,10 @@ export interface Discipline {
   discipline: Partial<Reading | GodGiving>
 }
 
-export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefined, start: Date | null, methode: string) => {
+export const readingRowsRendererByWeek = (data: ResultsObject<Reading> | undefined, startWeek: string, methode: string) => {
 
   let resultMap: readonly { [key: string]: any; }[] = []
-  if (methode === "get" + startWeekString(start) || methode === "" || methode === "createGet") {
+  if (methode === "get" + startWeek || methode === "" || methode === "createGet") {
     if (data !== undefined) {
       resultMap = data.items.map(x => ({
         id: randomId(),
@@ -69,25 +69,15 @@ export const upsertReadingFormData = (postboxId: string, userId: string, start: 
   const referenceEnd = "" + params.getValue(params.id, "referenceEnd");
   let theEnd: any = params.getValue(params.id, "theEnd");
   const theme = "" + params.getValue(params.id, "theme");
-    if (create) {
-      return {
-        userTime: {
-          userId: userId,
-          postboxId: postboxId,
-          startWeek: start,
-          endWeek: end,
-          week: start + "/" + end
-        },
-        totalCap: totalCap,
-        title: title,
-        referenceEnd: referenceEnd,
-        timeInMinute: timeInMinute,
-        theEnd: theEnd,
-        theme: theme,
-        readingType: readingType
-      }
-    }
+  if (create) {
     return {
+      userTime: {
+        userId: userId,
+        postboxId: postboxId,
+        startWeek: start,
+        endWeek: end,
+        week: start + "/" + end
+      },
       totalCap: totalCap,
       title: title,
       referenceEnd: referenceEnd,
@@ -96,6 +86,16 @@ export const upsertReadingFormData = (postboxId: string, userId: string, start: 
       theme: theme,
       readingType: readingType
     }
+  }
+  return {
+    totalCap: totalCap,
+    title: title,
+    referenceEnd: referenceEnd,
+    timeInMinute: timeInMinute,
+    theEnd: theEnd,
+    theme: theme,
+    readingType: readingType
+  }
 }
 
 export const validateReading = (upsertReading: {}, create: boolean): boolean => {
@@ -107,7 +107,7 @@ export const validateReading = (upsertReading: {}, create: boolean): boolean => 
   return upsertReading !== undefined && !UpdateReadingRequestSchema.validate(upsertReading).error
 }
 
-export const readingColumns= (disciplineType: string): GridColumns => [
+export const readingColumns = (disciplineType: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',
@@ -116,7 +116,7 @@ export const readingColumns= (disciplineType: string): GridColumns => [
   },
   {
     field: 'title', headerName: 'Titel',
-    editable: true, resizable: true, width: 200,hide:disciplineType!==ReadingType.C_BOOK
+    editable: true, resizable: true, width: 200, hide: disciplineType !== ReadingType.C_BOOK
   },
   {
     field: 'totalCap', headerName: 'TotalKap', type: 'number',
