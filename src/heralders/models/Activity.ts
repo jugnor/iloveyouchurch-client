@@ -7,23 +7,24 @@ export interface Activity {
   id: string;
   description?: string;
   postboxId: string;
-  activityOrder: ActivityOrder;
+  activityOrder: string;
   activityType: ActivityType;
   createdAt?: string;
 }
 
-export type CreateActivityRequest = Except<Activity, 'id' | 'postboxId' | 'createdAt'>;
+export type UpsertActivityRequest = Except<Activity, 'id' | 'postboxId' | 'createdAt'>;
 
-export type UpdateActivityRequest = CreateActivityRequest;
-
-
-export const CreateActivityRequestSchema: Schema = Joi.object({
-  description: Joi.string().optional(),
-  activityType: Joi.string().required(),
-  activityOrder: Joi.string().required()
+export const UpsertActivityRequestSchema: Schema = Joi.object({
+  activityType: Joi.string()
+  .valid(...Object.values(ActivityType))
+  .required(),
+  description: Joi.string().required(),
+  activityOrder: Joi.alternatives().conditional('godGivingType', {
+    is: ActivityType.PROGRAM,
+    then: Joi.string().required(),
+    otherwise: Joi.string().optional().allow('', null)
+  })
 });
-
-export const UpdateActivityRequestSchema = CreateActivityRequestSchema;
 
 export function instanceOfActivity(object?: any): object is Activity {
   if (!object) {

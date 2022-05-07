@@ -143,6 +143,6 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createActivity, activityByTypeAndOrder, getActivities, activitiesByType, loading};
+  return {createActivity, updateActivity, deleteActivity};
 }
 

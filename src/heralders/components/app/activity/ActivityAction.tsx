@@ -1,56 +1,46 @@
 import * as React from 'react';
 import {Suspense, useState} from 'react';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import {GridActionsCellItem, GridColumns,} from '@mui/x-data-grid';
-import Typography from "@material-ui/core/Typography";
+import Typography from '@mui/material/Typography';
 import Container from "@material-ui/core/Container";
 import Button from "@mui/material/Button";
-
-import useSWR from "swr";
-import {ResultsObject} from "../../util/ResultsObject";
-import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
-import {AlertColor} from "@mui/material/Alert";
-import {endOfWeek, startOfWeek} from "date-fns";
-import {useDiscipline} from "../../../hooks/useDiscipline";
-import {
-  disciplineColumns,
-  disciplineRowsRendererByWeek,
-  upsertDisciplineFormData,
-  validateDiscipline
-} from "./DisciplineRenderer";
-import {Discipline, UpsertDisciplineRequest} from "../../../models/Discipline";
-import {AlertMessage} from "../ArletMessageRenderer";
-import {DialogMessageRenderer} from "../DialogMessageRenderer"
+import SaveIcon from "@material-ui/icons/Save";
+import {useActivity} from "../../../hooks/useActivity";
+import {Activity, UpsertActivityRequest} from "../../../models/Activity";
 import {createTheme} from "@mui/material/styles";
 import {makeStyles} from "@mui/styles";
-import {CalenderWeekRenderer} from "../CalendarWeekRenderer";
-import {DataGridRows} from "../DataGridRows";
+import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
+import {AlertColor} from "@mui/material/Alert";
+import {
+  activityColumns,
+  activityRowsRendererByType,
+  upsertActivityFormData,
+  validateActivity
+} from "./ActivityRenderer";
+import {GridActionsCellItem} from "@mui/x-data-grid";
+import CancelIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import useSWR from "swr";
+import {ResultsObject} from "../../util/ResultsObject";
+import AddIcon from "@mui/icons-material/Add";
 import {SelectItem} from "../SelectItem";
+import {DataGridRows} from "../DataGridRows";
+import {AlertMessage} from "../ArletMessageRenderer";
+import {DialogMessageRenderer} from "../DialogMessageRenderer";
 
 
-interface DisciplineActionProps {
+interface ActivityActionProps {
   postboxId: string,
-  userId: string,
-  path: string
   menuItems: string[]
 }
 
-export function DisciplineAction({
-                                   postboxId,
-                                   userId,
-                                   path,
-                                   menuItems
-                                 }: DisciplineActionProps) {
+
+export function ActivityAction({postboxId, menuItems}: ActivityActionProps) {
 
   const {
-    createDiscipline,
-    updateDiscipline,
-    deleteDiscipline
-  } = useDiscipline(postboxId, userId, path);
+    createActivity, updateActivity, deleteActivity
+  } = useActivity(postboxId);
+
   const defaultTheme = createTheme();
 
   const useStyles = makeStyles(
@@ -75,20 +65,15 @@ export function DisciplineAction({
     }
     return "";
   };
-  const date = new Date();
-  const start = startOfWeek(date).toISOString();
-  const end = endOfWeek(date).toISOString();
+
   const classes = useStyles();
   const [params, setParams] = useState<GridRenderCellParams>();
   const [page, setPage] = React.useState(0);
   const [disciplineType, setDisciplineType] = useState<string>(getDisciplineType());
-  const [startWeek, setStartWeek] = React.useState<string>(start);
-  const [endWeek, setEndWeek] = React.useState<string>(end);
   const [messageAlert, setMessageAlert] = useState<string>('');
   const [severity, setSeverity] = useState<AlertColor>('success');
   const [openAlert, setOpenAlert] = React.useState(false);
   const [methode, setMethode] = useState<string>('');
-
 
   const [openDialog, setOpenDialog] = React.useState(false);
 
@@ -100,7 +85,8 @@ export function DisciplineAction({
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
-    setMethode("get" + startWeek)
+    setMethode("get")
+    //setMethode("get" + startWeek)
   };
 
   const handleEditClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
@@ -115,13 +101,12 @@ export function DisciplineAction({
       params.api.commitRowChange(params.row.id)
 
       if (methode === "create") {
-        let upsertDiscipline = upsertDisciplineFormData(postboxId, userId, startWeek, endWeek, true, params, disciplineType)
+        let upsertActivity = upsertActivityFormData(params, disciplineType)
         if (
-          validateDiscipline(upsertDiscipline, disciplineType, true)
-        ) {
+          validateActivity(upsertActivity)) {
 
-          createDiscipline(
-            upsertDiscipline as UpsertDisciplineRequest,
+          createActivity(
+            upsertActivity as UpsertActivityRequest,
             true
           ).then(r => {
             setMethode("createGet")
@@ -140,13 +125,13 @@ export function DisciplineAction({
           setSeverity("error")
         }
       } else {
-        let upsertDiscipline = upsertDisciplineFormData(postboxId, userId, startWeek, endWeek, false, params, disciplineType)
+        let upsertActivity = upsertActivityFormData(params, disciplineType)
         if (
-          validateDiscipline(upsertDiscipline, disciplineType, false)
+          validateActivity(upsertActivity)
 
         ) {
-          updateDiscipline(oId,
-            upsertDiscipline as UpsertDisciplineRequest,
+          updateActivity(oId,
+            upsertActivity as UpsertActivityRequest,
             true
           ).then(r => {
             setMethode("")
@@ -170,9 +155,9 @@ export function DisciplineAction({
   const handleDeleteClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
     event.stopPropagation();
     const id = params.row.id;
-    const oId = params.row.oId;
-    if (oId !== undefined && oId !== '') {
-      deleteDiscipline(oId
+    const aId = params.row.oId;
+    if (aId !== undefined && aId !== '') {
+      deleteActivity(aId
       ).then(r => {
         setMethode("")
         params.api.updateRows([{id, _action: 'delete'}])
@@ -199,8 +184,7 @@ export function DisciplineAction({
   };
 
 
-
-  const columnsAction = disciplineColumns(disciplineType).concat(
+  const columnsAction = activityColumns(disciplineType).concat(
     {
       field: 'actions',
       type: 'actions',
@@ -249,16 +233,13 @@ export function DisciplineAction({
     error,
     mutate
   } =
-    useSWR<ResultsObject<Discipline>>
-    (`/postboxes/${postboxId}/users/${userId}/${path}-results?` +
-      `week=${startWeek}/${endWeek}` +
+    useSWR<ResultsObject<Activity>>
+    (`/postboxes/${postboxId}/activity-results?` +
       `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
   return data ? (
     <> <Container>
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
-        <CalenderWeekRenderer setMethode={setMethode} setStartWeek={setStartWeek}
-                              setEndWeek={setEndWeek}/>
         <div>
 
           <Button color="primary" startIcon={<AddIcon/>}
@@ -267,7 +248,7 @@ export function DisciplineAction({
             Add neues Item
           </Button>
           <div style={{float: 'right'}}>
-            <SelectItem  menuItems={menuItems} setDisciplineType={setDisciplineType}
+            <SelectItem menuItems={menuItems} setDisciplineType={setDisciplineType}
                         disciplineType={disciplineType}/>
           </div>
         </div>
@@ -275,7 +256,7 @@ export function DisciplineAction({
         <br/>
         <Suspense fallback={null}>
           <DataGridRows
-            gridRowsProp={disciplineRowsRendererByWeek(data, startWeek, methode, disciplineType)}
+            gridRowsProp={activityRowsRendererByType(data, methode)}
             gridColumns={columnsAction} page={data.page} pageSize={data.size} total={data.total}
             onChangePage={onChangePage}/>
         </Suspense>

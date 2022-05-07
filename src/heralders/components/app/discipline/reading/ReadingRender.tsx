@@ -79,7 +79,7 @@ export const upsertReadingFormData = (postboxId: string, userId: string, start: 
         week: start + "/" + end
       },
       totalCap: totalCap,
-      title: title,
+      title: disciplineType===ReadingType.C_BOOK?title:null,
       referenceEnd: referenceEnd,
       timeInMinute: timeInMinute,
       theEnd: theEnd,
@@ -89,7 +89,7 @@ export const upsertReadingFormData = (postboxId: string, userId: string, start: 
   }
   return {
     totalCap: totalCap,
-    title: title,
+    title: disciplineType===ReadingType.C_BOOK?title:null,
     referenceEnd: referenceEnd,
     timeInMinute: timeInMinute,
     theEnd: theEnd,

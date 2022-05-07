@@ -110,7 +110,7 @@ export const meditationColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'theme', headerName: 'Thema',
-    editable: true, resizable: true, width: 200,
+    editable: true, resizable: true, width: 400,
   },
   {
     field: 'verse', headerName: 'Verse',

@@ -22,7 +22,7 @@ export function SelectItem({menuItems, setDisciplineType, disciplineType}: Selec
   return (
     <div>
       <FormControl sx={{m: 1, minWidth: 120}}>
-        <InputLabel id="demo-simple-select-helper-label">${localDiscipleType}</InputLabel>
+        <InputLabel id="demo-simple-select-helper-label">AKTIV TYPE</InputLabel>
         <Select
           labelId="demo-simple-select-helper-label"
           id="demo-simple-select-helper"
@@ -31,10 +31,9 @@ export function SelectItem({menuItems, setDisciplineType, disciplineType}: Selec
           onChange={handleChange}
         >
           {menuItems.map(x => <MenuItem value={x.split("|").at(0)}>
-            <em>${x.split("|").at(1)}</em>
+            <em>{x.split("|").at(1)}</em>
           </MenuItem>)}
         </Select>
-        <FormHelperText>With label + helper text</FormHelperText>
       </FormControl>
     </div>
   );

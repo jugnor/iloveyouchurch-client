@@ -41,7 +41,7 @@ export const CreateGodGivingRequestSchema: Schema = Joi.object({
   }),
   timeInMinute: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS ,
-    then: Joi.number().positive().optional(),
+    then: Joi.number().min(0).optional(),
     otherwise:null
   }),
   presence: Joi.alternatives().conditional('godGivingType', {
@@ -69,7 +69,7 @@ export const UpdateGodGivingRequestSchema  : Schema = Joi.object({
   }),
   timeInMinute: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS ,
-    then: Joi.number().positive().optional(),
+    then: Joi.number().min(0).optional(),
     otherwise:null
   }),
   presence: Joi.alternatives().conditional('godGivingType', {

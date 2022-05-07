@@ -85,7 +85,7 @@ export const fastingColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'days', headerName: 'Tage', type: 'number',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'goal', headerName: 'Ziel',

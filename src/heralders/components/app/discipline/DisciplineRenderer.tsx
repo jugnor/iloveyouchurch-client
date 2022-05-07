@@ -47,39 +47,55 @@ import {FastingType} from "../../../models/Fasting";
 import {GodGivingType} from "../../../models/GodGiving";
 
 
-export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | undefined, startWeek:string, methode: string, disciplineType: string): GridRowsProp => {
+export const disciplineRowsRendererByWeek = (data: ResultsObject<Discipline> | undefined, startWeek: string, methode: string, disciplineType: string): GridRowsProp => {
   switch (disciplineType) {
-    case ReadingType.BIBLE||ReadingType.C_BOOK:
+    case ReadingType.BIBLE:
+    case ReadingType.C_BOOK:
       return readingRowsRendererByWeek(data, startWeek, methode)
-    case PrayerType.ALONE || PrayerType.GROUP:
+    case PrayerType.ALONE :
+    case  PrayerType.GROUP:
       return prayerRowsRendererByWeek(data, startWeek, methode)
-    case RetreatType.MEDITATION || RetreatType.RETREAT:
+    case RetreatType.MEDITATION :
+    case RetreatType.RETREAT:
       return meditationRowsRendererByWeek(data, startWeek, methode)
-    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
+    case GospelType.GOSPEL :
+    case GospelType.SUPPORT :
+    case GospelType.CONTACT:
       return gospelRowsRendererByWeek(data, startWeek, methode)
-    case FastingType.COMPLETE || FastingType.PARTIAL:
-      return fastingRowsRendererByWeek(data,startWeek, methode)
-    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
+    case FastingType.COMPLETE :
+    case FastingType.PARTIAL:
+      return fastingRowsRendererByWeek(data, startWeek, methode)
+    case GodGivingType.MONEY :
+    case  GodGivingType.CHORE:
+    case GodGivingType.THANKS:
       return godGivingRowsRendererByWeek(data, startWeek, methode)
     default:
       return []
   }
 };
 
-export const upsertDisciplineFormData = (postboxId:string,userId:string,start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
+export const upsertDisciplineFormData = (postboxId: string, userId: string, start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
   switch (disciplineType) {
-    case ReadingType.BIBLE||ReadingType.C_BOOK:
-      return upsertReadingFormData(postboxId,userId,start, end, create, params,disciplineType)
-    case PrayerType.ALONE || PrayerType.GROUP:
-      return upsertPrayerFormData(postboxId,userId,start, end, create, params, disciplineType)
-    case RetreatType.MEDITATION || RetreatType.RETREAT:
-      return upsertMeditationFormData(postboxId,userId,start, end, create, params,disciplineType)
-    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
-      return upsertGospelFormData(postboxId,userId,start, end, create, params, disciplineType)
-    case FastingType.COMPLETE || FastingType.PARTIAL:
-      return upsertFastingFormData(postboxId,userId,start, end, create, params, disciplineType)
-    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
-      return upsertGodGivingFormData(postboxId,userId,start, end, create, params, disciplineType)
+    case ReadingType.BIBLE:
+    case ReadingType.C_BOOK:
+      return upsertReadingFormData(postboxId, userId, start, end, create, params, disciplineType)
+    case PrayerType.ALONE :
+    case  PrayerType.GROUP:
+      return upsertPrayerFormData(postboxId, userId, start, end, create, params, disciplineType)
+    case RetreatType.MEDITATION :
+    case RetreatType.RETREAT:
+      return upsertMeditationFormData(postboxId, userId, start, end, create, params, disciplineType)
+    case GospelType.GOSPEL :
+    case GospelType.SUPPORT :
+    case GospelType.CONTACT:
+      return upsertGospelFormData(postboxId, userId, start, end, create, params, disciplineType)
+    case FastingType.COMPLETE :
+    case FastingType.PARTIAL:
+      return upsertFastingFormData(postboxId, userId, start, end, create, params, disciplineType)
+    case GodGivingType.MONEY :
+    case  GodGivingType.CHORE:
+    case GodGivingType.THANKS:
+      return upsertGodGivingFormData(postboxId, userId, start, end, create, params, disciplineType)
     default:
       return undefined
   }
@@ -87,17 +103,25 @@ export const upsertDisciplineFormData = (postboxId:string,userId:string,start: s
 
 export const validateDiscipline = (upsertDiscipline: any, disciplineType: string, create: boolean): boolean => {
   switch (disciplineType) {
-    case ReadingType.BIBLE||ReadingType.C_BOOK:
+    case ReadingType.BIBLE:
+    case ReadingType.C_BOOK:
       return validateReading(upsertDiscipline, create)
-    case PrayerType.ALONE || PrayerType.GROUP:
+    case PrayerType.ALONE :
+    case  PrayerType.GROUP:
       return validatePrayer(upsertDiscipline, create)
-    case RetreatType.MEDITATION || RetreatType.RETREAT:
+    case RetreatType.MEDITATION :
+    case RetreatType.RETREAT:
       return validateMeditation(upsertDiscipline, create)
-    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
+    case GospelType.GOSPEL :
+    case GospelType.SUPPORT :
+    case GospelType.CONTACT:
       return validateGospel(upsertDiscipline, create)
-    case FastingType.COMPLETE || FastingType.PARTIAL:
+    case FastingType.COMPLETE :
+    case FastingType.PARTIAL:
       return validateFasting(upsertDiscipline, create)
-    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
+    case GodGivingType.MONEY :
+    case  GodGivingType.CHORE:
+    case GodGivingType.THANKS:
       return validateGodGiving(upsertDiscipline, create)
     default:
       return false
@@ -105,18 +129,27 @@ export const validateDiscipline = (upsertDiscipline: any, disciplineType: string
 }
 
 export const disciplineColumns = (disciplineType: string): GridColumns => {
+
   switch (disciplineType) {
-    case ReadingType.BIBLE||ReadingType.C_BOOK:
+    case ReadingType.BIBLE:
+    case ReadingType.C_BOOK:
       return readingColumns(disciplineType)
-    case PrayerType.ALONE || PrayerType.GROUP:
+    case PrayerType.ALONE :
+    case  PrayerType.GROUP:
       return prayerColumns(disciplineType)
-    case RetreatType.MEDITATION || RetreatType.RETREAT:
+    case RetreatType.MEDITATION :
+    case RetreatType.RETREAT:
       return meditationColumns(disciplineType)
-    case GospelType.GOSPEL || GospelType.SUPPORT || GospelType.CONTACT:
+    case GospelType.GOSPEL :
+    case GospelType.SUPPORT :
+    case GospelType.CONTACT:
       return gospelColumns(disciplineType)
-    case FastingType.COMPLETE || FastingType.PARTIAL:
+    case FastingType.COMPLETE :
+    case FastingType.PARTIAL:
       return fastingColumns(disciplineType)
-    case GodGivingType.MONEY || GodGivingType.CHORE || GodGivingType.THANKS:
+    case GodGivingType.MONEY :
+    case  GodGivingType.CHORE:
+    case GodGivingType.THANKS:
       return godGivingColumns(disciplineType)
     default:
       return []

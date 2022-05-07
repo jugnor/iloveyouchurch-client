@@ -62,7 +62,7 @@ export const gospelRowsRendererByWeek = (data: ResultsObject<Gospel> | undefined
 
 export const upsertGospelFormData = (postboxId: string, userId: string, start: string, end: string, create: boolean, params: GridRenderCellParams, disciplineType: string) => {
   const gospelType = disciplineType;
-  let timeInMinute: number = toNumber(params.getValue(params.id, "total"));
+  let timeInMinute: number = toNumber(params.getValue(params.id, "timeInMinute"));
   let goal: string = "" + params.getValue(params.id, "goal");
   let total: number = toNumber(params.getValue(params.id, "total"));
   let name: string = "" + params.getValue(params.id, "name");
@@ -82,7 +82,7 @@ export const upsertGospelFormData = (postboxId: string, userId: string, start: s
       },
       timeInMinute: disciplineType === GospelType.GOSPEL ? timeInMinute : null,
       goal: disciplineType === GospelType.GOSPEL ? goal : null,
-      total: disciplineType === GospelType.GOSPEL || GospelType.SUPPORT ? total : null,
+      total: disciplineType === GospelType.GOSPEL || disciplineType === GospelType.SUPPORT ? total : null,
       gospelContact: disciplineType === GospelType.CONTACT ? {
         name: name,
         email: email,
@@ -99,7 +99,7 @@ export const upsertGospelFormData = (postboxId: string, userId: string, start: s
   return {
     timeInMinute: disciplineType === GospelType.GOSPEL ? timeInMinute : null,
     goal: disciplineType === GospelType.GOSPEL ? goal : null,
-    total: disciplineType === GospelType.GOSPEL || GospelType.SUPPORT ? total : null,
+    total: disciplineType === GospelType.GOSPEL || disciplineType ===GospelType.SUPPORT ? total : null,
     gospelContact: disciplineType === GospelType.CONTACT ? {
       name: name,
       email: email,

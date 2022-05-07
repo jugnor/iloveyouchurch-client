@@ -2,7 +2,7 @@ import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import '../../css/Media.css';
+import '../../../css/Media.css';
 import AdminTabPanel from "./AdminTabPanel";
 import { Suspense } from 'react';
 export default function AdminTab() {

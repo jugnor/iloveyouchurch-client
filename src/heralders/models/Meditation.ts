@@ -26,7 +26,7 @@ export const CreateMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()
   .valid(...Object.values(RetreatType))
   .required(),
-  timeInMinute: Joi.number().positive().required(),
+  timeInMinute: Joi.number().min(0).required(),
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
   verse: Joi.string().optional().allow(''),
@@ -37,9 +37,9 @@ export const UpdateMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()
   .valid(...Object.values(RetreatType))
   .required(),
-  timeInMinute: Joi.number().positive().required(),
+  timeInMinute: Joi.number().min(0).required(),
   total: Joi.number().positive().required(),
-  theme: Joi.string().optional().empty(''),
+  theme: Joi.string().optional().allow(''),
   verse: Joi.string().optional().allow(''),
 });
 

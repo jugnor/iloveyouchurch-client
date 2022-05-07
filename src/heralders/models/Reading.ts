@@ -5,7 +5,7 @@ import {GospelType} from "./Gospel";
 
 export enum ReadingType{
   BIBLE='BIBLE',
-  C_BOOK='CBOOK'
+  C_BOOK='C_BOOK'
 }
 
 export interface Reading {
@@ -29,13 +29,13 @@ export const CreateReadingRequestSchema  : Schema = Joi.object({
   readingType:Joi.string().required(),
   totalCap:Joi.number().positive().required(),
   referenceEnd:Joi.string().optional().allow(''),
-  timeInMinute: Joi.number().positive().optional(),
+  timeInMinute: Joi.number().min(0).optional(),
   theme: Joi.string().optional().allow(''),
   theEnd:Joi.boolean().optional().allow(false),
   title:Joi.alternatives().conditional('readingType', {
     is: ReadingType.C_BOOK,
     then: Joi.string().required(),
-    otherwise:Joi.string().optional().allow('')
+    otherwise:null
   }),
   userTime: Joi.object().required()
 });
@@ -44,13 +44,13 @@ export const UpdateReadingRequestSchema  : Schema = Joi.object({
   readingType:Joi.string().required(),
   totalCap:Joi.number().positive().required(),
   referenceEnd:Joi.string().optional().allow(''),
-  timeInMinute: Joi.number().positive().optional(),
+  timeInMinute: Joi.number().min(0).optional(),
   theme: Joi.string().optional().allow(''),
   theEnd:Joi.boolean().optional().allow(false),
   title:Joi.alternatives().conditional('readingType', {
     is: ReadingType.C_BOOK,
     then: Joi.string().required(),
-    otherwise:Joi.string().optional().allow('')
+    otherwise:null
   }),
 });
 

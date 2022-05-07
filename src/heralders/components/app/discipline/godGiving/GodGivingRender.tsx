@@ -58,7 +58,7 @@ export const upsertGodGivingFormData = (postboxId: string, userId: string, start
   const amount: number = toNumber(params.getValue(params.id, "amount"));
   const total: number = toNumber(params.getValue(params.id, "total"));
   const description: string = "" + params.getValue(params.id, "description");
-  const presence: any = params.getValue(params.id, "presence");
+  const presence: boolean = true;
 
   if (create) {
     return {
@@ -89,6 +89,7 @@ export const upsertGodGivingFormData = (postboxId: string, userId: string, start
 
 export const validateGodGiving = (upsertGodGiving: {}, create: boolean): boolean => {
   if (create) {
+    console.log("fehler "+{CreateGodGivingRequestSchema})
     return upsertGodGiving !== undefined && !CreateGodGivingRequestSchema.validate(upsertGodGiving).error
   }
   return upsertGodGiving !== undefined && !UpdateGodGivingRequestSchema.validate(upsertGodGiving).error
@@ -103,7 +104,7 @@ export const godGivingColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'timeInMinute', headerName: 'Zeit(min)', type: 'number',
-    editable: true, resizable: true, width: 300, hide: disciplineType !== GodGivingType.THANKS
+    editable: true, resizable: true, width: 100, hide: disciplineType !== GodGivingType.THANKS
   },
   {
     field: 'amount', headerName: 'Betrag', type: 'number',
@@ -119,5 +120,5 @@ export const godGivingColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'description', headerName: 'Beschreibung',
-    editable: true, resizable: true, width: 300,
+    editable: true, resizable: true, width: 500,
   }];
