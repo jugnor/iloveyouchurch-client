@@ -21,7 +21,7 @@ import {
   disciplineRowsRendererByWeek,
   upsertDisciplineFormData,
   validateDiscipline
-} from "./DisciplineRenderer";
+} from "./DisciplinePrepare";
 import {Discipline, UpsertDisciplineRequest} from "../../../models/Discipline";
 import {AlertMessage} from "../ArletMessageRenderer";
 import {DialogMessageRenderer} from "../DialogMessageRenderer"

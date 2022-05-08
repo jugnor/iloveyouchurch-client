@@ -1,6 +1,5 @@
 import Joi, {Schema} from 'joi';
 import {Except} from 'type-fest';
-import {ActivityOrder} from "./ActivityOrder";
 import {ActivityType} from "./ActivityType";
 
 export interface Activity {
@@ -12,7 +11,7 @@ export interface Activity {
   createdAt?: string;
 }
 
-export type UpsertActivityRequest = Except<Activity, 'id' | 'postboxId' | 'createdAt'>;
+export type UpsertActivityRequest = Except<Activity, 'postboxId' | 'createdAt'>;
 
 export const UpsertActivityRequestSchema: Schema = Joi.object({
   activityType: Joi.string()

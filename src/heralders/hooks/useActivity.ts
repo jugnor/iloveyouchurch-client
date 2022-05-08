@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Activity, CreateActivityRequest, UpdateActivityRequest} from "../models/Activity";
+import {Activity, UpsertActivityRequest} from "../models/Activity";
 import {matchMutate} from '../../swr';
 import {useApi} from './useApi';
 import useSWR, {mutate, SWRResponse} from "swr";
@@ -28,7 +28,7 @@ export function useActivity(postboxId: string) {
   }
 
 
-  const createActivity = useCallback(async (data: CreateActivityRequest, silent?: boolean) => {
+  const createActivity = useCallback(async (data: UpsertActivityRequest, silent?: boolean) => {
       setLoading(true);
       try {
         const newActivityResponse = await makeRequestWithFullResponse<Activity>(
@@ -57,6 +57,64 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
+  const deleteActivity = useCallback(
+    async (activityId: string,activityType:string) => {
+      setLoading(true);
+
+      try {
+        await makeRequest(`/postboxes/${postboxId}/activities/${activityId}?type=${activityType}`, 'DELETE');
+
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
+
+        await matchMutate(
+          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
+        );
+        setLoading(false);
+      } catch (e) {
+        alert('error: Da ist leider etwas schiefgelaufen.');
+        setLoading(false);
+
+        throw e;
+      }
+    },
+    [alert, makeRequest, postboxId, t]
+  );
+
+  const updateActivity = useCallback(
+    async (activityId: string, data: UpsertActivityRequest, silent?: boolean) => {
+      setLoading(true);
+  console.log("id: "+activityId)
+      try {
+        const updatedCase = await makeRequest<Activity>(
+          `/postboxes/${postboxId}/activities/${activityId}`,
+          'PUT',
+          data
+        );
+
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
+
+        await matchMutate(
+          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
+        );
+
+        await mutate(`/postboxes/${postboxId}/activities/${activityId}`);
+
+        if (!silent) {
+          alert('success: Änderungen gespeichert.');
+        }
+
+        setLoading(false);
+
+        return updatedCase;
+      } catch (e) {
+        alert('error: Da ist leider etwas schiefgelaufen.');
+        setLoading(false);
+
+        throw e;
+      }
+    },
+    [alert, makeRequest, postboxId, t]
+  );
   const getActivities = useCallback(
     async (activityType: ActivityType, week?: string) => {
       setLoading(true);
@@ -82,67 +140,6 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  const deleteActivity = useCallback(
-    async (activityId: string) => {
-      setLoading(true);
-
-      try {
-        await makeRequest(`/postboxes/${postboxId}/activities/${activityId}`, 'DELETE');
-
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
-
-        await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
-
-        alert('success: Fall gelöscht.');
-        setLoading(false);
-      } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
-      }
-    },
-    [alert, makeRequest, postboxId, t]
-  );
-
-  const updateActivity = useCallback(
-    async (activityId: string, data: UpdateActivityRequest, silent?: boolean) => {
-      setLoading(true);
-
-      try {
-        const updatedCase = await makeRequest<Activity>(
-          `/postboxes/${postboxId}/activities/${activityId}`,
-          'PUT',
-          data
-        );
-
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
-
-        await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/case-results.*$`)
-        );
-
-        await mutate(`/postboxes/${postboxId}/activities/${activityId}`);
-
-        if (!silent) {
-          alert('success: Änderungen gespeichert.');
-        }
-
-        setLoading(false);
-
-        return updatedCase;
-      } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
-      }
-    },
-    [alert, makeRequest, postboxId, t]
-  );
-
-  return {createActivity, updateActivity, deleteActivity};
+  return {createActivity, updateActivity, deleteActivity,activityByTypeAndOrder};
 }
 

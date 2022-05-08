@@ -39,6 +39,7 @@ export const upsertActivityFormData = (params: GridRenderCellParams, activityTyp
   const activityOrder: string = "" + params.getValue(params.id, "activityOrder");
   const description: string = "" + params.getValue(params.id, "description");
 
+
   return {
     activityType: activityType,
     description: description,
@@ -56,7 +57,7 @@ export const validateActivity = (upsertActivity: {}): boolean => {
 export const activityColumns = (activityType: string): GridColumns => [
 
   {
-    field: 'days', headerName: 'Tag',
+    field: 'activityOrder', headerName: 'Tag',
     editable: true, resizable: true, width: 150, hide: activityType !== ActivityType.PROGRAM
   },
   {

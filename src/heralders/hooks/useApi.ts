@@ -17,7 +17,7 @@ export function useApi() {
       Authorization: keycloak.token
         ? `Bearer ${keycloak.token}`
         : undefined,
-      'Content-type': 'application/json',
+      'Content-type': 'application/json'
     },
     method: "GET",
     responseType: 'json',
@@ -49,7 +49,7 @@ export function useApi() {
             ? data instanceof FormData
               ? 'multipart/form-data'
               : 'application/json'
-            : undefined
+            : undefined,
         },
         method,
         responseType: optionsResponseType || 'json',
@@ -68,7 +68,6 @@ export function useApi() {
       optionsResponseType?: ResponseType
     ) => {
       return (await makeRequestWithFullResponse<T>(url, method, data, optionsUpload, optionsResponseType))
-        // return (await makeRequestWithFullResponse<T>(url, method, data))
         .data;
     },
     [makeRequestWithFullResponse]

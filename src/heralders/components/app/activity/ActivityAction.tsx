@@ -15,7 +15,7 @@ import {
   activityRowsRendererByType,
   upsertActivityFormData,
   validateActivity
-} from "./ActivityRenderer";
+} from "./ActivityPrepare";
 import {GridActionsCellItem} from "@mui/x-data-grid";
 import CancelIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
@@ -96,7 +96,7 @@ export function ActivityAction({postboxId, menuItems}: ActivityActionProps) {
 
   const handleSaveClick = (params: GridRenderCellParams) => {
     return (event: { stopPropagation: () => void; }) => {
-      const oId = params.row.oId;
+      const aId = params.row.aId;
       event.stopPropagation();
       params.api.commitRowChange(params.row.id)
 
@@ -130,7 +130,7 @@ export function ActivityAction({postboxId, menuItems}: ActivityActionProps) {
           validateActivity(upsertActivity)
 
         ) {
-          updateActivity(oId,
+          updateActivity(aId,
             upsertActivity as UpsertActivityRequest,
             true
           ).then(r => {
@@ -155,9 +155,10 @@ export function ActivityAction({postboxId, menuItems}: ActivityActionProps) {
   const handleDeleteClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
     event.stopPropagation();
     const id = params.row.id;
-    const aId = params.row.oId;
+    const aId = params.row.aId;
+    const activityType = params.row.activityType;
     if (aId !== undefined && aId !== '') {
-      deleteActivity(aId
+      deleteActivity(aId,activityType
       ).then(r => {
         setMethode("")
         params.api.updateRows([{id, _action: 'delete'}])
@@ -241,7 +242,9 @@ export function ActivityAction({postboxId, menuItems}: ActivityActionProps) {
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
         <div>
-
+        <br/>
+          <br/>
+          <br/>
           <Button color="primary" startIcon={<AddIcon/>}
                   onClick={() =>
                     setMethode('create')}>
