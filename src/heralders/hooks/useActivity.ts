@@ -6,7 +6,7 @@ import {useApi} from './useApi';
 import useSWR, {mutate, SWRResponse} from "swr";
 import {ActivityType} from "../models/ActivityType";
 import {ActivityOrder} from "../models/ActivityOrder";
-import {ResultsObject} from "../components/util/ResultsObject";
+import {ResultsObject} from "../models/ResultsObject";
 
 
 export function useActivity(postboxId: string) {
