@@ -56,9 +56,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function AdminTabPanel() {
-  const postboxId:string = '9f756ec7-2692-4540-a57e-9f26e7df3247'
-  const userId:string='fd3cf575-5390-4c59-8a8a-4a448e6618c2'
+export interface AdminTabPanelProps {
+  postboxId:string
+  userId:string
+}
+export default function AdminTabPanel({postboxId,userId}:AdminTabPanelProps) {
+
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {

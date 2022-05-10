@@ -4,14 +4,12 @@ import classes from "*.module.scss";
 import useSWR from "swr";
 import {ResultsObject} from "../models/ResultsObject";
 import {PostboxModel} from "../models/PostboxModel";
-import {Box, Button, Typography} from "@mui/material";
-import {Link, useParams} from 'react-router-dom';
-import { getPostboxPath } from "../../utils/router";
+import {Box, IconButton, Typography} from "@mui/material";
+import {Link} from 'react-router-dom';
+import {getPostboxPath} from "../../utils/router";
 
 export function PostboxesSelect() {
-  const { postboxId: currentPostboxId } = useParams();
   const [page, setPage] = React.useState(0);
-
   const {
     data,
     error,
@@ -19,6 +17,12 @@ export function PostboxesSelect() {
   } =
     useSWR<ResultsObject<PostboxModel>>
     (`/postbox-results?page=${page}&size=5&sortBy=CREATED_AT&order=DESC`);
+
+  const handlePageChange = (newPage: number) => {
+    if (page >= 0) {
+      setPage(newPage)
+    }
+  };
 
   return data ? (
     <div className="Acc">
@@ -34,7 +38,9 @@ export function PostboxesSelect() {
             </Box>
           </Link>
         )}
-
+        <IconButton hidden={page <= 0} onClick={() => handlePageChange(page - 1)}/>
+        <IconButton hidden={page + 1 > data.total / data.size}
+  onClick={() => handlePageChange(page + 1)}/>
       </div>
     </div>) : (<>Es ist leider etwas schiefgelaufen</>);
 }
