@@ -1,9 +1,11 @@
 import React, { ReactElement } from 'react';
-import Body from "../heralders/PageTsx/Body";
+import HeraldersBody from "../heralders/base/HeraldersBody";
+import {PostboxesSelect} from "../heralders/base/PostBoxesSelect";
+import {PostboxModel} from "../heralders/models/PostboxModel";
 
 export enum RouteKey {
   ACCOUNTGIVING,
-  HOME,
+  HERALDERS,
   POSTBOXES,
   POSTBOX
 }
@@ -17,22 +19,26 @@ export interface Route {
 export const routes: {
   [key in RouteKey]: Route;
 } = {
-  [RouteKey.HOME]: {
-    element:  <Body/>,
+  [RouteKey.HERALDERS]: {
+    element:  <HeraldersBody/>,
     path: '/'
   },
   [RouteKey.ACCOUNTGIVING]: {
-    element:  <Body/>,
+    element:  <HeraldersBody/>,
     path: '/'
   }
   ,
   [RouteKey.POSTBOXES]: {
-    element:  <Body/>,
+    element:  <PostboxesSelect/>,
     path: 'postboxes'
   }
   ,
   [RouteKey.POSTBOX]: {
-    element:  <Body/>,
+    element:  <HeraldersBody/>,
     path: 'postboxes/:postboxId'
   }
 };
+
+export function getPostboxPath(postbox: PostboxModel) {
+  return `/postboxes/${postbox.id}`;
+}
