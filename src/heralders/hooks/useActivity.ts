@@ -15,7 +15,7 @@ export function useActivity(postboxId: string) {
 
   const [loading, setLoading] = useState(false);
 
-  const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
+ /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
     const {
       data,
       error
@@ -25,7 +25,7 @@ export function useActivity(postboxId: string) {
 
   const activitiesByType = ( type: ActivityType): SWRResponse<ResultsObject<Activity>, Error> => {
     return useSWR<ResultsObject<Activity>>(`/postboxes/${postboxId}/activity-results?type=${type}`);
-  }
+  }*/
 
 
   const createActivity = useCallback(async (data: UpsertActivityRequest, silent?: boolean) => {
@@ -140,6 +140,6 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createActivity, updateActivity, deleteActivity,activityByTypeAndOrder};
+  return {createActivity, updateActivity, deleteActivity};
 }
 

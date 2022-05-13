@@ -167,7 +167,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function Header() {
+export interface HeaderProps {
+  message:string
+}
+export default function Header({message}:HeaderProps) {
   const props = useSpring({
     opacity: 1,
     from: {opacity: 0},
@@ -209,7 +212,7 @@ export default function Header() {
             src={Logo}
           />
           <div className={classes.grow}/>
-          <Typography variant="h6" noWrap>Willkommen Zu Hause Heralders</Typography>
+          <Typography variant="h6" noWrap>{message}</Typography>
           <div className={classes.grow}/>
           {keycloak.authenticated && (
             <div>

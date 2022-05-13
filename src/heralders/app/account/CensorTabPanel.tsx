@@ -7,10 +7,10 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import '../../css/Media.css';
 import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
-import {DataGridRenderer} from "../DataGridRenderer";
 import {ActivityAction} from "../activity/ActivityAction";
 import {ActivityType} from "../../models/ActivityType";
 import ComputerIcon from "@mui/icons-material/Computer";
+import {CensorDataGridRenderer} from "./CensorDataGridRenderer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -59,11 +59,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export interface CensorTabPanelProps {
-  postboxId:string
-  userId:string
+  postboxId: string
+  userId: string
 }
 
-export function CensorTabPanel({postboxId,userId}:CensorTabPanelProps) {
+export function CensorTabPanel({postboxId, userId}: CensorTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -85,12 +85,12 @@ export function CensorTabPanel({postboxId,userId}:CensorTabPanelProps) {
             orientation="vertical"
           >
             <Tab label="Berichte Überprüfen" icon={<ScreenSearchDesktopIcon/>} {...a11yProps(0)} />
-            <Tab label="Aktivitäten" icon={<ComputerIcon/>} {...a11yProps(1)} />          </Tabs>
+            <Tab label="Aktivitäten" icon={<ComputerIcon/>} {...a11yProps(1)} /> </Tabs>
           <TabPanel value={value} index={0}>
-            <div><DataGridRenderer postboxId={postboxId}
-                                   userId={userId} path={''}
-                                   type={"Censor"}
-                                   menuItems={[]}/></div>
+            <div><CensorDataGridRenderer postboxId={postboxId}
+                                         userId={userId}
+                                         tab={"Censor"}
+                                         menuItems={[]}/></div>
           </TabPanel>
           <TabPanel value={value} index={1}>
             <ActivityAction postboxId={postboxId}

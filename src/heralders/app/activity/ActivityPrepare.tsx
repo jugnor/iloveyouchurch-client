@@ -6,9 +6,12 @@ import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParam
 import {ResultsObject} from "../../models/ResultsObject";
 import {Activity, UpsertActivityRequestSchema} from "../../models/Activity";
 import {ActivityType} from "../../models/ActivityType";
+import Typography from "@material-ui/core/Typography";
 
 
 export const activityRowsRendererByType = (data: ResultsObject<Activity> | undefined, methode: string) => {
+
+  {console.log("top "+data)}
 
   let resultMap: readonly { [key: string]: any; }[] = []
   if (methode === "get" || methode === "" || methode === "createGet") {

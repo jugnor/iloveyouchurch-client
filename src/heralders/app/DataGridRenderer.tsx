@@ -74,58 +74,62 @@ export function DataGridRenderer({
     setMethode("get")
   };
 
+
+  let {
+    data :disciplineData,
+
+  } = useSWR<ResultsObject<Discipline>>
+  (type === 'Discipline'?`/postboxes/${postboxId}/users/${userId}/${path}-results?` +
+    `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`:null);
+
+  const {
+    data:activityData,
+
+  } =
+    useSWR<ResultsObject<Activity>>
+    (type==='Activity'?`/postboxes/${postboxId}/activity-results?` +
+      `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`:null);
+
+  const {
+    data:censorData
+  } =
+    useSWR<ResultsObject<Account>>
+    (type==='Censor'?`/postboxes/${postboxId}/account-results?` +
+      `week=${startWeek}/${endWeek}` +
+      `&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`:null);
+
+  const {
+    data:myReportData,
+  } =
+    useSWR<ResultsObject<Account>>
+    (type==='MyReport'?`/postboxes/${postboxId}/users/${userId}/account-results?` +
+      `&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`:null);
+
   let dataR
   let rows;
   let columnsAction;
   if (type === 'Activity') {
     columnsAction = activityColumns(disciplineType)
-    const {
-      data,
-      error,
-      mutate
-    } =
-      useSWR<ResultsObject<Activity>>
-      (`/postboxes/${postboxId}/activity-results?` +
-        `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-    dataR = data
-    rows = activityRowsRendererByType(data, methode)
+
+    dataR = activityData
+    rows = activityRowsRendererByType(activityData, methode)
+
 
   } else if (type === "Discipline") {
     columnsAction = disciplineColumns(disciplineType)
-    let {
-      data,
-      error,
-      mutate
-    } = useSWR<ResultsObject<Discipline>>
-    (`/postboxes/${postboxId}/users/${userId}/${path}-results?` +
-      `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-    dataR = data
-    rows = disciplineRowsRendererByWeek(data, "", methode, disciplineType)
+
+    dataR = disciplineData
+    rows = disciplineRowsRendererByWeek(disciplineData, "", methode, disciplineType)
   } else if (type === 'Censor') {
-    const {
-      data,
-      error,
-      mutate
-    } =
-      useSWR<ResultsObject<Account>>
-      (`/postboxes/${postboxId}/account-results?` +
-        `week=${startWeek}/${endWeek}` +
-        `&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-    dataR = data
-    rows = accountRowsRendererByWeek(data, startWeek, methode)
     columnsAction = accountColumns(disciplineType)
+    dataR = censorData
+    rows = accountRowsRendererByWeek(censorData, startWeek, methode)
+
   } else if (type === 'MyReport') {
-    const {
-      data,
-      error,
-      mutate
-    } =
-      useSWR<ResultsObject<Account>>
-      (`/postboxes/${postboxId}/users/${userId}/account-results?` +
-        `&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-    dataR = data
-    rows = accountRowsRendererByWeek(data, "", methode)
     columnsAction = accountColumns(disciplineType)
+    dataR = myReportData
+    rows = accountRowsRendererByWeek(myReportData, "", methode)
+
   }
 
   return dataR && columnsAction && rows ? (

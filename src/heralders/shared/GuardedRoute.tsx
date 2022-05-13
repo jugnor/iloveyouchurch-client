@@ -1,9 +1,15 @@
-import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
-import React from 'react';
-import { useKeycloak } from '@react-keycloak/web';
+import {ReactNode, useEffect} from 'react';
 
-export function GuardedRoute() {
+import { useKeycloak } from '@react-keycloak/web';
+import { Route } from 'react-router-dom';
+
+
+interface GuardedRouteProps {
+  children?: ReactNode | ReactNode[];
+  [prop: string]: any;
+}
+
+export function GuardedRoute({ children, ...rest }: GuardedRouteProps) {
   const { keycloak } = useKeycloak();
 
   useEffect(() => {
@@ -12,7 +18,7 @@ export function GuardedRoute() {
     }
   }, [keycloak]);
 
-  return keycloak.authenticated ? <Outlet /> : null;
+  return keycloak.authenticated ? <Route {...rest}>{children}</Route> : null;
 }
 
 export default GuardedRoute;

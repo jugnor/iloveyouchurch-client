@@ -9,6 +9,7 @@ import '../../css/Media.css';
 import ComputerIcon from '@mui/icons-material/Computer';
 import {ActivityType} from "../../models/ActivityType";
 import {DataGridRenderer} from "../DataGridRenderer";
+import {HomeDataGridRenderer} from "./HomeDataGridRenderer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -83,9 +84,7 @@ export function HomeTabPanel({postboxId,userId}:HomeTabPanelProps) {
             <Tab label="Aktivitäten" icon={<ComputerIcon/>} {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
-            <DataGridRenderer postboxId={postboxId}
-                              userId={userId}
-                              path={''}
+            <HomeDataGridRenderer postboxId={postboxId}
                               type={"Activity"}
                               menuItems={[ActivityType.PROGRAM + "|Program", ActivityType.ANNOUNCEMENT + "|Ankündigung", ActivityType.EVENT
                               + "|Event", ActivityType.PENALTY + "|Straffe"]}/>
