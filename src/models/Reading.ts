@@ -1,7 +1,6 @@
 import Joi, {Schema} from 'joi';
 import {Except} from 'type-fest';
 import {UserTime} from "./UserTime";
-import {GospelType} from "./Gospel";
 
 export enum ReadingType{
   BIBLE='BIBLE',

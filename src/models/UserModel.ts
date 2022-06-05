@@ -1,27 +1,33 @@
 import {Except} from 'type-fest';
 import Joi, {Schema} from 'joi';
 
-
+export enum UserRole {
+  SYSTEM_ADMIN='SYSTEM_ADMIN',
+  POSTBOX_ADMIN='POSTBOX_ADMIN',
+  POSTBOX_MONITOR='POSTBOX_MONITOR',
+  POSTBOX_PARTICIPANT='POSTBOX_PARTICIPANT'
+}
 export interface Credentials {
-  value: string,
-  temporary: boolean
+  value?: string,
+  temporary?: boolean
 }
 
 interface ClientRoles {
-  ilc_client: string[]
+  ilc_client?: string[]
 }
 
 export interface UserModel {
   id: string;
   userName: string;
-  enable: boolean;
-  emailVerified: boolean;
+  enable?: boolean;
+  emailVerified?: boolean;
   email: string;
   firstName: string;
-  lastName: number;
-  credentials: Credentials[];
-  clientRoles: ClientRoles;
-  createdTimestamp: number
+  lastName: string;
+  credentials?: Credentials[];
+  clientRoles?: ClientRoles;
+  role?:string,
+  createdTimestamp?: number
 }
 
 export type UpsertUserRequest = Except<UserModel, 'id' | 'createdTimestamp'>;

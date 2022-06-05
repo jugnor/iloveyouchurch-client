@@ -5,12 +5,10 @@ import {makeStyles, Theme} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import '../../../css/Media.css';
+import '../../css/Media.css';
 import ComputerIcon from '@mui/icons-material/Computer';
-import {ActivityType} from "../../../models/ActivityType";
-import {DataGridRenderer} from "../../DataGridRenderer";
-import {HomeDataGridRenderer} from "./HomeDataGridRenderer";
-import {UserAction} from "./UserAction";
+import {UserAction} from "./user/UserAction";
+import {UserPostboxAction} from "./userPostbox/UserPostboxAction";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -53,14 +51,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     bottom: '-30%',
     left: '10%',
     position: 'revert',
-     backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper,
   },
 }));
+
 export interface HomeTabPanelProps {
-  postboxId:string
-  userId:string
+  postboxId: string
+  userId: string
 }
-export function UserTabPanel({postboxId,userId}:HomeTabPanelProps) {
+
+export function UserTabPanel({postboxId, userId}: HomeTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -82,12 +82,13 @@ export function UserTabPanel({postboxId,userId}:HomeTabPanelProps) {
             orientation="vertical"
           >
             <Tab label="Registrierung" icon={<ComputerIcon/>} {...a11yProps(0)} />
+            <Tab label="Nutzer zuordnen" icon={<ComputerIcon/>} {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
-            <UserAction postboxId={postboxId}
-                        userId={''}
-                        menuItems={[ActivityType.PROGRAM + "|Program", ActivityType.ANNOUNCEMENT + "|Ankündigung", ActivityType.EVENT
-                              + "|Event", ActivityType.PENALTY + "|Straffe"]}/>
+            <UserAction/>
+          </TabPanel>
+          <TabPanel value={value} index={0}>
+            <UserPostboxAction postboxId={postboxId} menuItems={}/>
           </TabPanel>
         </AppBar>
       </div>

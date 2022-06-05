@@ -20,7 +20,7 @@ import {CensorTabPanel} from "../app/account/CensorTabPanel";
 import AdminTabPanel from "../app/activity/AdminTabPanel";
 import {RouteKey, routes} from "../utils/router";
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
-import {UserTabPanel} from "../app/system/user/UserTabPanel";
+import {UserTabPanel} from "../app/system/UserTabPanel";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;

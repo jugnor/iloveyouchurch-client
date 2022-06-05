@@ -17,20 +17,30 @@ import {AlertMessage} from "../../ArletMessageRenderer";
 import {createTheme} from "@mui/material/styles";
 import {makeStyles} from "@mui/styles";
 import {DataGridRows} from "../../DataGridRows";
-import {upsertUserFormData, userColumns, userRowsRenderer, validateUser} from "./UserRenderer";
-import {UpsertUserRequest, UserModel} from "../../../models/UserModel";
-import {useUser} from "../../../hooks/useUser";
+import {
+  addUserToPostboxFormData,
+  userPostboxColumns, userPostboxRowsRenderer,
+  validateAddUserToPostbox,
+} from "./UserPostboxRenderer";
+import {UserModel} from "../../../models/UserModel";
+import {useUserPostbox} from "../../../hooks/useUserPostbox";
+import {AddUserToPostboxRequest} from "../../../models/UserPostboxModel";
+import {DialogMessageRenderer} from "../../DialogMessageRenderer";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import {SelectItem} from "../../SelectItem";
 
 
 interface UserPostboxActionProps {
+  postboxId: string
+  menuItems:string[]
 }
 
-export function UserAction({}: UserPostboxActionProps) {
+export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
 
   const {
-    createUser,
-    updateUser
-  } = useUser();
+    addUserToPostbox,
+    removeUserFromPostbox
+  } = useUserPostbox(postboxId);
   const defaultTheme = createTheme();
 
   const useStyles = makeStyles(
@@ -78,57 +88,53 @@ export function UserAction({}: UserPostboxActionProps) {
       event.stopPropagation();
       params.api.commitRowChange(params.row.id)
 
-      if (methode === "create") {
-        let upsertUser = upsertUserFormData(true, params)
-        if (
-          validateUser(upsertUser, true)
-        ) {
+      let addUser = addUserToPostboxFormData(postboxId, params)
+      if (
+        validateAddUserToPostbox(addUserToPostbox)
+      ) {
 
-          createUser(
-            upsertUser as UpsertUserRequest,
-            true
-          ).then(r => {
-            setMethode("createGet")
-            params.api.setRowMode(params.row.id, 'view');
-            const id = params.row.id;
-            params.api.updateRows([{id, _action: 'delete'}])
-            setOpenAlert(true);
-
-            setMessageAlert("Das neue Item wurde erfolgreich hinzugefügt")
-            setSeverity("success")
-          });
-        } else {
+        addUserToPostbox(
+          addUser as AddUserToPostboxRequest,
+          true
+        ).then(r => {
+          setMethode("createGet")
+          params.api.setRowMode(params.row.id, 'view');
+          const id = params.row.id;
+          params.api.updateRows([{id, _action: 'delete'}])
           setOpenAlert(true);
-          setMethode("create")
-          setMessageAlert("Das neue Item konnte leider nicht erzeugt werden")
-          setSeverity("error")
-        }
+
+          setMessageAlert("Der neue Nutzer wurde erfolgreich hinzugefügt")
+          setSeverity("success")
+        });
       } else {
-        let upsertUser = upsertUserFormData(false, params)
-        if (
-          validateUser(upsertUser, false)
-
-        ) {
-          updateUser(oId,
-            upsertUser as UpsertUserRequest,
-            true
-          ).then(r => {
-            setMethode("")
-            params.api.setRowMode(params.row.id, 'view');
-            params.api.updateRows([{...params.row, isNew: false}]);
-            setOpenAlert(true);
-            setMessageAlert("Das Item wurde erfolgreich geändert")
-            setSeverity("success")
-          });
-
-        } else {
-          setOpenAlert(true);
-          setMethode("")
-          setMessageAlert("Das Item konnte leider nicht geändert werden")
-          setSeverity("error")
-        }
+        setOpenAlert(true);
+        setMethode("create")
+        setMessageAlert("Der neue Nutzer konnte nicht hinzugefügt werden")
+        setSeverity("error")
       }
-    };
+    }
+  };
+
+  const handleDeleteClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
+    event.stopPropagation();
+    const id = params.row.id;
+    const oId = params.row.oId;
+    if (oId !== undefined && oId !== '') {
+      removeUserFromPostbox(oId
+      ).then(r => {
+        setMethode("")
+        params.api.updateRows([{id, _action: 'delete'}])
+        setOpenAlert(true);
+        setMessageAlert("Der Nutzer wurde erfolgreich entfernt")
+        setSeverity("success")
+      });
+    } else {
+      setOpenAlert(true);
+      setMethode("")
+      setMessageAlert("Der Nutzer konnte leider nicht entfernt werden")
+      setSeverity("error")
+    }
+    setOpenDialog(false)
   };
 
   const handleCancelClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
@@ -141,7 +147,7 @@ export function UserAction({}: UserPostboxActionProps) {
   };
 
 
-  const columnsAction = userColumns().concat(
+  const columnsAction = userPostboxColumns().concat(
     {
       field: 'actions',
       type: 'actions',
@@ -175,6 +181,12 @@ export function UserAction({}: UserPostboxActionProps) {
             onClick={handleEditClick(params)}
             color="inherit"
           />,
+          <GridActionsCellItem
+            icon={<DeleteIcon/>}
+            label="Delete"
+            onClick={handleClickOpenDialog(params)}
+            color="inherit"
+          />,
         ];
       }
     });
@@ -185,8 +197,8 @@ export function UserAction({}: UserPostboxActionProps) {
     mutate
   } =
     useSWR<ResultsObject<UserModel>>
-    (`/users?` +
-      `page=${page}&size=10`);
+    (`postboxes/${postboxId}/users?` +
+      `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
   return data ? (
     <> <Container>
       <Typography component="div" className={"program"} style={
@@ -197,22 +209,27 @@ export function UserAction({}: UserPostboxActionProps) {
           <Button color="primary" startIcon={<AddIcon/>}
                   onClick={() =>
                     setMethode('create')}>
-            Add neues Item
+            Add neuen Nutzer
           </Button>
           <div style={{float: 'right'}}>
-          </div>
+            <SelectItem  menuItems={menuItems} setDisciplineType={setDisciplineType}
+                         disciplineType={disciplineType}/>
         </div>
         <br/>
         <br/>
         <Suspense fallback={null}>
           <DataGridRows
-            gridRowsProp={userRowsRenderer(data, methode)}
+            gridRowsProp={userPostboxRowsRenderer(data, methode)}
             gridColumns={columnsAction} page={data.page} pageSize={data.size} total={data.total}
             onChangePage={onChangePage}/>
         </Suspense>
       </Typography>
       <AlertMessage openAlert={openAlert} setOpenAlert={setOpenAlert} message={messageAlert}
                     severity={severity}/>
+      <DialogMessageRenderer openDialog={openDialog}
+                             setOpenDialog={setOpenDialog}
+                             params={params}
+                             handleDeleteClick={handleDeleteClick}/>
     </Container>
     </>
   ) : (<>Es ist leider etwas schiefgelaufen</>);
