@@ -4,7 +4,7 @@ import { SWRConfig } from 'swr';
 import { Configuration } from 'swr/dist/types';
 
 import { cache } from '../swr';
-import { useApi } from '../heralders/hooks/useApi';
+import { useApi } from '../hooks/useApi';
 
 interface AppContainerProps {
   children: ReactNode;

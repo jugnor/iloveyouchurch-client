@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Activity, UpsertActivityRequest} from "../models/Activity";
-import {matchMutate} from '../../swr';
+import {matchMutate} from '../swr';
 import {useApi} from './useApi';
 import useSWR, {mutate, SWRResponse} from "swr";
 import {ActivityType} from "../models/ActivityType";

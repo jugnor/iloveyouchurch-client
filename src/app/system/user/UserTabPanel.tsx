@@ -5,11 +5,12 @@ import {makeStyles, Theme} from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import '../../css/Media.css';
+import '../../../css/Media.css';
 import ComputerIcon from '@mui/icons-material/Computer';
-import {ActivityType} from "../../models/ActivityType";
-import {DataGridRenderer} from "../DataGridRenderer";
+import {ActivityType} from "../../../models/ActivityType";
+import {DataGridRenderer} from "../../DataGridRenderer";
 import {HomeDataGridRenderer} from "./HomeDataGridRenderer";
+import {UserAction} from "./UserAction";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -52,15 +53,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     bottom: '-30%',
     left: '10%',
     position: 'revert',
-    // backgroundColor: theme.palette.background.paper,
-    backgroundColor: theme.palette.background.paper,
+     backgroundColor: theme.palette.background.paper,
   },
 }));
 export interface HomeTabPanelProps {
   postboxId:string
   userId:string
 }
-export function HomeTabPanel({postboxId,userId}:HomeTabPanelProps) {
+export function UserTabPanel({postboxId,userId}:HomeTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -81,12 +81,12 @@ export function HomeTabPanel({postboxId,userId}:HomeTabPanelProps) {
             aria-label="scrollable force tabs example"
             orientation="vertical"
           >
-            <Tab label="Aktivitäten" icon={<ComputerIcon/>} {...a11yProps(0)} />
+            <Tab label="Registrierung" icon={<ComputerIcon/>} {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
-            <HomeDataGridRenderer postboxId={postboxId}
-                              type={"Activity"}
-                              menuItems={[ActivityType.PROGRAM + "|Program", ActivityType.ANNOUNCEMENT + "|Ankündigung", ActivityType.EVENT
+            <UserAction postboxId={postboxId}
+                        userId={''}
+                        menuItems={[ActivityType.PROGRAM + "|Program", ActivityType.ANNOUNCEMENT + "|Ankündigung", ActivityType.EVENT
                               + "|Event", ActivityType.PENALTY + "|Straffe"]}/>
           </TabPanel>
         </AppBar>

@@ -1,9 +1,9 @@
 import React, { ReactElement } from 'react';
-import HeraldersBody from "../heralders/base/HeraldersBody";
-import {PostboxesSelect} from "../heralders/base/PostBoxesSelect";
-import {PostboxModel} from "../heralders/models/PostboxModel";
+import DepartmentPostbox from "../base/DepartmentPostbox";
+import {PostboxesSelect} from "../base/PostBoxesSelect";
+import {PostboxModel} from "../models/PostboxModel";
 import {Navigate} from "react-router-dom";
-import Postbox from "../heralders/base/Postbox";
+import Postbox from "../base/Postbox";
 
 export enum RouteKey {
   HOME,

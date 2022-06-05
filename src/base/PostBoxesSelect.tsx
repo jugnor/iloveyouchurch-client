@@ -5,7 +5,7 @@ import {ResultsObject} from "../models/ResultsObject";
 import {PostboxModel} from "../models/PostboxModel";
 import {Box, Card, IconButton, Typography} from "@mui/material";
 import {Link} from 'react-router-dom';
-import {getPostboxPath} from "../../utils/router";
+import {getPostboxPath} from "../utils/router";
 import HeaderMessage from "../headerFooter/HeaderMessage";
 
 export function PostboxesSelect() {

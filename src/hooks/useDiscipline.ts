@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {matchMutate} from '../../swr';
+import {matchMutate} from '../swr';
 import {useApi} from './useApi';
 import {mutate} from "swr";
 import {Reading, UpsertReadingRequest} from "../models/Reading";
