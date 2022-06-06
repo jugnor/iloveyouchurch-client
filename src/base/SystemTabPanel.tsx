@@ -5,22 +5,13 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-import CreateIcon from '@mui/icons-material/Create';
-import GavelIcon from '@material-ui/icons/Gavel';
-import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
 import GroupsIcon from '@mui/icons-material/Groups';
-import {useMatch} from "react-router-dom";
-import {useKeycloak} from "@react-keycloak/web";
-import {HomeTabPanel} from "../app/activity/HomeTabPanel";
 import {DisciplineHandlingTabPanel} from "../app/discipline/DisciplineTabPanel";
-import MyReportTabPanel from "../app/myReport/MyReportTabPanel";
-import {CensorTabPanel} from "../app/account/CensorTabPanel";
-import AdminTabPanel from "../app/activity/AdminTabPanel";
-import {RouteKey, routes} from "../utils/router";
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import {UserTabPanel} from "../app/system/UserTabPanel";
+import {useUserProperties} from "../hooks/useUserProperties";
+import {PostboxTabPanel} from "../app/system/PostboxTabPanel";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;
@@ -66,21 +57,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function SystemTabPanel() {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
-  const postboxPageMatch = useMatch(routes[RouteKey.POSTBOX_ID]);
-  const currentPostboxId = postboxPageMatch?.params.postboxId
-  const {keycloak} = useKeycloak();
-  const userId = keycloak.subject;
-
-  const monitor: boolean = keycloak.hasResourceRole('POSTBOX_MONITOR' )
-  const admin: boolean = keycloak.hasResourceRole('POSTBOX_ADMIN' )
-  const sysAdmin: boolean = keycloak.hasResourceRole('SYSTEM_ADMIN' )
+  const {userId, currentPostboxId} = useUserProperties();
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
 
   return currentPostboxId && userId ? (
-    <div className={classes.root} style={{position:'absolute'}}>
+    <div className={classes.root} style={{position: 'absolute'}}>
       <AppBar position="relative" color="transparent">
         <Tabs
           value={value}
@@ -100,7 +84,7 @@ export default function SystemTabPanel() {
           <UserTabPanel postboxId={currentPostboxId} userId={userId}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <DisciplineHandlingTabPanel postboxId={currentPostboxId} userId={userId}/>
+          <PostboxTabPanel/>
         </TabPanel>
 
       </AppBar>

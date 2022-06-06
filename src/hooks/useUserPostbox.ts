@@ -7,7 +7,7 @@ import useSWR, {mutate, SWRResponse} from "swr";
 import {ActivityType} from "../models/ActivityType";
 import {ActivityOrder} from "../models/ActivityOrder";
 import {ResultsObject} from "../models/ResultsObject";
-import {AddUserToPostboxRequest} from "../models/UserPostboxModel";
+import {AddUserToPostboxRequest, UserPostboxModel} from "../models/UserPostboxModel";
 
 
 export function useUserPostbox(postboxId: string) {
@@ -19,8 +19,8 @@ export function useUserPostbox(postboxId: string) {
   const addUserToPostbox = useCallback(async (data: AddUserToPostboxRequest, silent?: boolean) => {
       setLoading(true);
       try {
-        const newUserResponse = await makeRequestWithFullResponse<Activity>(
-          `/postboxes/${postboxId}/users/add`,
+        const newUserResponse = await makeRequestWithFullResponse<UserPostboxModel>(
+          `/postboxes/users/add`,
           'POST',
           data);
 
@@ -47,7 +47,7 @@ export function useUserPostbox(postboxId: string) {
       setLoading(true);
 
       try {
-        await makeRequest(`/postboxes/${postboxId}/users`, 'DELETE');
+        await makeRequest(`/postboxes/${postboxId}/users/${userId}`, 'DELETE');
 
         await matchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
 
@@ -62,42 +62,6 @@ export function useUserPostbox(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  const updateActivity = useCallback(
-    async (activityId: string, data: UpsertActivityRequest, silent?: boolean) => {
-      setLoading(true);
-  console.log("id: "+activityId)
-      try {
-        const updatedCase = await makeRequest<Activity>(
-          `/postboxes/${postboxId}/activities/${activityId}`,
-          'PUT',
-          data
-        );
-
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
-
-        await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
-
-        await mutate(`/postboxes/${postboxId}/activities/${activityId}`);
-
-        if (!silent) {
-          alert('success: Änderungen gespeichert.');
-        }
-
-        setLoading(false);
-
-        return updatedCase;
-      } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
-      }
-    },
-    [alert, makeRequest, postboxId, t]
-  );
-
-  return {addUserToPostbox, updateActivity, removeUserFromPostbox};
+  return {addUserToPostbox, removeUserFromPostbox};
 }
 

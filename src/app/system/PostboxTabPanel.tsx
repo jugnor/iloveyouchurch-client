@@ -12,6 +12,7 @@ import {UserPostboxAction} from "./userPostbox/UserPostboxAction";
 import useSWR from "swr";
 import {ResultsObject} from "../../models/ResultsObject";
 import {PostboxModel} from "../../models/PostboxModel";
+import {PostboxAction} from "./postbox/PostboxAction";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -58,12 +59,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface UserTabPanelProps {
-  postboxId: string
-  userId: string
+export interface PostboxTabPanelProps {
+
 }
 
-export function UserTabPanel({postboxId, userId}: UserTabPanelProps) {
+export function PostboxTabPanel({}: PostboxTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -74,7 +74,7 @@ export function UserTabPanel({postboxId, userId}: UserTabPanelProps) {
     data: postboxes,
   } =
     useSWR<ResultsObject<PostboxModel>>
-    (`postboxes`);
+    (`/postboxes`);
 
   const extractPostboxes = (): string[] => {
     if (postboxes !== undefined) {
@@ -97,14 +97,13 @@ export function UserTabPanel({postboxId, userId}: UserTabPanelProps) {
             aria-label="scrollable force tabs example"
             orientation="vertical"
           >
-            <Tab label="Registrierung" icon={<ComputerIcon/>} {...a11yProps(0)} />
-            <Tab label="Nutzer zuordnen" icon={<ComputerIcon/>} {...a11yProps(1)} />
+            <Tab label="Abteilung" icon={<ComputerIcon/>} {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
             <UserAction/>
           </TabPanel>
-          <TabPanel value={value} index={1}>
-            <UserPostboxAction postboxId={postboxId} menuItems={extractPostboxes()}/>
+          <TabPanel value={value} index={0}>
+            <PostboxAction/>
           </TabPanel>
         </AppBar>
       </div>

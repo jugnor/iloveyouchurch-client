@@ -19,7 +19,8 @@ import {makeStyles} from "@mui/styles";
 import {DataGridRows} from "../../DataGridRows";
 import {
   addUserToPostboxFormData,
-  userPostboxColumns, userPostboxRowsRenderer,
+  userPostboxColumns,
+  userPostboxRowsRenderer,
   validateAddUserToPostbox,
 } from "./UserPostboxRenderer";
 import {UserModel} from "../../../models/UserModel";
@@ -32,15 +33,12 @@ import {SelectItem} from "../../SelectItem";
 
 interface UserPostboxActionProps {
   postboxId: string
-  menuItems:string[]
+  menuItems: string[]
 }
 
-export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
+export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps) {
 
-  const {
-    addUserToPostbox,
-    removeUserFromPostbox
-  } = useUserPostbox(postboxId);
+
   const defaultTheme = createTheme();
 
   const useStyles = makeStyles(
@@ -54,6 +52,17 @@ export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
     }),
     {defaultTheme},
   );
+  const getDisciplineType = (): string => {
+    const first = menuItems.at(0);
+    if (first !== undefined) {
+      const second = first.split("|").at(0);
+      if (second !== undefined) {
+        return second;
+      }
+    }
+    return "";
+  };
+
 
   const classes = useStyles();
   const [params, setParams] = useState<GridRenderCellParams>();
@@ -62,7 +71,11 @@ export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
   const [severity, setSeverity] = useState<AlertColor>('success');
   const [openAlert, setOpenAlert] = React.useState(false);
   const [methode, setMethode] = useState<string>('');
-
+  const [disciplineType, setDisciplineType] = useState<string>(getDisciplineType());
+  const {
+    addUserToPostbox,
+    removeUserFromPostbox
+  } = useUserPostbox(disciplineType);
 
   const [openDialog, setOpenDialog] = React.useState(false);
 
@@ -88,7 +101,7 @@ export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
       event.stopPropagation();
       params.api.commitRowChange(params.row.id)
 
-      let addUser = addUserToPostboxFormData(postboxId, params)
+      let addUser = addUserToPostboxFormData(disciplineType, params)
       if (
         validateAddUserToPostbox(addUserToPostbox)
       ) {
@@ -192,35 +205,32 @@ export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
     });
 
   const {
-    data,
-    error,
-    mutate
+    data: users,
   } =
     useSWR<ResultsObject<UserModel>>
     (`postboxes/${postboxId}/users?` +
       `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-  return data ? (
+  return users ? (
     <> <Container>
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
 
-        <div>
-
-          <Button color="primary" startIcon={<AddIcon/>}
-                  onClick={() =>
-                    setMethode('create')}>
-            Add neuen Nutzer
-          </Button>
-          <div style={{float: 'right'}}>
-            <SelectItem  menuItems={menuItems} setDisciplineType={setDisciplineType}
-                         disciplineType={disciplineType}/>
+        <Button color="primary" startIcon={<AddIcon/>}
+                onClick={() =>
+                  setMethode('create')}>
+          Add neuen Nutzer
+        </Button>
+        <div style={{float: 'right'}}>
+          <SelectItem menuItems={menuItems} setDisciplineType={setDisciplineType}
+                      disciplineType={disciplineType}/>
         </div>
         <br/>
         <br/>
         <Suspense fallback={null}>
           <DataGridRows
-            gridRowsProp={userPostboxRowsRenderer(data, methode)}
-            gridColumns={columnsAction} page={data.page} pageSize={data.size} total={data.total}
+            gridRowsProp={userPostboxRowsRenderer(users, methode)}
+            gridColumns={columnsAction} page={users.page} pageSize={users.size}
+            total={users.total}
             onChangePage={onChangePage}/>
         </Suspense>
       </Typography>
@@ -232,5 +242,7 @@ export function UserPostboxAction({postboxId}: UserPostboxActionProps) {
                              handleDeleteClick={handleDeleteClick}/>
     </Container>
     </>
-  ) : (<>Es ist leider etwas schiefgelaufen</>);
+  ) : (
+    <>Es ist leider etwas schiefgelaufen</>
+  );
 }

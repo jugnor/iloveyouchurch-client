@@ -7,14 +7,16 @@ import {Box, Card, IconButton, Typography} from "@mui/material";
 import {Link} from 'react-router-dom';
 import {getPostboxPath} from "../utils/router";
 import HeaderMessage from "../headerFooter/HeaderMessage";
+import {useUserProperties} from "../hooks/useUserProperties";
 
 export function PostboxesSelect() {
   const [page, setPage] = React.useState(0);
+  const {userId} =useUserProperties();
   const {
     data
   } =
     useSWR<ResultsObject<PostboxModel>>
-    (`/postbox-results?page=${page}&size=5&sortBy=CREATED_AT&order=DESC`);
+    (`/users/${userId}/postbox-results?page=${page}&size=5&sortBy=CREATED_AT&order=DESC`);
 
   const handlePageChange = (newPage: number) => {
     if (page >= 0) {

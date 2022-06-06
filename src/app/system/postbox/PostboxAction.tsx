@@ -17,20 +17,25 @@ import {AlertMessage} from "../../ArletMessageRenderer";
 import {createTheme} from "@mui/material/styles";
 import {makeStyles} from "@mui/styles";
 import {DataGridRows} from "../../DataGridRows";
-import {upsertUserFormData, userColumns, userRowsRenderer, validateUser} from "./UserRenderer";
-import {UpsertUserRequest, UserModel} from "../../../models/UserModel";
-import {useUser} from "../../../hooks/useUser";
+import {PostboxModel, UpsertPostboxRequest} from "../../../models/PostboxModel";
+import {
+  postboxColumns,
+  postboxRowsRenderer,
+  upsertPostboxFormData,
+  validatePostbox
+} from "./PostboxRenderer";
+import {usePostbox} from "../../../hooks/usePostbox";
 
 
-interface UserActionProps {
+interface PostboxActionProps {
 }
 
-export function UserAction({}: UserActionProps) {
+export function PostboxAction({}: PostboxActionProps) {
 
   const {
-    createUser,
-    updateUser
-  } = useUser();
+    createPostbox,
+    updatePostbox
+  } = usePostbox();
   const defaultTheme = createTheme();
 
   const useStyles = makeStyles(
@@ -79,13 +84,13 @@ export function UserAction({}: UserActionProps) {
       params.api.commitRowChange(params.row.id)
 
       if (methode === "create") {
-        let upsertUser = upsertUserFormData(true, params)
+        let upsertPostbox = upsertPostboxFormData(true, params)
         if (
-          validateUser(upsertUser, true)
+          validatePostbox(upsertPostbox, true)
         ) {
 
-          createUser(
-            upsertUser as UpsertUserRequest,
+          createPostbox(
+            upsertPostbox as UpsertPostboxRequest,
             true
           ).then(r => {
             setMethode("createGet")
@@ -104,13 +109,13 @@ export function UserAction({}: UserActionProps) {
           setSeverity("error")
         }
       } else {
-        let upsertUser = upsertUserFormData(false, params)
+        let upsertPostbox = upsertPostboxFormData(false, params)
         if (
-          validateUser(upsertUser, false)
+          validatePostbox(upsertPostbox, false)
 
         ) {
-          updateUser(oId,
-            upsertUser as UpsertUserRequest,
+          updatePostbox(oId,
+            upsertPostbox as UpsertPostboxRequest,
             true
           ).then(r => {
             setMethode("")
@@ -141,7 +146,7 @@ export function UserAction({}: UserActionProps) {
   };
 
 
-  const columnsAction = userColumns().concat(
+  const columnsAction = postboxColumns().concat(
     {
       field: 'actions',
       type: 'actions',
@@ -184,9 +189,9 @@ export function UserAction({}: UserActionProps) {
     error,
     mutate
   } =
-    useSWR<ResultsObject<UserModel>>
-    (`/users?` +
-      `page=${page}&size=10`);
+    useSWR<ResultsObject<PostboxModel>>
+    (`/postbox-results?` +
+      `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
   return data ? (
     <> <Container>
       <Typography component="div" className={"program"} style={
@@ -206,7 +211,7 @@ export function UserAction({}: UserActionProps) {
         <br/>
         <Suspense fallback={null}>
           <DataGridRows
-            gridRowsProp={userRowsRenderer(data, methode)}
+            gridRowsProp={postboxRowsRenderer(data, methode)}
             gridColumns={columnsAction} page={data.page} pageSize={data.size} total={data.total}
             onChangePage={onChangePage}/>
         </Suspense>
