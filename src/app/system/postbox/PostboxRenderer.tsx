@@ -81,9 +81,7 @@ export const validatePostbox = (upsertPostbox: {}, create: boolean): boolean => 
 }
 
 
-const {isSystemAdmin} = useUserProperties();
-
-export const postboxColumns = (): GridColumns => [
+export const postboxColumns = (isSystemAdmin:boolean): GridColumns => [
   {
     field: 'name',
     headerName: 'Name',
@@ -92,7 +90,7 @@ export const postboxColumns = (): GridColumns => [
   },
   {
     field: 'ownerId', headerName: 'OwnerId',
-    editable: isSystemAdmin, resizable: true, width: 200
+    editable:isSystemAdmin, resizable: true, width: 200
   },
   {
     field: 'postboxType', headerName: 'type', type: 'number',

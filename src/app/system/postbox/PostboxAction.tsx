@@ -25,6 +25,7 @@ import {
   validatePostbox
 } from "./PostboxRenderer";
 import {usePostbox} from "../../../hooks/usePostbox";
+import {useUserProperties} from "../../../hooks/useUserProperties";
 
 
 interface PostboxActionProps {
@@ -37,7 +38,7 @@ export function PostboxAction({}: PostboxActionProps) {
     updatePostbox
   } = usePostbox();
   const defaultTheme = createTheme();
-
+  const {isSystemAdmin} = useUserProperties();
   const useStyles = makeStyles(
     (theme) => ({
       actions: {
@@ -146,7 +147,7 @@ export function PostboxAction({}: PostboxActionProps) {
   };
 
 
-  const columnsAction = postboxColumns().concat(
+  const columnsAction = postboxColumns(isSystemAdmin).concat(
     {
       field: 'actions',
       type: 'actions',
@@ -202,7 +203,7 @@ export function PostboxAction({}: PostboxActionProps) {
           <Button color="primary" startIcon={<AddIcon/>}
                   onClick={() =>
                     setMethode('create')}>
-            Add neues Item
+            Add eine neue Gruppe
           </Button>
           <div style={{float: 'right'}}>
           </div>

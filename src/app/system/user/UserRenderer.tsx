@@ -27,7 +27,7 @@ export const userRowsRenderer = (data: ResultsObject<UserModel> | undefined, met
       resultMap = data.items.map(x => ({
         id: randomId(),
         oId:x.id,
-        userName:x.userName,
+        username:x.username,
         firstName: x.firstName,
         lastName: x.lastName,
         email: x.email,
@@ -37,7 +37,7 @@ export const userRowsRenderer = (data: ResultsObject<UserModel> | undefined, met
   if (methode === 'create') {
     return [{
       id: randomId(),
-      userName:'',
+      username:'',
       firstName: '',
       lastName: '',
       email:'',
@@ -52,7 +52,7 @@ export const upsertUserFormData = (
                                       create: boolean, params: GridRenderCellParams) => {
   const firstName = "" + params.getValue(params.id, "firstName");
   const lastName = "" + params.getValue(params.id, "lastName");
-  let userName=""+ params.getValue(params.id, "userName");
+  let username=""+ params.getValue(params.id, "username");
   const email = "" + params.getValue(params.id, "email");
   const credentials =[{value:email,temporary:false}]
   const clientRoles= {ilc_client:['POSTBOX_PARTICIPANT']}
@@ -60,7 +60,7 @@ export const upsertUserFormData = (
     return {
       firstName :firstName,
       lastName:lastName,
-      userName:userName,
+      username:username,
       email:email,
       enabled:true,
       emailVerified:true,
@@ -71,7 +71,7 @@ export const upsertUserFormData = (
   return {
     firstName :firstName,
     lastName:lastName,
-    userName:userName,
+    userName:username,
     email:email,
   }
 }

@@ -18,7 +18,7 @@ interface ClientRoles {
 
 export interface UserModel {
   id: string;
-  userName: string;
+  username: string;
   enable?: boolean;
   emailVerified?: boolean;
   email: string;
@@ -36,7 +36,7 @@ export type UpsertUserRequest = Except<UserModel, 'id' | 'createdTimestamp'>;
 export const CreateUserRequestSchema: Schema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  userName: Joi.string().required(),
+  username: Joi.string().required(),
   email: Joi.string().email({tlds: {allow: false}}).required(),
   enable: Joi.boolean().optional().allow(true),
   emailVerified: Joi.boolean().optional().allow(true),
@@ -45,9 +45,9 @@ export const CreateUserRequestSchema: Schema = Joi.object({
       temporary: Joi.string().optional().allow('')
     })
   ).optional().allow(null),
-  clientRoles: Joi.object(Joi.object({
+  clientRoles: Joi.object({
     ilc_client: Joi.array()
-  })).optional().allow(null)
+  }).optional().allow(null)
 });
 
 export const UpdateUserRequestSchema = CreateUserRequestSchema;

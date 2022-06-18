@@ -208,7 +208,7 @@ export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps
     data: users,
   } =
     useSWR<ResultsObject<UserModel>>
-    (`postboxes/${postboxId}/users?` +
+    (`/postboxes/${postboxId}/users?` +
       `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
   return users ? (
     <> <Container>
@@ -218,7 +218,7 @@ export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps
         <Button color="primary" startIcon={<AddIcon/>}
                 onClick={() =>
                   setMethode('create')}>
-          Add neuen Nutzer
+          Add neuen Nutzer in Gruppe
         </Button>
         <div style={{float: 'right'}}>
           <SelectItem menuItems={menuItems} setDisciplineType={setDisciplineType}

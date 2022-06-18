@@ -28,7 +28,7 @@ export const userPostboxRowsRenderer = (data: ResultsObject<UserModel> | undefin
       resultMap = data.items.map(x => ({
         id: randomId(),
         oId:x.id,
-        userName:x.userName,
+        username:x.username,
         firstName: x.firstName,
         lastName: x.lastName,
         email: x.email,

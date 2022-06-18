@@ -100,9 +100,6 @@ export function PostboxTabPanel({}: PostboxTabPanelProps) {
             <Tab label="Abteilung" icon={<ComputerIcon/>} {...a11yProps(0)} />
           </Tabs>
           <TabPanel value={value} index={0}>
-            <UserAction/>
-          </TabPanel>
-          <TabPanel value={value} index={0}>
             <PostboxAction/>
           </TabPanel>
         </AppBar>

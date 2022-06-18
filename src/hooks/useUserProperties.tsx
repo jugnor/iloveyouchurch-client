@@ -9,7 +9,7 @@ export function useUserProperties() {
   const postboxPageMatch = useMatch(routes[RouteKey.POSTBOX_ID]);
   const currentPostboxId = postboxPageMatch?.params.postboxId
   const roles = keycloak.tokenParsed?.resource_access?.ycit?.roles;
-  const isSystemAdmin = roles?.includes(UserRole.SYSTEM_ADMIN);
+  const isSystemAdmin = keycloak.hasResourceRole(UserRole.SYSTEM_ADMIN);
   const isPostboxAdmin = roles?.includes(UserRole.POSTBOX_ADMIN);
   const isPostboxParticipant = roles?.includes(UserRole.POSTBOX_PARTICIPANT);
   const isPostboxMonitor = roles?.includes(UserRole.POSTBOX_MONITOR);

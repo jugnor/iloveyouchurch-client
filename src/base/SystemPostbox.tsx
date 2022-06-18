@@ -23,6 +23,7 @@ function SystemPostbox() {
       <HeaderMessage/>
       <div className='background-image' style={
         {
+          backgroundImage: "url(celebrate.png)",
           backgroundPosition: 'center',
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',

@@ -73,12 +73,12 @@ export function UserTabPanel({postboxId, userId}: UserTabPanelProps) {
   const {
     data: postboxes,
   } =
-    useSWR<ResultsObject<PostboxModel>>
-    (`postboxes`);
+    useSWR<PostboxModel[]>
+    (`/postboxes`);
 
   const extractPostboxes = (): string[] => {
     if (postboxes !== undefined) {
-      return postboxes.items.map(item => item.id + "|" + item.name)
+      return postboxes.map(item => item.id + "|" + item.name)
     }
     return [];
   }

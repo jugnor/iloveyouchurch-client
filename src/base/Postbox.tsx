@@ -1,11 +1,11 @@
 import {useTranslation} from 'react-i18next';
 import useSWR from 'swr';
-import {PostboxModel} from "../models/PostboxModel";
+import {PostboxModel, PostboxType} from "../models/PostboxModel";
 import DepartmentPostbox from "./DepartmentPostbox";
 import * as React from "react";
 import {Suspense, useCallback, useMemo} from "react";
-import {PostboxType} from "../models/PostboxType";
 import {useUserProperties} from "../hooks/useUserProperties";
+import SystemPostbox from "./SystemPostbox";
 
 
 export default function Postbox() {
@@ -35,9 +35,8 @@ export default function Postbox() {
     <Suspense fallback={null}>
       <>
         {element?.postboxType === PostboxType.DEPARTMENT ?
-          <DepartmentPostbox/> : ''}</>
-
-
+          <DepartmentPostbox/> : element.postboxType === PostboxType.SYSTEM ?
+            <SystemPostbox/> : ''}  </>
     </Suspense>) : (<>Es ist leider etwas schiefgelaufen</>);
 }
 
