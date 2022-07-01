@@ -11,12 +11,13 @@ import {useUserProperties} from "../hooks/useUserProperties";
 
 export function PostboxesSelect() {
   const [page, setPage] = React.useState(0);
-  const {userId} =useUserProperties();
+  const {userId,isSystemAdmin} =useUserProperties();
   const {
     data
   } =
     useSWR<ResultsObject<PostboxModel>>
-    (`/users/${userId}/postbox-results?page=${page}&size=5&sortBy=CREATED_AT&order=DESC`);
+    (isSystemAdmin?`/postbox-results?page=${page}&size=5&sortBy=CREATED_AT&order=DESC`
+    :`/users/${userId}/postbox-results?page=${page}&size=5&sortBy=CREATED_AT&order=DESC`);
 
   const handlePageChange = (newPage: number) => {
     if (page >= 0) {

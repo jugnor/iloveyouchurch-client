@@ -141,44 +141,7 @@ export function UserAction({}: UserActionProps) {
   };
 
 
-  const columnsAction = userColumns().concat(
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      cellClassName: classes.actions,
-      renderCell: (params: GridRenderCellParams) => {
-        const isInEditMode = params.api.getRowMode(params.row.id) === 'edit'
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon/>}
-              label="Save"
-              onClick={handleSaveClick(params)}
-              color="primary"
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon/>}
-              label="Cancel"
-              className={classes.textPrimary}
-              onClick={handleCancelClick(params)}
-              color="inherit"
-            />,
-          ];
-        }
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon/>}
-            label="Edit"
-            className={classes.textPrimary}
-            onClick={handleEditClick(params)}
-            color="inherit"
-          />,
-        ];
-      }
-    });
-
+  const columnsAction = userColumns();
   const {
     data,
     error,
@@ -192,16 +155,6 @@ export function UserAction({}: UserActionProps) {
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
 
-        <div>
-
-          <Button color="primary" startIcon={<AddIcon/>}
-                  onClick={() =>
-                    setMethode('create')}>
-            Add einen neuen Nutzer
-          </Button>
-          <div style={{float: 'right'}}>
-          </div>
-        </div>
         <br/>
         <br/>
         <Suspense fallback={null}>

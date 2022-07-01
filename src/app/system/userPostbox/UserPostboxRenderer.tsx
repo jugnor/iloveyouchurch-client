@@ -16,9 +16,12 @@ import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParam
 import {
   CreateUserRequestSchema,
   UpdateUserRequestSchema,
-  UserModel
+  UserModel, UserRole
 } from "../../../models/UserModel";
-import {AddUserToPostboxRequestSchema} from "../../../models/UserPostboxModel";
+import {
+  AddUserToPostboxRequestSchema,
+  UpdateUserRoleInPostboxRequestSchema
+} from "../../../models/UserPostboxModel";
 
 export const userPostboxRowsRenderer = (data: ResultsObject<UserModel> | undefined, methode: string) => {
 
@@ -32,6 +35,7 @@ export const userPostboxRowsRenderer = (data: ResultsObject<UserModel> | undefin
         firstName: x.firstName,
         lastName: x.lastName,
         email: x.email,
+        userRole:x.userRole,
       }));
     }
   }
@@ -46,18 +50,30 @@ export const userPostboxRowsRenderer = (data: ResultsObject<UserModel> | undefin
   return allRows;
 };
 
-export const addUserToPostboxFormData = (
-                                      postboxId:string, params: GridRenderCellParams) => {
+export const upsertUserToPostboxFormData = (
+                                      postboxId:string,userId:string, params: GridRenderCellParams,add:boolean) => {
   const email = "" + params.getValue(params.id, "email");
+  const userRole = "" + params.getValue(params.id, "useRole");
 
-    return {
-      email:email,
-      postboxId:postboxId
-    }
+  if(add){
+  return {
+    email:email,
+    postboxId:postboxId,
+    userRole:userRole as UserRole
+  }
+}
+  return {
+    userId:userId,
+    postboxId:postboxId,
+    userRole:userRole as UserRole
+  }
   }
 
-export const validateAddUserToPostbox = (addUserToPostbox: {}): boolean => {
-    return addUserToPostbox !== undefined && !AddUserToPostboxRequestSchema.validate(addUserToPostbox).error
+export const validateUpsertUserToPostbox = (upsertUserToPostbox: {},create:boolean): boolean => {
+  if(create){
+    return upsertUserToPostbox !== undefined && !AddUserToPostboxRequestSchema.validate(upsertUserToPostbox).error
+  }
+  return upsertUserToPostbox !== undefined && !UpdateUserRoleInPostboxRequestSchema.validate(upsertUserToPostbox).error
 }
 
 export const userPostboxColumns = (): GridColumns => [
@@ -72,10 +88,14 @@ export const userPostboxColumns = (): GridColumns => [
     editable: true, resizable: true, width: 200
   },
   {
-    field: 'firstName', headerName: 'Vorname', type: 'number',
-    editable: false, resizable: true, width: 100,
+    field: 'userRole', headerName: 'Rolle',
+    editable: true, resizable: true, width: 200
+  },
+  {
+    field: 'firstName', headerName: 'Vorname',
+    editable: false, resizable: true, width: 200,
   },
   {
     field: 'lastName', headerName: 'Nachname',
-    editable: false, resizable: true, width: 100,
+    editable: false, resizable: true, width: 200,
   }];

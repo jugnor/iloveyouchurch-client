@@ -16,7 +16,7 @@ import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParam
 import {
   CreateUserRequestSchema,
   UpdateUserRequestSchema,
-  UserModel
+  UserModel, UserRole
 } from "../../../models/UserModel";
 
 export const userRowsRenderer = (data: ResultsObject<UserModel> | undefined, methode: string) => {
@@ -30,7 +30,7 @@ export const userRowsRenderer = (data: ResultsObject<UserModel> | undefined, met
         username:x.username,
         firstName: x.firstName,
         lastName: x.lastName,
-        email: x.email,
+        email: x.email
       }));
     }
   }
@@ -40,7 +40,7 @@ export const userRowsRenderer = (data: ResultsObject<UserModel> | undefined, met
       username:'',
       firstName: '',
       lastName: '',
-      email:'',
+      email:''
     }]
   }
 
@@ -55,7 +55,8 @@ export const upsertUserFormData = (
   let username=""+ params.getValue(params.id, "username");
   const email = "" + params.getValue(params.id, "email");
   const credentials =[{value:email,temporary:false}]
-  const clientRoles= {ilc_client:['POSTBOX_PARTICIPANT']}
+  const role=""+ params.getValue(params.id,"role")
+  const clientRoles= {ilc_client:[role as UserRole]}
   if (create) {
     return {
       firstName :firstName,
@@ -78,7 +79,6 @@ export const upsertUserFormData = (
 
 export const validateUser = (upsertUser: {}, create: boolean): boolean => {
   if (create) {
-    console.log(upsertUser)
     console.log(CreateUserRequestSchema.validate(upsertUser).error)
     return upsertUser !== undefined && !CreateUserRequestSchema.validate(upsertUser).error
   }
@@ -88,19 +88,19 @@ export const validateUser = (upsertUser: {}, create: boolean): boolean => {
 export const userColumns = (): GridColumns => [
   {
     field: 'username',
-    headerName: 'username',
-    width: 220,
+    headerName: 'UserName',
+    width: 250,
     editable: true,
   },
   {
     field: 'email', headerName: 'Email',
-    editable: true, resizable: true, width: 200
+    editable: true, resizable: true, width: 300
   },
   {
-    field: 'firstName', headerName: 'Vorname', type: 'number',
-    editable: true, resizable: true, width: 100,
+    field: 'firstName', headerName: 'Vorname',
+    editable: true, resizable: true, width: 250,
   },
   {
     field: 'lastName', headerName: 'Nachname',
-    editable: true, resizable: true, width: 100,
+    editable: true, resizable: true, width: 250,
   }];

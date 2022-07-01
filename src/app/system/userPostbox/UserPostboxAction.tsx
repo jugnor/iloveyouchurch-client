@@ -18,17 +18,22 @@ import {createTheme} from "@mui/material/styles";
 import {makeStyles} from "@mui/styles";
 import {DataGridRows} from "../../DataGridRows";
 import {
-  addUserToPostboxFormData,
+  upsertUserToPostboxFormData,
   userPostboxColumns,
   userPostboxRowsRenderer,
-  validateAddUserToPostbox,
+  validateUpsertUserToPostbox,
 } from "./UserPostboxRenderer";
 import {UserModel} from "../../../models/UserModel";
 import {useUserPostbox} from "../../../hooks/useUserPostbox";
-import {AddUserToPostboxRequest} from "../../../models/UserPostboxModel";
+import {
+  AddUserToPostboxRequest,
+  UpdateUserToPostboxRequest
+} from "../../../models/UserPostboxModel";
 import {DialogMessageRenderer} from "../../DialogMessageRenderer";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import {SelectItem} from "../../SelectItem";
+import {upsertDisciplineFormData, validateDiscipline} from "../../discipline/DisciplinePrepare";
+import {UpsertDisciplineRequest} from "../../../models/Discipline";
 
 
 interface UserPostboxActionProps {
@@ -74,6 +79,7 @@ export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps
   const [disciplineType, setDisciplineType] = useState<string>(getDisciplineType());
   const {
     addUserToPostbox,
+    updateUserToPostbox,
     removeUserFromPostbox
   } = useUserPostbox(disciplineType);
 
@@ -100,31 +106,57 @@ export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps
       const oId = params.row.oId;
       event.stopPropagation();
       params.api.commitRowChange(params.row.id)
+     if(methode==="create") {
 
-      let addUser = addUserToPostboxFormData(disciplineType, params)
-      if (
-        validateAddUserToPostbox(addUserToPostbox)
-      ) {
+       let addUser = upsertUserToPostboxFormData(disciplineType, oId, params, true)
+       if (
+         validateUpsertUserToPostbox(addUser, true)
+       ) {
 
-        addUserToPostbox(
-          addUser as AddUserToPostboxRequest,
-          true
-        ).then(r => {
-          setMethode("createGet")
-          params.api.setRowMode(params.row.id, 'view');
-          const id = params.row.id;
-          params.api.updateRows([{id, _action: 'delete'}])
-          setOpenAlert(true);
+         addUserToPostbox(
+           addUser as AddUserToPostboxRequest,
+           true
+         ).then(r => {
+           setMethode("createGet")
+           params.api.setRowMode(params.row.id, 'view');
+           const id = params.row.id;
+           params.api.updateRows([{id, _action: 'delete'}])
+           setOpenAlert(true);
 
-          setMessageAlert("Der neue Nutzer wurde erfolgreich hinzugefügt")
-          setSeverity("success")
-        });
-      } else {
-        setOpenAlert(true);
-        setMethode("create")
-        setMessageAlert("Der neue Nutzer konnte nicht hinzugefügt werden")
-        setSeverity("error")
-      }
+           setMessageAlert("Der neue Nutzer wurde erfolgreich hinzugefügt")
+           setSeverity("success")
+         });
+
+       } else {
+         setOpenAlert(true);
+         setMethode("create")
+         setMessageAlert("Der neue Nutzer konnte nicht hinzugefügt werden")
+         setSeverity("error")
+       }
+       let updateUser = upsertUserToPostboxFormData(disciplineType, oId, params, false)
+       if (
+         validateUpsertUserToPostbox(updateUser, true)
+
+       ) {
+         updateUserToPostbox(
+           updateUser as UpdateUserToPostboxRequest,
+           true
+         ).then(r => {
+           setMethode("")
+           params.api.setRowMode(params.row.id, 'view');
+           params.api.updateRows([{...params.row, isNew: false}]);
+           setOpenAlert(true);
+           setMessageAlert("Die neue Rolle wurde dem Nutzer vergeben")
+           setSeverity("success")
+         });
+
+       } else {
+         setOpenAlert(true);
+         setMethode("")
+         setMessageAlert("Die neue Rolle konnte dem Nutzer vergeben werden")
+         setSeverity("error")
+       }
+     }
     }
   };
 
@@ -214,7 +246,7 @@ export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps
     <> <Container>
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
-
+<div>
         <Button color="primary" startIcon={<AddIcon/>}
                 onClick={() =>
                   setMethode('create')}>
@@ -224,6 +256,7 @@ export function UserPostboxAction({postboxId, menuItems}: UserPostboxActionProps
           <SelectItem menuItems={menuItems} setDisciplineType={setDisciplineType}
                       disciplineType={disciplineType}/>
         </div>
+</div>
         <br/>
         <br/>
         <Suspense fallback={null}>
