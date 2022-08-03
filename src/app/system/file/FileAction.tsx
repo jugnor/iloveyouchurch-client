@@ -8,7 +8,7 @@ import {GridActionsCellItem,} from '@mui/x-data-grid';
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Button from "@mui/material/Button";
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import useSWR from "swr";
 import {ResultsObject} from "../../../models/ResultsObject";
 import {GridRenderCellParams} from "@mui/x-data-grid/models/params/gridCellParams";
@@ -17,34 +17,25 @@ import {AlertMessage} from "../../ArletMessageRenderer";
 import {createTheme} from "@mui/material/styles";
 import {makeStyles} from "@mui/styles";
 import {DataGridRows} from "../../DataGridRows";
-import {
-  upsertUserToPostboxFormData,
-  userPostboxColumns,
-  userPostboxRowsRenderer,
-  validateUpsertUserToPostbox,
-} from "./UserPostboxRenderer";
-import {UserModel, UserRole} from "../../../models/UserModel";
-import {useUserPostbox} from "../../../hooks/useUserPostbox";
-import {UpsertUserToPostboxRequest} from "../../../models/UserPostboxModel";
 import {DialogMessageRenderer} from "../../DialogMessageRenderer";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import {SelectItem} from "../../SelectItem";
-import {PostboxModel, PostboxType} from "../../../models/PostboxModel";
-import {useUserProperties} from "../../../hooks/useUserProperties";
+import {useFile} from "../../../hooks/useFile";
+import {
+  fileColumns,
+  fileRowsRenderer,
+  upsertFileFormData,
+  validateUpsertFile
+} from "./FileRenderer";
+import {FileModel, UpdateFileRequest} from "../../../models/File";
+import FileViewModal from "../../FileViewModal";
 
 
-interface UserPostboxActionProps {
-  currentPostboxId: string
-  menuItems: string[]
+interface FileActionProps {
+  postboxId: string
 }
 
-export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActionProps) {
+export function FileAction({postboxId}: FileActionProps) {
 
-  const {
-    data: postbox,
-  } =
-    useSWR<PostboxModel>
-    (`/postboxes/${currentPostboxId}`);
 
   const defaultTheme = createTheme();
 
@@ -59,7 +50,7 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
     }),
     {defaultTheme},
   );
-  const getDisciplineType = (): string => {
+  /*const getDisciplineType = (): string => {
     const first = menuItems.at(0);
     if (first !== undefined) {
       const second = first.split("|").at(0);
@@ -68,7 +59,7 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
       }
     }
     return "";
-  };
+  };*/
 
 
   const classes = useStyles();
@@ -78,21 +69,32 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
   const [severity, setSeverity] = useState<AlertColor>('success');
   const [openAlert, setOpenAlert] = React.useState(false);
   const [methode, setMethode] = useState<string>('');
-  const [disciplineType, setDisciplineType] = useState<string>(getDisciplineType());
+  const [addFile, setAddFile] = useState<File>();
+ // const [disciplineType, setDisciplineType] = useState<string>(getDisciplineType());
+  const [openViewFile, setOpenViewFile] = useState<boolean>(false);
+
   const {
-    addUserToPostbox,
-    updateUserToPostbox,
-    removeUserFromPostbox
-  } = useUserPostbox(postbox?.postboxType===PostboxType.SYSTEM?
-    disciplineType:currentPostboxId);
+    uploadFile,
+    deleteFileMetaData,
+    updateFileMetaData
+  } = useFile(postboxId);
 
   const [openDialog, setOpenDialog] = React.useState(false);
+  const handleUploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files !== null && event.target.files !== undefined) {
+      setAddFile(event.target.files[0]);
+    }
+  };
 
   const handleClickOpenDialog = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
     setOpenDialog(true);
     setParams(params)
   };
 
+  const handleViewClick = (params: GridRenderCellParams) => (event: { stopPropagation: () => void; }) => {
+    setOpenViewFile(true)
+    setParams(params)
+  };
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
@@ -103,6 +105,32 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
     event.stopPropagation();
     params.api.setRowMode(params.row.id, 'edit');
   };
+  const handleSaveFile =()=>{
+    if (addFile !== undefined) {
+
+      uploadFile(
+        addFile,
+        true
+      ).then(r => {
+
+        setOpenAlert(true);
+        setMethode("createGet")
+
+        setMessageAlert("Die Datei wurde erfolgreich hochgeladen")
+        setSeverity("success")
+      });
+
+    } else {
+      setOpenAlert(true);
+      setMethode("createGet")
+      setMessageAlert("Die datei konnte nicht hochgeladen werden")
+      setSeverity("error")
+    }
+  }
+
+  const onCloseFileViewModal =() =>{
+    setOpenViewFile(false)
+  }
 
   const handleSaveClick = (params: GridRenderCellParams) => {
     return (event: { stopPropagation: () => void; }) => {
@@ -110,15 +138,10 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
       event.stopPropagation();
       params.api.commitRowChange(params.row.id)
       if (methode === "create") {
+        if (addFile !== undefined) {
 
-        let addUser = upsertUserToPostboxFormData(postbox?.postboxType===PostboxType.SYSTEM?
-        disciplineType:currentPostboxId, params)
-        if (
-          validateUpsertUserToPostbox(addUser)
-        ) {
-
-          addUserToPostbox(
-            addUser as UpsertUserToPostboxRequest,
+          uploadFile(
+            addFile,
             true
           ).then(r => {
             setMethode("createGet")
@@ -127,39 +150,38 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
             params.api.updateRows([{id, _action: 'delete'}])
             setOpenAlert(true);
 
-            setMessageAlert("Der neue Nutzer wurde erfolgreich hinzugefügt")
+            setMessageAlert("Die Datei wurde erfolgreich hochgeladen")
             setSeverity("success")
           });
 
         } else {
           setOpenAlert(true);
           setMethode("create")
-          setMessageAlert("Der neue Nutzer konnte nicht hinzugefügt werden")
+          setMessageAlert("Die datei konnte nicht hochgeladen werden")
           setSeverity("error")
         }
       } else {
-        let updateUser = upsertUserToPostboxFormData(postbox?.postboxType===PostboxType.SYSTEM?
-          disciplineType:currentPostboxId, params)
+        let updateFile = upsertFileFormData(postboxId, params)
         if (
-          validateUpsertUserToPostbox(updateUser)
+          validateUpsertFile(updateFile)
 
         ) {
-          updateUserToPostbox(
-            updateUser as UpsertUserToPostboxRequest,
+          updateFileMetaData(
+            oId, updateFile as UpdateFileRequest,
             true
           ).then(r => {
             setMethode("")
-            params.api.setRowMode(params.row.id, 'view');
-            params.api.updateRows([{...params.row, isNew: false}]);
             setOpenAlert(true);
-            setMessageAlert("Die neue Rolle wurde dem Nutzer vergeben")
+            setMessageAlert("Die Meta Daten wurden erfolgreich geändert")
             setSeverity("success")
           });
 
         } else {
+          setMethode("createGet")
+          params.api.setRowMode(params.row.id, 'view');
+          params.api.updateRows([{...params.row, isNew: false}]);
           setOpenAlert(true);
-          setMethode("")
-          setMessageAlert("Die neue Rolle konnte dem Nutzer vergeben werden")
+          setMessageAlert("Die Meta daten konnten nicht geändert werden")
           setSeverity("error")
         }
       }
@@ -171,18 +193,18 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
     const id = params.row.id;
     const oId = params.row.oId;
     if (oId !== undefined && oId !== '') {
-      removeUserFromPostbox(oId
+      deleteFileMetaData(oId
       ).then(r => {
-        setMethode("")
+        setMethode("createGet")
         params.api.updateRows([{id, _action: 'delete'}])
         setOpenAlert(true);
-        setMessageAlert("Der Nutzer wurde erfolgreich entfernt")
+        setMessageAlert("Die Datei wurde erfolgreich gelöscht")
         setSeverity("success")
       });
     } else {
       setOpenAlert(true);
       setMethode("")
-      setMessageAlert("Der Nutzer konnte leider nicht entfernt werden")
+      setMessageAlert("Die datei konnte leider nicht entfernt werden")
       setSeverity("error")
     }
     setOpenDialog(false)
@@ -198,7 +220,7 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
   };
 
 
-  const columnsAction = userPostboxColumns(methode === "create").concat(
+  const columnsAction = fileColumns().concat(
     {
       field: 'actions',
       type: 'actions',
@@ -226,6 +248,13 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
         }
         return [
           <GridActionsCellItem
+            icon={<VisibilityIcon/>}
+            label="View"
+            className={classes.textPrimary}
+            onClick={handleViewClick(params)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
             icon={<EditIcon/>}
             label="Edit"
             className={classes.textPrimary}
@@ -243,37 +272,39 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
     });
 
   const {
-    data: users,
+    data:fileString,
   } =
-    useSWR<ResultsObject<UserModel>>
-    (postbox?.postboxType===PostboxType.SYSTEM?`/postboxes/${disciplineType}/users?` +
-      `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`:
-      `/postboxes/${currentPostboxId}/users?` +
+    useSWR<string>
+    (`/postboxes/${postboxId}/files-description/BG?mimeType=image`);
+
+  const {
+    data: files,
+  } =
+    useSWR<ResultsObject<FileModel>>
+    (`/postboxes/${postboxId}/file-results?` +
       `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
-
-
-  return users ? (
+  return files ?(
     <> <Container>
       <Typography component="div" className={"program"} style={
         {overflowY: 'auto'}}>
         <div>
+          <br/>
+          <br/>
+          <input type="file" name="file" onChange={handleUploadFile}/>
+          <br/>
           <Button color="primary" startIcon={<AddIcon/>}
                   onClick={() =>
-                    setMethode('create')}>
-            Add neuen Nutzer in Gruppe
+                    handleSaveFile()}>
+            Add eine neue Datei in Gruppe
           </Button>
-          <div style={{float: 'right'}}>
-            {postbox?.postboxType===PostboxType.SYSTEM && <SelectItem menuItems={menuItems} setDisciplineType={setDisciplineType}
-                                                                      disciplineType={disciplineType}/>}
-          </div>
         </div>
         <br/>
         <br/>
         <Suspense fallback={null}>
           <DataGridRows
-            gridRowsProp={userPostboxRowsRenderer(users, methode)}
-            gridColumns={columnsAction} page={users.page} pageSize={users.size}
-            total={users.total}
+            gridRowsProp={fileRowsRenderer(files, methode)}
+            gridColumns={columnsAction} page={files.page} pageSize={files.size}
+            total={files.total}
             onChangePage={onChangePage}/>
         </Suspense>
       </Typography>
@@ -283,9 +314,10 @@ export function UserPostboxAction({currentPostboxId, menuItems}: UserPostboxActi
                              setOpenDialog={setOpenDialog}
                              params={params}
                              handleDeleteClick={handleDeleteClick}/>
+      {openViewFile && <FileViewModal onCloseFileViewModal={onCloseFileViewModal} fileId={params?.row.oId}/>}
     </Container>
     </>
   ) : (
-    <>Es ist leider etwas in user action schiefgelaufen</>
+    <>Es ist leider etwas in file action schiefgelaufen</>
   );
 }

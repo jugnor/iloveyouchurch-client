@@ -6,7 +6,6 @@ import {PostboxModel} from "../models/PostboxModel";
 import {Box, Card, IconButton, Typography} from "@mui/material";
 import {Link} from 'react-router-dom';
 import {getPostboxPath} from "../utils/router";
-import HeaderMessage from "../headerFooter/HeaderMessage";
 import {useUserProperties} from "../hooks/useUserProperties";
 
 export function PostboxesSelect() {
@@ -29,7 +28,6 @@ export function PostboxesSelect() {
     <Suspense fallback={null}>
       <Header message={'I LOVE YOU CHURCH'}/>
 
-      <div><HeaderMessage/></div>
       <br/>
       <div className='background-image' style={
         {

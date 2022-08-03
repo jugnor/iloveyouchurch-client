@@ -37,6 +37,6 @@ export default function Postbox() {
         {element?.postboxType === PostboxType.DEPARTMENT ?
           <DepartmentPostbox/> : element.postboxType === PostboxType.SYSTEM ?
             <SystemPostbox/> : ''}  </>
-    </Suspense>) : (<>Es ist leider etwas schiefgelaufen</>);
+    </Suspense>) : <>Es ist leider etwas schiefgelaufen</>;
 }
 

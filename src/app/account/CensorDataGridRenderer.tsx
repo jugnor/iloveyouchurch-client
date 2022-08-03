@@ -74,13 +74,13 @@ export function CensorDataGridRenderer({
     data: censorData
   } =
     useSWR<ResultsObject<Account>>
-    (tab==='Censor'?`/postboxes/${postboxId}/account-results?` +
+    (tab==="Censor"?`/postboxes/${postboxId}/account-results?` +
       `week=${startWeek}/${endWeek}` +
       `&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`:`/postboxes/${postboxId}/users/${userId}/account-results?`+
       `&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
 
 
-  const columns = accountColumns(disciplineType)
+  const columns = accountColumns("")
 
   const rows = accountRowsRendererByWeek(censorData, startWeek, methode)
 

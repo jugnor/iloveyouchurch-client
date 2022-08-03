@@ -18,7 +18,11 @@ import {
   UpdateUserRequestSchema,
   UserModel
 } from "../../../models/UserModel";
-import {PostboxModel} from "../../../models/PostboxModel";
+import {
+  CreatePostboxRequestSchema,
+  PostboxModel,
+  UpdatePostboxRequestSchema
+} from "../../../models/PostboxModel";
 import {useUserProperties} from "../../../hooks/useUserProperties";
 
 export const postboxRowsRenderer = (data: ResultsObject<PostboxModel> | undefined, methode: string) => {
@@ -30,7 +34,6 @@ export const postboxRowsRenderer = (data: ResultsObject<PostboxModel> | undefine
         id: randomId(),
         oId:x.id,
         name:x.name,
-        ownerId: x.ownerId,
         postboxType: x.postboxType,
         description: x.description,
         createdAt:x.createdAt
@@ -41,7 +44,6 @@ export const postboxRowsRenderer = (data: ResultsObject<PostboxModel> | undefine
     return [{
       id: randomId(),
       name:'',
-      ownerId: '',
       postboxType: '',
       description:'',
     }]
@@ -52,51 +54,43 @@ export const postboxRowsRenderer = (data: ResultsObject<PostboxModel> | undefine
 };
 
 export const upsertPostboxFormData = (
-                                      create: boolean, params: GridRenderCellParams) => {
+  params: GridRenderCellParams) => {
   const name = "" + params.getValue(params.id, "name");
-  const ownerId = "" + params.getValue(params.id, "ownerId");
   let postboxType=""+ params.getValue(params.id, "postboxType");
   const description = "" + params.getValue(params.id, "description");
-  if (create) {
+
     return {
       name:name,
-      ownerId: ownerId,
       postboxType: postboxType,
       description: description,
-    }
+
   }
-  return {
-    name:name,
-    ownerId: ownerId,
-    postboxType: postboxType,
-    description: description,
-  }
+
 }
 
 export const validatePostbox = (upsertPostbox: {}, create: boolean): boolean => {
   if (create) {
-    return upsertPostbox !== undefined && !CreateUserRequestSchema.validate(upsertPostbox).error
+    return upsertPostbox !== undefined && !CreatePostboxRequestSchema.validate(upsertPostbox).error
   }
-  return upsertPostbox !== undefined && !UpdateUserRequestSchema.validate(upsertPostbox).error
+  console.log(upsertPostbox)
+
+  console.log(UpdatePostboxRequestSchema.validate(upsertPostbox).error)
+  return upsertPostbox !== undefined && !UpdatePostboxRequestSchema.validate(upsertPostbox).error
 }
 
 
-export const postboxColumns = (isSystemAdmin:boolean): GridColumns => [
+export const postboxColumns = (create :boolean): GridColumns => [
   {
     field: 'name',
     headerName: 'Name',
-    width: 220,
-    editable: true,
+    width: 250,
+    editable: create,
   },
   {
-    field: 'ownerId', headerName: 'OwnerId',
-    editable:isSystemAdmin, resizable: true, width: 200
-  },
-  {
-    field: 'postboxType', headerName: 'type', type: 'number',
-    editable: false, resizable: true, width: 100,
+    field: 'postboxType', headerName: 'type',
+    editable: create, resizable: true, width: 200,
   },
   {
     field: 'description', headerName: 'Beschreibung',
-    editable: true, resizable: true, width: 100,
+    editable: true, resizable: true, width: 300,
   }];

@@ -9,6 +9,9 @@ import '../../css/Media.css';
 import ComputerIcon from '@mui/icons-material/Computer';
 import {ActivityType} from "../../models/ActivityType";
 import {ActivityAction} from "./ActivityAction";
+import {FileAction} from "../system/file/FileAction";
+import {ListItemIcon} from "@mui/material";
+import {UserPostboxAction} from "../system/userPostbox/UserPostboxAction";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -83,11 +86,19 @@ export default function AdminTabPanel({postboxId,userId}:AdminTabPanelProps) {
             orientation="vertical"
           >
             <Tab label="Aktivitäten" icon={<ComputerIcon/>} {...a11yProps(0)} />
+            <Tab label="Nutzer zuordnen" icon={<ComputerIcon/>} {...a11yProps(1)} />
+            <Tab label="Dateien" icon={<ListItemIcon/>} {...a11yProps(2)} />
           </Tabs>
           <TabPanel value={value} index={0}>
             <ActivityAction postboxId={postboxId}
                             menuItems={[ActivityType.PROGRAM + "|Program", ActivityType.ANNOUNCEMENT + "|Ankündigung", ActivityType.EVENT
                             + "|Event", ActivityType.PENALTY + "|Straffe"]}/>
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <UserPostboxAction currentPostboxId={postboxId} menuItems={Array.of()}/>
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <FileAction postboxId={postboxId}/>
           </TabPanel>
         </AppBar>
       </div>

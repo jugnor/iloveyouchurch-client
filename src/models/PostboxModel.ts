@@ -19,7 +19,6 @@ export type UpsertPostboxRequest = Except<PostboxModel, 'id' | 'createdAt'>;
 
 export const CreatePostboxRequestSchema: Schema = Joi.object({
   name: Joi.string().required(),
-  ownerId: Joi.string().required(),
   description: Joi.string().required(),
   postboxType: Joi.string().required(),
 });

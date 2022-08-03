@@ -8,7 +8,7 @@ import {ActivityType} from "../models/ActivityType";
 import {ActivityOrder} from "../models/ActivityOrder";
 import {ResultsObject} from "../models/ResultsObject";
 import {
-  AddUserToPostboxRequest,
+  UpsertUserToPostboxRequest,
   UpdateUserToPostboxRequest,
   UserPostboxModel
 } from "../models/UserPostboxModel";
@@ -20,7 +20,7 @@ export function useUserPostbox(postboxId: string) {
 
   const [loading, setLoading] = useState(false);
 
-  const addUserToPostbox = useCallback(async (data: AddUserToPostboxRequest, silent?: boolean) => {
+  const addUserToPostbox = useCallback(async (data: UpsertUserToPostboxRequest, silent?: boolean) => {
       setLoading(true);
       try {
         const newUserResponse = await makeRequestWithFullResponse<UserPostboxModel>(
@@ -46,12 +46,12 @@ export function useUserPostbox(postboxId: string) {
     [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
-  const updateUserToPostbox = useCallback(async (data: UpdateUserToPostboxRequest, silent?: boolean) => {
+  const updateUserToPostbox = useCallback(async (data: UpsertUserToPostboxRequest, silent?: boolean) => {
       setLoading(true);
       try {
         const newUserResponse = await makeRequestWithFullResponse<UserPostboxModel>(
-          `/postboxes/users/add`,
-          'POST',
+          `/postboxes/users/roles`,
+          'PUT',
           data);
 
         await matchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
@@ -71,6 +71,8 @@ export function useUserPostbox(postboxId: string) {
     },
     [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
+
+
   const removeUserFromPostbox = useCallback(
     async (userId: string) => {
       setLoading(true);

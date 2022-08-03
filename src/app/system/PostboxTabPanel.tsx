@@ -13,6 +13,10 @@ import useSWR from "swr";
 import {ResultsObject} from "../../models/ResultsObject";
 import {PostboxModel} from "../../models/PostboxModel";
 import {PostboxAction} from "./postbox/PostboxAction";
+import {ListItemIcon} from "@mui/material";
+import {FileAction} from "./file/FileAction";
+import {ActivityAction} from "../activity/ActivityAction";
+import {ActivityType} from "../../models/ActivityType";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -60,10 +64,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export interface PostboxTabPanelProps {
-
+postboxId:string
 }
 
-export function PostboxTabPanel({}: PostboxTabPanelProps) {
+export function PostboxTabPanel({postboxId}: PostboxTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -76,12 +80,7 @@ export function PostboxTabPanel({}: PostboxTabPanelProps) {
     useSWR<ResultsObject<PostboxModel>>
     (`/postboxes`);
 
-  const extractPostboxes = (): string[] => {
-    if (postboxes !== undefined) {
-      return postboxes.items.map(item => item.id + "|" + item.name)
-    }
-    return [];
-  }
+
 
   return (
     <Suspense fallback={null}>
@@ -97,10 +96,19 @@ export function PostboxTabPanel({}: PostboxTabPanelProps) {
             aria-label="scrollable force tabs example"
             orientation="vertical"
           >
-            <Tab label="Abteilung" icon={<ComputerIcon/>} {...a11yProps(0)} />
+            <Tab label="Abteilungen" icon={<ComputerIcon/>} {...a11yProps(0)} />
+            <Tab label="Informationen" icon={<ComputerIcon/>} {...a11yProps(1)} />
+            <Tab label="Dateien" icon={<ComputerIcon/>} {...a11yProps(2)} />
           </Tabs>
           <TabPanel value={value} index={0}>
             <PostboxAction/>
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <ActivityAction postboxId={postboxId}
+                            menuItems={[ActivityType.NEWS+ "|Informationen"]}/>
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <FileAction postboxId={postboxId}/>
           </TabPanel>
         </AppBar>
       </div>

@@ -10,8 +10,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import {UserAction} from "./user/UserAction";
 import {UserPostboxAction} from "./userPostbox/UserPostboxAction";
 import useSWR from "swr";
-import {ResultsObject} from "../../models/ResultsObject";
-import {PostboxModel} from "../../models/PostboxModel";
+import {PostboxModel, PostboxType} from "../../models/PostboxModel";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -78,7 +77,7 @@ export function UserTabPanel({postboxId, userId}: UserTabPanelProps) {
 
   const extractPostboxes = (): string[] => {
     if (postboxes !== undefined) {
-      return postboxes.map(item => item.id + "|" + item.name)
+      return postboxes.filter(it=>it.postboxType!==PostboxType.SYSTEM).map(item => item.id + "|" + item.name)
     }
     return [];
   }
@@ -104,7 +103,7 @@ export function UserTabPanel({postboxId, userId}: UserTabPanelProps) {
             <UserAction/>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <UserPostboxAction postboxId={postboxId} menuItems={extractPostboxes()}/>
+            <UserPostboxAction currentPostboxId={postboxId} menuItems={extractPostboxes()}/>
           </TabPanel>
         </AppBar>
       </div>

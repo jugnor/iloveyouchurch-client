@@ -37,7 +37,7 @@ export const accountRowsRendererByWeek = (data: ResultsObject<Account> | undefin
   return allRows;
 };
 
-export const accountColumns = (disciplineType: string): GridColumns => [
+export const accountColumns = (disc:string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',
@@ -45,7 +45,7 @@ export const accountColumns = (disciplineType: string): GridColumns => [
     editable: false,
   },
   {
-    field: 'name', headerName: 'userName', type: 'boolean',
+    field: 'name', headerName: 'Name', type: 'boolean',
     editable: true, resizable: true, width: 100
   },
   {
@@ -70,31 +70,31 @@ export const accountColumns = (disciplineType: string): GridColumns => [
   },
   {
     field: 'partialFasting', headerName: 'Teil-Fasten', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100
   },
   {
     field: 'completeFasting', headerName: 'Komplettes Fasten', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100
   },
 
   {
     field: 'choreRepeat', headerName: 'Probe', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100
   },
   {
     field: 'godGiving', headerName: 'Spende', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100
   },
   {
     field: 'gospel', headerName: 'Evangelisation', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100,
   },
   {
     field: 'retreat', headerName: 'Auszeit', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100
   },
   {
     field: 'christianLiteratureReading', headerName: 'Buch-Lesen', type: 'boolean',
-    editable: true, resizable: true, width: 100, hide: true
+    editable: true, resizable: true, width: 100
   },
 ];

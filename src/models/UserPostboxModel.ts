@@ -1,6 +1,5 @@
 import Joi, {Schema} from 'joi';
 import {UserRole} from "./UserModel";
-import {GodGivingType} from "./GodGiving";
 
 
 export interface UserPostboxModel {
@@ -11,7 +10,7 @@ export interface UserPostboxModel {
   createdAt: string;
 }
 
-export interface AddUserToPostboxRequest {
+export interface UpsertUserToPostboxRequest {
   postboxId: string;
   email: string;
   userRole:UserRole;
@@ -23,7 +22,7 @@ export interface UpdateUserToPostboxRequest {
   userRole:UserRole;
 }
 
-export const AddUserToPostboxRequestSchema: Schema = Joi.object({
+export const UpsertUserToPostboxRequestSchema: Schema = Joi.object({
   postboxId: Joi.string().required(),
   email: Joi.string().email({tlds: {allow: false}}).required(),
   userRole:Joi.string()

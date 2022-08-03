@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
-import {GridActionsCellItem,} from '@mui/x-data-grid';
+import {GridActionsCellItem} from '@mui/x-data-grid';
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Button from "@mui/material/Button";
@@ -85,7 +85,7 @@ export function PostboxAction({}: PostboxActionProps) {
       params.api.commitRowChange(params.row.id)
 
       if (methode === "create") {
-        let upsertPostbox = upsertPostboxFormData(true, params)
+        let upsertPostbox = upsertPostboxFormData(params)
         if (
           validatePostbox(upsertPostbox, true)
         ) {
@@ -110,7 +110,7 @@ export function PostboxAction({}: PostboxActionProps) {
           setSeverity("error")
         }
       } else {
-        let upsertPostbox = upsertPostboxFormData(false, params)
+        let upsertPostbox = upsertPostboxFormData( params)
         if (
           validatePostbox(upsertPostbox, false)
 
@@ -147,7 +147,7 @@ export function PostboxAction({}: PostboxActionProps) {
   };
 
 
-  const columnsAction = postboxColumns(isSystemAdmin).concat(
+  const columnsAction = postboxColumns(methode === "create").concat(
     {
       field: 'actions',
       type: 'actions',
@@ -193,6 +193,7 @@ export function PostboxAction({}: PostboxActionProps) {
     useSWR<ResultsObject<PostboxModel>>
     (`/postbox-results?` +
       `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`);
+
   return data ? (
     <> <Container>
       <Typography component="div" className={"program"} style={

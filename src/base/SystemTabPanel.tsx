@@ -84,7 +84,7 @@ export default function SystemTabPanel() {
           <UserTabPanel postboxId={currentPostboxId} userId={userId}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <PostboxTabPanel/>
+          <PostboxTabPanel postboxId={currentPostboxId}/>
         </TabPanel>
 
       </AppBar>

@@ -14,24 +14,28 @@ const METHODE = 'GET';
 
 export function AppContainer({ children }: AppContainerProps) {
  // const { alert, renderAlertContainer } = useAlerts();
+
   const { makeRequest } = useApi();
   const swrConfig = useMemo<Partial<Configuration>>(
     () => ({
       cache,
       errorRetryCount: 0,
       fetcher: (url) => makeRequest(`${url}`, METHODE),
-      onError: (error) => {
+      /*onErrorRetry: (err,key) => {
         if (
-          error &&
-          (String(error.status).startsWith('4') ||
-            String(error.status).startsWith('5'))
+          err &&
+          (String(err.status).startsWith('4') ||
+            String(err.status).startsWith('5'))
         ) {
+          { console.log("lalala")}
           alert('error,Da ist leider etwas schiefgelaufen.');
-          throw new Error(error);
+          throw new Error(err);
+        }else {
+          { console.log("lalala",err.statusText)}
         }
-      },
+      },*/
       revalidateOnFocus: false,
-      suspense: true
+      suspense: false
     }),
     [makeRequest]
   );

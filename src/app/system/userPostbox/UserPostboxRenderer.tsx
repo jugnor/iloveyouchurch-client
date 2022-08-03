@@ -19,7 +19,7 @@ import {
   UserModel, UserRole
 } from "../../../models/UserModel";
 import {
-  AddUserToPostboxRequestSchema,
+  UpsertUserToPostboxRequestSchema,
   UpdateUserRoleInPostboxRequestSchema
 } from "../../../models/UserPostboxModel";
 
@@ -51,37 +51,32 @@ export const userPostboxRowsRenderer = (data: ResultsObject<UserModel> | undefin
 };
 
 export const upsertUserToPostboxFormData = (
-                                      postboxId:string,userId:string, params: GridRenderCellParams,add:boolean) => {
+                                      postboxId:string, params: GridRenderCellParams) => {
   const email = "" + params.getValue(params.id, "email");
-  const userRole = "" + params.getValue(params.id, "useRole");
+  const userRole = "" + params.getValue(params.id, "userRole");
 
-  if(add){
+
   return {
     email:email,
     postboxId:postboxId,
     userRole:userRole as UserRole
   }
-}
-  return {
-    userId:userId,
-    postboxId:postboxId,
-    userRole:userRole as UserRole
-  }
+
   }
 
-export const validateUpsertUserToPostbox = (upsertUserToPostbox: {},create:boolean): boolean => {
-  if(create){
-    return upsertUserToPostbox !== undefined && !AddUserToPostboxRequestSchema.validate(upsertUserToPostbox).error
-  }
-  return upsertUserToPostbox !== undefined && !UpdateUserRoleInPostboxRequestSchema.validate(upsertUserToPostbox).error
+export const validateUpsertUserToPostbox = (upsertUserToPostbox: {}): boolean => {
+  console.log(upsertUserToPostbox);
+ console.log(UpsertUserToPostboxRequestSchema.validate(upsertUserToPostbox).error);
+  return upsertUserToPostbox !== undefined && !UpsertUserToPostboxRequestSchema.validate(upsertUserToPostbox).error
 }
 
-export const userPostboxColumns = (): GridColumns => [
+export const userPostboxColumns = (create:boolean): GridColumns => [
   {
     field: 'username',
     headerName: 'username',
     width: 220,
     editable: false,
+    hide:create
   },
   {
     field: 'email', headerName: 'Email',
@@ -93,9 +88,9 @@ export const userPostboxColumns = (): GridColumns => [
   },
   {
     field: 'firstName', headerName: 'Vorname',
-    editable: false, resizable: true, width: 200,
+    editable: false, resizable: true, width: 200,hide:create
   },
   {
     field: 'lastName', headerName: 'Nachname',
-    editable: false, resizable: true, width: 200,
+    editable: false, resizable: true, width: 200,hide:create
   }];

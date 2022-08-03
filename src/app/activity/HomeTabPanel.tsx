@@ -86,7 +86,7 @@ export function HomeTabPanel({postboxId,userId}:HomeTabPanelProps) {
             <HomeDataGridRenderer postboxId={postboxId}
                               type={"Activity"}
                               menuItems={[ActivityType.PROGRAM + "|Program", ActivityType.ANNOUNCEMENT + "|Ankündigung", ActivityType.EVENT
-                              + "|Event", ActivityType.PENALTY + "|Straffe"]}/>
+                              + "|Event", ActivityType.PENALTY + "|Straffe",ActivityType.NEWS+ "|Information"]}/>
           </TabPanel>
         </AppBar>
       </div>
