@@ -1,16 +1,16 @@
-import React, {Suspense} from "react";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import {makeStyles, Theme} from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import React, { Suspense } from 'react';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import '../../css/Media.css';
 import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
-import {ActivityAction} from "../activity/ActivityAction";
-import {ActivityType} from "../../models/ActivityType";
-import ComputerIcon from "@mui/icons-material/Computer";
-import {CensorDataGridRenderer} from "./CensorDataGridRenderer";
+import { ActivityAction } from '../activity/ActivityAction';
+import { ActivityType } from '../../models/ActivityType';
+import ComputerIcon from '@mui/icons-material/Computer';
+import { CensorDataGridRenderer } from './CensorDataGridRenderer';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -19,7 +19,7 @@ interface TabPanelProps {
 }
 
 function TabPanel(props: TabPanelProps) {
-  const {children, value, index, ...other} = props;
+  const { children, value, index, ...other } = props;
 
   return (
     <div
@@ -32,7 +32,6 @@ function TabPanel(props: TabPanelProps) {
       {value === index && (
         <Box p={3}>
           <Typography>{children}</Typography>
-
         </Box>
       )}
     </div>
@@ -42,7 +41,7 @@ function TabPanel(props: TabPanelProps) {
 function a11yProps(index: any) {
   return {
     id: `scrollable-force-tab-${index}`,
-    'aria-controls': `scrollable-force-tabpanel-${index}`,
+    'aria-controls': `scrollable-force-tabpanel-${index}`
   };
 }
 
@@ -54,16 +53,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     left: '10%',
     position: 'revert',
     // backgroundColor: theme.palette.background.paper,
-    backgroundColor: theme.palette.background.paper,
-  },
+    backgroundColor: theme.palette.background.paper
+  }
 }));
 
 export interface CensorTabPanelProps {
-  postboxId: string
-  userId: string
+  postboxId: string;
+  userId: string;
 }
 
-export function CensorTabPanel({postboxId, userId}: CensorTabPanelProps) {
+export function CensorTabPanel({ postboxId, userId }: CensorTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -71,7 +70,8 @@ export function CensorTabPanel({postboxId, userId}: CensorTabPanelProps) {
     setValue(newValue);
   };
 
-  return (<Suspense fallback={null}>
+  return (
+    <Suspense fallback={null}>
       <div className={classes.root}>
         <AppBar position="static" color="transparent">
           <Tabs
@@ -84,17 +84,32 @@ export function CensorTabPanel({postboxId, userId}: CensorTabPanelProps) {
             aria-label="scrollable force tabs example"
             orientation="vertical"
           >
-            <Tab label="Berichte Überprüfen" icon={<ScreenSearchDesktopIcon/>} {...a11yProps(0)} />
-            <Tab label="Aktivitäten" icon={<ComputerIcon/>} {...a11yProps(1)} /> </Tabs>
+            <Tab
+              label="Berichte Überprüfen"
+              icon={<ScreenSearchDesktopIcon />}
+              {...a11yProps(0)}
+            />
+            <Tab
+              label="Aktivitäten"
+              icon={<ComputerIcon />}
+              {...a11yProps(1)}
+            />{' '}
+          </Tabs>
           <TabPanel value={value} index={0}>
-            <div><CensorDataGridRenderer postboxId={postboxId}
-                                         userId={userId}
-                                         tab={"Censor"}
-                                         menuItems={[]}/></div>
+            <div>
+              <CensorDataGridRenderer
+                postboxId={postboxId}
+                userId={userId}
+                tab={'Censor'}
+                menuItems={[]}
+              />
+            </div>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <ActivityAction postboxId={postboxId}
-                            menuItems={[ActivityType.PENALTY + "|Straffe"]}/>
+            <ActivityAction
+              postboxId={postboxId}
+              menuItems={[ActivityType.PENALTY + '|Straffe']}
+            />
           </TabPanel>
         </AppBar>
       </div>

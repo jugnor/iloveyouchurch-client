@@ -1,8 +1,7 @@
-import {ReactNode, useEffect} from 'react';
+import { ReactNode, useEffect } from 'react';
 
 import { useKeycloak } from '@react-keycloak/web';
 import { Route } from 'react-router-dom';
-
 
 interface GuardedRouteProps {
   children?: ReactNode | ReactNode[];

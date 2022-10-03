@@ -1,21 +1,18 @@
-import {useCallback, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {Activity, UpsertActivityRequest} from "../models/Activity";
-import {matchMutate} from '../swr';
-import {useApi} from './useApi';
-import useSWR, {mutate, SWRResponse} from "swr";
-import {ActivityType} from "../models/ActivityType";
-import {ActivityOrder} from "../models/ActivityOrder";
-import {ResultsObject} from "../models/ResultsObject";
-
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Activity, UpsertActivityRequest } from '../models/Activity';
+import { matchMutate } from '../swr';
+import { useApi } from './useApi';
+import useSWR, { mutate, SWRResponse } from 'swr';
+import { ActivityType } from '../models/ActivityType';
 
 export function useActivity(postboxId: string) {
-  const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
-  const {t} = useTranslation();
+  const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
 
- /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
+  /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
     const {
       data,
       error
@@ -27,14 +24,15 @@ export function useActivity(postboxId: string) {
     return useSWR<ResultsObject<Activity>>(`/postboxes/${postboxId}/activity-results?type=${type}`);
   }*/
 
-
-  const createActivity = useCallback(async (data: UpsertActivityRequest, silent?: boolean) => {
+  const createActivity = useCallback(
+    async (data: UpsertActivityRequest, silent?: boolean) => {
       setLoading(true);
       try {
         const newActivityResponse = await makeRequestWithFullResponse<Activity>(
           `/postboxes/${postboxId}/activities`,
           'POST',
-          data);
+          data
+        );
 
         await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
 
@@ -58,11 +56,14 @@ export function useActivity(postboxId: string) {
   );
 
   const deleteActivity = useCallback(
-    async (activityId: string,activityType:string) => {
+    async (activityId: string, activityType: string) => {
       setLoading(true);
 
       try {
-        await makeRequest(`/postboxes/${postboxId}/activities/${activityId}?type=${activityType}`, 'DELETE');
+        await makeRequest(
+          `/postboxes/${postboxId}/activities/${activityId}?type=${activityType}`,
+          'DELETE'
+        );
 
         await matchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
 
@@ -81,9 +82,13 @@ export function useActivity(postboxId: string) {
   );
 
   const updateActivity = useCallback(
-    async (activityId: string, data: UpsertActivityRequest, silent?: boolean) => {
+    async (
+      activityId: string,
+      data: UpsertActivityRequest,
+      silent?: boolean
+    ) => {
       setLoading(true);
-  console.log("id: "+activityId)
+      console.log('id: ' + activityId);
       try {
         const updatedCase = await makeRequest<Activity>(
           `/postboxes/${postboxId}/activities/${activityId}`,
@@ -119,9 +124,14 @@ export function useActivity(postboxId: string) {
     async (activityType: ActivityType, week?: string) => {
       setLoading(true);
       try {
-        const activities = await makeRequest<Activity[]>(`/postboxes/${postboxId}/activity-results?type=${activityType}&week=${week}`, 'GET');
+        const activities = await makeRequest<Activity[]>(
+          `/postboxes/${postboxId}/activity-results?type=${activityType}&week=${week}`,
+          'GET'
+        );
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/activity-results.*$`));
+        await matchMutate(
+          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
+        );
 
         await matchMutate(
           new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
@@ -140,6 +150,5 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createActivity, updateActivity, deleteActivity};
+  return { createActivity, updateActivity, deleteActivity };
 }
-

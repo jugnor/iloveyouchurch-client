@@ -3,25 +3,32 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
-import Select, {SelectChangeEvent} from '@mui/material/Select';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { ActivityType } from '../models/ActivityType';
+import { translateActivityType } from '../models/Activity';
 
 interface SelectItemProps {
-  menuItems: string[]
-  setDisciplineType: (disciplineType: string) => void
-  disciplineType: string
+  setActivityType: (disciplineType: string) => void;
+  activityType: string;
 }
 
-export function SelectItem({menuItems, setDisciplineType, disciplineType}: SelectItemProps) {
-
-  const [localDiscipleType, setLocalDisciplineType] = React.useState(disciplineType);
-
+export function SelectItem({ setActivityType, activityType }: SelectItemProps) {
+  const [localDiscipleType, setLocalDisciplineType] =
+    React.useState(activityType);
+  const menuItems = Array.of(
+    ActivityType.NEWS,
+    ActivityType.PENALTY,
+    ActivityType.EVENT,
+    ActivityType.ANNOUNCEMENT,
+    ActivityType.PROGRAM
+  );
   const handleChange = (event: SelectChangeEvent) => {
     setLocalDisciplineType(event.target.value);
-    setDisciplineType(event.target.value)
+    setActivityType(event.target.value);
   };
   return (
     <div>
-      <FormControl sx={{m: 1, minWidth: 120}}>
+      <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id="demo-simple-select-helper-label">Auswahl</InputLabel>
         <Select
           labelId="demo-simple-select-helper-label"
@@ -30,9 +37,11 @@ export function SelectItem({menuItems, setDisciplineType, disciplineType}: Selec
           label="Discipline"
           onChange={handleChange}
         >
-          {menuItems.map(x => <MenuItem value={x.split("|").at(0)}>
-            <em>{x.split("|").at(1)}</em>
-          </MenuItem>)}
+          {menuItems.map((item) => (
+            <MenuItem value={item}>
+              <em>{translateActivityType(item)}</em>
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </div>

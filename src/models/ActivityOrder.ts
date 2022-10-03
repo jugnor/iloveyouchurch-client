@@ -5,8 +5,5 @@ export enum ActivityOrder {
   ORDER4 = 'ORDER4',
   ORDER5 = 'ORDER5',
   ORDER6 = 'ORDER6',
-  ORDER7 = 'ORDER7',
-
+  ORDER7 = 'ORDER7'
 }
-
-

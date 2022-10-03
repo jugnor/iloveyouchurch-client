@@ -1,26 +1,27 @@
-import {useCallback, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {matchMutate} from '../swr';
-import {useApi} from './useApi';
-import {mutate} from "swr";
-import {Reading, UpsertReadingRequest} from "../models/Reading";
-import {Discipline, UpsertDisciplineRequest} from "../models/Discipline";
-import {UpsertUserRequest, UserModel} from "../models/UserModel";
-
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { matchMutate } from '../swr';
+import { useApi } from './useApi';
+import { mutate } from 'swr';
+import { Reading, UpsertReadingRequest } from '../models/Reading';
+import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
+import { UpsertUserRequest, UserModel } from '../models/UserModel';
 
 export function useUser() {
-  const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
-  const {t} = useTranslation();
+  const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
 
-  const createUser = useCallback(async (data: UpsertUserRequest, silent?: boolean) => {
+  const createUser = useCallback(
+    async (data: UpsertUserRequest, silent?: boolean) => {
       setLoading(true);
       try {
         const newUseUserResponse = await makeRequestWithFullResponse<UserModel>(
           `/users`,
           'POST',
-          data);
+          data
+        );
 
         await matchMutate(new RegExp(`^/users.*$`));
 
@@ -53,7 +54,6 @@ export function useUser() {
 
         await matchMutate(new RegExp(`^/users.*$`));
 
-
         if (!silent) {
           alert('success: Änderungen gespeichert.');
         }
@@ -71,6 +71,5 @@ export function useUser() {
     [alert, makeRequest, t]
   );
 
-  return {createUser, updateUser, loading};
+  return { createUser, updateUser, loading };
 }
-

@@ -4,18 +4,11 @@ import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import Button from '@mui/material/Button';
 import SaveIcon from '@material-ui/icons/Save';
-import { useActivity } from '../../hooks/useActivity';
-import { Activity, UpsertActivityRequest } from '../../models/Activity';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellParams';
 import { AlertColor } from '@mui/material/Alert';
-import {
-  activityColumns,
-  activityRowsRendererByType,
-  upsertActivityFormData,
-  validateActivity
-} from './ActivityPrepare';
+
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import CancelIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,19 +16,27 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import useSWR from 'swr';
 import { ResultsObject } from '../../models/ResultsObject';
 import AddIcon from '@mui/icons-material/Add';
-import { SelectItem } from '../SelectItem';
 import { DataGridRows } from '../DataGridRows';
 import { AlertMessage } from '../ArletMessageRenderer';
 import { DialogMessageRenderer } from '../DialogMessageRenderer';
+import { useRegulation } from '../../hooks/useRegulation';
+import {
+  regulationColumns,
+  regulationRowsRenderer,
+  upsertRegulationFormData,
+  validateRegulation
+} from './RegulationRenderer';
+import { Regulation, UpsertRegulationRequest } from '../../models/Regulation';
+import { validateActivity } from '../activity/ActivityPrepare';
 
-interface ActivityActionProps {
+interface RegulationActionProps {
   postboxId: string;
-  menuItems: string[];
+  action: boolean;
 }
 
-export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
-  const { createActivity, updateActivity, deleteActivity } =
-    useActivity(postboxId);
+export function RegulationAction({ postboxId, action }: RegulationActionProps) {
+  const { createRegulation, updateRegulation, deleteRegulation } =
+    useRegulation(postboxId);
 
   const defaultTheme = createTheme();
 
@@ -51,23 +52,9 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
     { defaultTheme }
   );
 
-  const getDisciplineType = (): string => {
-    const first = menuItems.at(0);
-    if (first !== undefined) {
-      const second = first.split('|').at(0);
-      if (second !== undefined) {
-        return second;
-      }
-    }
-    return '';
-  };
-
   const classes = useStyles();
   const [params, setParams] = useState<GridRenderCellParams>();
   const [page, setPage] = React.useState(0);
-  const [disciplineType, setDisciplineType] = useState<string>(
-    getDisciplineType()
-  );
   const [messageAlert, setMessageAlert] = useState<string>('');
   const [severity, setSeverity] = useState<AlertColor>('success');
   const [openAlert, setOpenAlert] = React.useState(false);
@@ -85,7 +72,6 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
   const onChangePage = (newPage: number) => {
     setPage(newPage);
     setMethode('get');
-    //setMethode("get" + startWeek)
   };
 
   const handleEditClick =
@@ -102,20 +88,21 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
       params.api.commitRowChange(params.row.id);
 
       if (methode === 'create') {
-        let upsertActivity = upsertActivityFormData(params, disciplineType);
-        if (validateActivity(upsertActivity)) {
-          createActivity(upsertActivity as UpsertActivityRequest, true).then(
-            (r) => {
-              setMethode('createGet');
-              params.api.setRowMode(params.row.id, 'view');
-              const id = params.row.id;
-              params.api.updateRows([{ id, _action: 'delete' }]);
-              setOpenAlert(true);
+        let upsertRegulation = upsertRegulationFormData(postboxId, params);
+        if (validateRegulation(upsertRegulation)) {
+          createRegulation(
+            upsertRegulation as UpsertRegulationRequest,
+            true
+          ).then((r) => {
+            setMethode('createGet');
+            params.api.setRowMode(params.row.id, 'view');
+            const id = params.row.id;
+            params.api.updateRows([{ id, _action: 'delete' }]);
+            setOpenAlert(true);
 
-              setMessageAlert('Das neue Item wurde erfolgreich hinzugefügt');
-              setSeverity('success');
-            }
-          );
+            setMessageAlert('Das neue Item wurde erfolgreich hinzugefügt');
+            setSeverity('success');
+          });
         } else {
           setOpenAlert(true);
           setMethode('create');
@@ -123,11 +110,11 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
           setSeverity('error');
         }
       } else {
-        let upsertActivity = upsertActivityFormData(params, disciplineType);
-        if (validateActivity(upsertActivity)) {
-          updateActivity(
+        let upsertRegulation = upsertRegulationFormData(postboxId, params);
+        if (validateRegulation(upsertRegulation)) {
+          updateRegulation(
             aId,
-            upsertActivity as UpsertActivityRequest,
+            upsertRegulation as UpsertRegulationRequest,
             true
           ).then((r) => {
             setMethode('');
@@ -140,7 +127,7 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
         } else {
           setOpenAlert(true);
           setMethode('');
-          setMessageAlert('Das Item konnte leider nicht geändert werden');
+          setMessageAlert('Das neue Item konnte leider nicht geändert werden');
           setSeverity('error');
         }
       }
@@ -152,10 +139,9 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
     (event: { stopPropagation: () => void }) => {
       event.stopPropagation();
       const id = params.row.id;
-      const aId = params.row.aId;
-      const activityType = params.row.activityType;
-      if (aId !== undefined && aId !== '') {
-        deleteActivity(aId, activityType).then((r) => {
+      const oId = params.row.aId;
+      if (oId !== undefined && oId !== '') {
+        deleteRegulation(oId).then((r) => {
           setMethode('');
           params.api.updateRows([{ id, _action: 'delete' }]);
           setOpenAlert(true);
@@ -182,7 +168,7 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
       }
     };
 
-  const columnsAction = activityColumns(disciplineType).concat({
+  const columnsAction = regulationColumns().concat({
     field: 'actions',
     type: 'actions',
     headerName: 'Actions',
@@ -197,6 +183,7 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
             label="Save"
             onClick={handleSaveClick(params)}
             color="primary"
+            hidden={!action}
           />,
           <GridActionsCellItem
             icon={<CancelIcon />}
@@ -204,6 +191,7 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
             className={classes.textPrimary}
             onClick={handleCancelClick(params)}
             color="inherit"
+            hidden={!action}
           />
         ];
       }
@@ -214,20 +202,22 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
           className={classes.textPrimary}
           onClick={handleEditClick(params)}
           color="inherit"
+          hidden={!action}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
           onClick={handleClickOpenDialog(params)}
           color="inherit"
+          hidden={!action}
         />
       ];
     }
   });
 
-  const { data, error, mutate } = useSWR<ResultsObject<Activity>>(
-    `/postboxes/${postboxId}/activity-results?` +
-      `&type=${disciplineType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
+  const { data, error, mutate } = useSWR<ResultsObject<Regulation>>(
+    `/postboxes/${postboxId}/regulation-results?` +
+      `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
   return data ? (
     <>
@@ -242,27 +232,25 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
             <br />
             <br />
             <br />
-            <Button
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => setMethode('create')}
-            >
-              Add neues Item
-            </Button>
-            <div style={{ float: 'right' }}>
-              <SelectItem
-                menuItems={menuItems}
-                setActivityType={setDisciplineType}
-                activityType={disciplineType}
-              />
-            </div>
+            {action ? (
+              <Button
+                hidden={!action}
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => setMethode('create')}
+              >
+                Add neues Item
+              </Button>
+            ) : (
+              ''
+            )}
           </div>
           <br />
           <br />
           <Suspense fallback={null}>
             <DataGridRows
-              gridRowsProp={activityRowsRendererByType(data, methode)}
-              gridColumns={columnsAction}
+              gridRowsProp={regulationRowsRenderer(data, methode)}
+              gridColumns={action ? columnsAction : regulationColumns()}
               page={data.page}
               pageSize={data.size}
               total={data.total}

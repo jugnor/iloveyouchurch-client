@@ -1,35 +1,37 @@
-import axios, {Method, ResponseType} from 'axios';
-import {useCallback} from 'react';
+import axios, { Method, ResponseType } from 'axios';
+import { useCallback } from 'react';
 
-import {useKeycloak} from '@react-keycloak/web';
+import { useKeycloak } from '@react-keycloak/web';
 
 export interface RequestOptions {
   onUploadProgress?: (progressEvent: ProgressEvent) => void;
   responseType?: ResponseType;
 }
 
-
 export function useApi() {
-  const {keycloak} = useKeycloak();
+  const { keycloak } = useKeycloak();
   const apiUrl = process.env.REACT_APP_API_URL;
-  const fetcher = (url: string) => axios.request({
-    headers: {
-      Authorization: keycloak.token
-        ? `Bearer ${keycloak.token}`
-        : undefined,
-      'Content-type': 'application/json'
-    },
-    method: "GET",
-    responseType: 'json',
-    url: `${apiUrl}${encodeURI(url)}`
-  })
-  .then(res => {
-      return res.data
-  }).catch(err => {
-    // Do something for an error here
-    console.log("Error Reading data " + err);
-    return ""
-  });
+  const fetcher = (url: string) =>
+    axios
+      .request({
+        headers: {
+          Authorization: keycloak.token
+            ? `Bearer ${keycloak.token}`
+            : undefined,
+          'Content-type': 'application/json'
+        },
+        method: 'GET',
+        responseType: 'json',
+        url: `${apiUrl}${encodeURI(url)}`
+      })
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        // Do something for an error here
+        console.log('Error Reading data ' + err);
+        return '';
+      });
   const makeRequestWithFullResponse = useCallback(
     async <T>(
       url: string,
@@ -49,7 +51,7 @@ export function useApi() {
             ? data instanceof FormData
               ? 'multipart/form-data'
               : 'application/json'
-            : undefined,
+            : undefined
         },
         method,
         responseType: optionsResponseType || 'json',
@@ -67,12 +69,18 @@ export function useApi() {
       optionsUpload?: (progressEvent: ProgressEvent) => void,
       optionsResponseType?: ResponseType
     ) => {
-      return (await makeRequestWithFullResponse<T>(url, method, data, optionsUpload, optionsResponseType))
-        .data;
+      return (
+        await makeRequestWithFullResponse<T>(
+          url,
+          method,
+          data,
+          optionsUpload,
+          optionsResponseType
+        )
+      ).data;
     },
     [makeRequestWithFullResponse]
   );
 
-  return {makeRequest, makeRequestWithFullResponse,fetcher};
-
+  return { makeRequest, makeRequestWithFullResponse, fetcher };
 }

@@ -1,6 +1,6 @@
-import Joi, {Schema} from 'joi';
-import {Except} from 'type-fest';
-import {UserTime} from "./UserTime";
+import Joi, { Schema } from 'joi';
+import { Except } from 'type-fest';
+import { UserTime } from './UserTime';
 
 export enum RetreatType {
   MEDITATION = 'MEDITATION',
@@ -13,7 +13,7 @@ export interface Meditation {
   timeInHour: number;
   theme: string;
   verse: string;
-  total:number;
+  total: number;
   retreatType: RetreatType;
   userTime: UserTime;
   createdAt?: Date;
@@ -21,11 +21,10 @@ export interface Meditation {
 
 export type UpsertMeditationRequest = Except<Meditation, 'id' | 'createdAt'>;
 
-
 export const CreateMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()
-  .valid(...Object.values(RetreatType))
-  .required(),
+    .valid(...Object.values(RetreatType))
+    .required(),
   timeInMinute: Joi.number().min(0).required(),
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
@@ -35,11 +34,10 @@ export const CreateMeditationRequestSchema: Schema = Joi.object({
 
 export const UpdateMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()
-  .valid(...Object.values(RetreatType))
-  .required(),
+    .valid(...Object.values(RetreatType))
+    .required(),
   timeInMinute: Joi.number().min(0).required(),
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
-  verse: Joi.string().optional().allow(''),
+  verse: Joi.string().optional().allow('')
 });
-

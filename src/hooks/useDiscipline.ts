@@ -1,15 +1,14 @@
-import {useCallback, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {matchMutate} from '../swr';
-import {useApi} from './useApi';
-import {mutate} from "swr";
-import {Reading, UpsertReadingRequest} from "../models/Reading";
-import {Discipline, UpsertDisciplineRequest} from "../models/Discipline";
-
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { matchMutate } from '../swr';
+import { useApi } from './useApi';
+import { mutate } from 'swr';
+import { Reading, UpsertReadingRequest } from '../models/Reading';
+import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
 
 export function useDiscipline(postboxId: string, userId: string, path: string) {
-  const {makeRequest, makeRequestWithFullResponse, fetcher} = useApi();
-  const {t} = useTranslation();
+  const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
 
@@ -21,18 +20,25 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
     return data;
   }*/
 
-  const createDiscipline = useCallback(async (data: UpsertDisciplineRequest, silent?: boolean) => {
+  const createDiscipline = useCallback(
+    async (data: UpsertDisciplineRequest, silent?: boolean) => {
       setLoading(true);
       try {
-        const newUseDisciplineResponse = await makeRequestWithFullResponse<Reading>(
-          `/postboxes/${postboxId}/${path}s`,
-          'POST',
-          data);
-
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`));
+        const newUseDisciplineResponse =
+          await makeRequestWithFullResponse<Reading>(
+            `/postboxes/${postboxId}/${path}s`,
+            'POST',
+            data
+          );
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
+        );
+
+        await matchMutate(
+          new RegExp(
+            `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
+          )
         );
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
@@ -55,12 +61,19 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
       setLoading(true);
 
       try {
-        await makeRequest(`/postboxes/${postboxId}/${path}s/${godGivingId}`, 'DELETE');
-
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`));
+        await makeRequest(
+          `/postboxes/${postboxId}/${path}s/${godGivingId}`,
+          'DELETE'
+        );
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`)
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
+        );
+
+        await matchMutate(
+          new RegExp(
+            `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
+          )
         );
         setLoading(false);
       } catch (e) {
@@ -84,10 +97,14 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
           data
         );
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`));
+        await matchMutate(
+          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
+        );
 
         await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`)
+          new RegExp(
+            `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
+          )
         );
 
         await mutate(`/postboxes/${postboxId}/${path}s/${clrId}`);
@@ -109,6 +126,5 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return {createDiscipline, deleteDiscipline, updateDiscipline, loading};
+  return { createDiscipline, deleteDiscipline, updateDiscipline, loading };
 }
-

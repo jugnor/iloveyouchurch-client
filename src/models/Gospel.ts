@@ -1,6 +1,6 @@
-import Joi, {Schema} from 'joi';
-import {Except} from 'type-fest';
-import {UserTime} from "./UserTime";
+import Joi, { Schema } from 'joi';
+import { Except } from 'type-fest';
+import { UserTime } from './UserTime';
 
 export enum GospelType {
   GOSPEL = 'GOSPEL',
@@ -14,8 +14,8 @@ export interface Gospel {
   timeInHour: number;
   goal: string;
   total: number;
-  gospelContact: GospelContact
-  gospelSupport: GospelSupport
+  gospelContact: GospelContact;
+  gospelSupport: GospelSupport;
   gospelType: GospelType;
   userTime: UserTime;
   createdAt?: Date;
@@ -35,26 +35,25 @@ export interface GospelContact {
 
 export type UpsertGospelRequest = Except<Gospel, 'id' | 'createdAt'>;
 
-
 export const CreateGospelRequestSchema: Schema = Joi.object({
   gospelType: Joi.string()
-  .valid(...Object.values(GospelType))
-  .required(),
+    .valid(...Object.values(GospelType))
+    .required(),
   timeInMinute: Joi.alternatives().conditional('gospelType', {
     is: GospelType.GOSPEL,
     then: Joi.number().min(0).optional(),
     otherwise: null
   }),
   total: Joi.alternatives()
-  .conditional('gospelType', {
-    is: GospelType.GOSPEL,
-    then: Joi.number().positive().required(),
-  })
-  .conditional('gospelType', {
-    is: GospelType.SUPPORT,
-    then: Joi.number().positive().required(),
-    otherwise:null
-  }),
+    .conditional('gospelType', {
+      is: GospelType.GOSPEL,
+      then: Joi.number().positive().required()
+    })
+    .conditional('gospelType', {
+      is: GospelType.SUPPORT,
+      then: Joi.number().positive().required(),
+      otherwise: null
+    }),
   goal: Joi.alternatives().conditional('gospelType', {
     is: GospelType.GOSPEL,
     then: Joi.string().optional().allow(''),
@@ -64,9 +63,12 @@ export const CreateGospelRequestSchema: Schema = Joi.object({
     is: GospelType.CONTACT,
     then: Joi.object({
       name: Joi.string().required(),
-      email: Joi.string().email({tlds: {allow: false}}).optional().allow(''),
-      telephone: Joi.string().optional().allow(null,''),
-      city: Joi.string().optional().allow(null,'')
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .optional()
+        .allow(''),
+      telephone: Joi.string().optional().allow(null, ''),
+      city: Joi.string().optional().allow(null, '')
     }).required(),
     otherwise: null
   }),
@@ -82,46 +84,48 @@ export const CreateGospelRequestSchema: Schema = Joi.object({
 });
 
 export const UpdateGospelRequestSchema: Schema = Joi.object({
-    gospelType: Joi.string()
+  gospelType: Joi.string()
     .valid(...Object.values(GospelType))
     .required(),
-    timeInMinute: Joi.alternatives().conditional('gospelType', {
+  timeInMinute: Joi.alternatives().conditional('gospelType', {
+    is: GospelType.GOSPEL,
+    then: Joi.number().min(0).optional(),
+    otherwise: null
+  }),
+  total: Joi.alternatives()
+    .conditional('gospelType', {
       is: GospelType.GOSPEL,
-      then: Joi.number().min(0).optional(),
-      otherwise: null
-    }),
-    total: Joi.alternatives().conditional('gospelType', {
-      is: GospelType.GOSPEL,
-      then: Joi.number().positive().required(),
+      then: Joi.number().positive().required()
     })
     .conditional('gospelType', {
       is: GospelType.SUPPORT,
       then: Joi.number().positive().required(),
-      otherwise:null
-    }),
-    goal: Joi.alternatives().conditional('gospelType', {
-      is: GospelType.GOSPEL,
-      then: Joi.string().optional().allow(''),
       otherwise: null
     }),
-    gospelContact: Joi.alternatives().conditional('gospelType', {
-      is: GospelType.CONTACT,
-      then: Joi.object({
-        name: Joi.string().required(),
-        email: Joi.string().email({tlds: {allow: false}}).optional().allow(''),
-        telephone: Joi.string().optional().allow(null,''),
-        city: Joi.string().optional().allow(null,'')
-      }).required(),
-      otherwise: null
-    }),
-    gospelSupport: Joi.alternatives().conditional('gospelType', {
-      is: GospelType.SUPPORT,
-      then: Joi.object({
-        title: Joi.string().required(),
-        supportType: Joi.string().required()
-      }).required(),
-      otherwise: null
-    }),
-  }
-)
-
+  goal: Joi.alternatives().conditional('gospelType', {
+    is: GospelType.GOSPEL,
+    then: Joi.string().optional().allow(''),
+    otherwise: null
+  }),
+  gospelContact: Joi.alternatives().conditional('gospelType', {
+    is: GospelType.CONTACT,
+    then: Joi.object({
+      name: Joi.string().required(),
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .optional()
+        .allow(''),
+      telephone: Joi.string().optional().allow(null, ''),
+      city: Joi.string().optional().allow(null, '')
+    }).required(),
+    otherwise: null
+  }),
+  gospelSupport: Joi.alternatives().conditional('gospelType', {
+    is: GospelType.SUPPORT,
+    then: Joi.object({
+      title: Joi.string().required(),
+      supportType: Joi.string().required()
+    }).required(),
+    otherwise: null
+  })
+});

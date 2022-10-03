@@ -1,7 +1,7 @@
-export enum ActivityType{
-  PROGRAM='PROGRAM',
-  EVENT='EVENT',
-  ANNOUNCEMENT='ANNOUNCEMENT',
-  PENALTY='PENALTY',
-  NEWS='NEWS'
+export enum ActivityType {
+  PROGRAM = 'PROGRAM',
+  EVENT = 'EVENT',
+  ANNOUNCEMENT = 'ANNOUNCEMENT',
+  PENALTY = 'PENALTY',
+  NEWS = 'NEWS'
 }
