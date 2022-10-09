@@ -95,7 +95,6 @@ export function MyReportDataGridRenderer({
           {menuItems.length > 0 ? (
             <div>
               <SelectItem
-                menuItems={menuItems}
                 setActivityType={setDisciplineType}
                 activityType={disciplineType}
               />

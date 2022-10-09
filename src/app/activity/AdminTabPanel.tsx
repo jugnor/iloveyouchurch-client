@@ -12,7 +12,7 @@ import { ActivityAction } from './ActivityAction';
 import { FileAction } from '../system/file/FileAction';
 import { ListItemIcon } from '@mui/material';
 import { UserPostboxAction } from '../system/userPostbox/UserPostboxAction';
-import { RegulationAction } from '../regulation/RegulationAction';
+import { RegulationAction } from '../regulation/RegulationBoard';
 
 interface TabPanelProps {
   children?: React.ReactNode;

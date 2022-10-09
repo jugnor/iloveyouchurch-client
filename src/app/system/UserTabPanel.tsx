@@ -57,11 +57,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export interface UserTabPanelProps {
-  postboxId: string;
   userId: string;
 }
 
-export function UserTabPanel({ postboxId, userId }: UserTabPanelProps) {
+export function UserTabPanel({  userId }: UserTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -109,7 +108,6 @@ export function UserTabPanel({ postboxId, userId }: UserTabPanelProps) {
           </TabPanel>
           <TabPanel value={value} index={1}>
             <UserPostboxAction
-              currentPostboxId={postboxId}
               menuItems={extractPostboxes()}
             />
           </TabPanel>

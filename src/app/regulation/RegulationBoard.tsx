@@ -21,13 +21,11 @@ import { AlertMessage } from '../ArletMessageRenderer';
 import { DialogMessageRenderer } from '../DialogMessageRenderer';
 import { useRegulation } from '../../hooks/useRegulation';
 import {
-  regulationColumns,
   regulationRowsRenderer,
   upsertRegulationFormData,
   validateRegulation
 } from './RegulationRenderer';
-import { Regulation, UpsertRegulationRequest } from '../../models/Regulation';
-import { validateActivity } from '../activity/ActivityPrepare';
+import {Regulation, setRegulationColumns, UpsertRegulationRequest} from '../../models/Regulation';
 
 interface RegulationActionProps {
   postboxId: string;
@@ -168,7 +166,7 @@ export function RegulationAction({ postboxId, action }: RegulationActionProps) {
       }
     };
 
-  const columnsAction = regulationColumns().concat({
+  const columnsAction = setRegulationColumns().concat({
     field: 'actions',
     type: 'actions',
     headerName: 'Actions',
@@ -250,7 +248,7 @@ export function RegulationAction({ postboxId, action }: RegulationActionProps) {
           <Suspense fallback={null}>
             <DataGridRows
               gridRowsProp={regulationRowsRenderer(data, methode)}
-              gridColumns={action ? columnsAction : regulationColumns()}
+              gridColumns={action ? columnsAction : setRegulationColumns()}
               page={data.page}
               pageSize={data.size}
               total={data.total}

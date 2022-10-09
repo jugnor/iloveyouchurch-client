@@ -284,7 +284,6 @@ export function DisciplineAction({
             </Button>
             <div style={{ float: 'right' }}>
               <SelectItem
-                menuItems={menuItems}
                 setActivityType={setDisciplineType}
                 activityType={disciplineType}
               />

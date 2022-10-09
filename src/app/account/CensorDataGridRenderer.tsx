@@ -109,7 +109,6 @@ export function CensorDataGridRenderer({
           {menuItems.length > 0 ? (
             <div>
               <SelectItem
-                menuItems={menuItems}
                 setActivityType={setDisciplineType}
                 activityType={disciplineType}
               />

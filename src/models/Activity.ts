@@ -60,16 +60,14 @@ export const setActivityColumns = (activityType: string): GridColumns => [
     field: 'activityOrder',
     headerName: 'Tag',
     editable: true,
-    resizable: true,
-    width: 150,
+    width: 250,
     hide: activityType !== ActivityType.PROGRAM
   },
   {
     field: 'description',
     headerName: 'Beschreibung',
     editable: true,
-    resizable: true,
-    width: 600
+    width: activityType === ActivityType.PROGRAM?750:1000
   }
 ];
 

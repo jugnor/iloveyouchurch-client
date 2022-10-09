@@ -33,14 +33,15 @@ import { PostboxModel, PostboxType } from '../../../models/PostboxModel';
 import { useUserProperties } from '../../../hooks/useUserProperties';
 
 interface UserPostboxActionProps {
-  currentPostboxId: string;
+  currentPostboxId?: string;
   menuItems: string[];
 }
 
 export function UserPostboxAction({
-  currentPostboxId,
   menuItems
 }: UserPostboxActionProps) {
+  const { currentPostboxId } = useUserProperties();
+
   const { data: postbox } = useSWR<PostboxModel>(
     `/postboxes/${currentPostboxId}`
   );
@@ -83,7 +84,7 @@ export function UserPostboxAction({
     useUserPostbox(
       postbox?.postboxType === PostboxType.SYSTEM
         ? disciplineType
-        : currentPostboxId
+        : ""
     );
 
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -116,7 +117,7 @@ export function UserPostboxAction({
         let addUser = upsertUserToPostboxFormData(
           postbox?.postboxType === PostboxType.SYSTEM
             ? disciplineType
-            : currentPostboxId,
+            : "",
           params
         );
         if (validateUpsertUserToPostbox(addUser)) {
@@ -142,7 +143,7 @@ export function UserPostboxAction({
         let updateUser = upsertUserToPostboxFormData(
           postbox?.postboxType === PostboxType.SYSTEM
             ? disciplineType
-            : currentPostboxId,
+            : "currentPostboxId",
           params
         );
         if (validateUpsertUserToPostbox(updateUser)) {
@@ -272,7 +273,6 @@ export function UserPostboxAction({
             <div style={{ float: 'right' }}>
               {postbox?.postboxType === PostboxType.SYSTEM && (
                 <SelectItem
-                  menuItems={menuItems}
                   setActivityType={setDisciplineType}
                   activityType={disciplineType}
                 />
