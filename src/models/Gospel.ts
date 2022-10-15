@@ -1,6 +1,10 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { UserTime } from './UserTime';
+import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
+import {ResultsObject} from "./ResultsObject";
+import {randomId} from "@mui/x-data-grid-generator";
+import {toDate} from "date-fns";
 
 export enum GospelType {
   GOSPEL = 'GOSPEL',
@@ -10,6 +14,7 @@ export enum GospelType {
 
 export interface Gospel {
   id: string;
+  userId:string,
   timeInMinute: number;
   timeInHour: number;
   goal: string;
@@ -17,7 +22,7 @@ export interface Gospel {
   gospelContact: GospelContact;
   gospelSupport: GospelSupport;
   gospelType: GospelType;
-  userTime: UserTime;
+  weekOfYear: number;
   createdAt?: Date;
 }
 
@@ -129,3 +134,118 @@ export const UpdateGospelRequestSchema: Schema = Joi.object({
     otherwise: null
   })
 });
+
+export const gospelColumns = (type: string): GridColumns => [
+  {
+    field: 'weekOfYear',
+    headerName: 'kalenderwoche',
+    width: 200,
+    type:"number",
+    editable: false
+  },
+  {
+    field: 'timeInMinute',
+    headerName: 'Zeit(min)',
+    type: 'number',
+    editable: true,
+    resizable: true,
+    width: 100,
+    hide: type !== GospelType.GOSPEL
+  },
+  {
+    field: 'total',
+    headerName: 'Total',
+    type: 'number',
+    editable: true,
+    resizable: true,
+    width: 100,
+    hide:
+      type !== GospelType.GOSPEL &&
+      type !== GospelType.SUPPORT
+  },
+  {
+    field: 'goal',
+    headerName: 'Ziel',
+    editable: true,
+    resizable: true,
+    width: 500,
+    hide: type !== GospelType.GOSPEL
+  },
+  {
+    field: 'name',
+    headerName: 'Name',
+    editable: true,
+    resizable: true,
+    width: 250,
+    hide: type !== GospelType.CONTACT
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    editable: true,
+    resizable: true,
+    width: 250,
+    hide: type !== GospelType.CONTACT
+  },
+  {
+    field: 'telephone',
+    headerName: 'Telephone',
+    editable: true,
+    resizable: true,
+    width: 200,
+    hide: type !== GospelType.CONTACT
+  },
+  {
+    field: 'city',
+    headerName: 'Stadt',
+    editable: true,
+    resizable: true,
+    width: 200,
+    hide: type !== GospelType.CONTACT
+  },
+  {
+    field: 'title',
+    headerName: 'Titel',
+    editable: true,
+    resizable: true,
+    width: 300,
+    hide: type !== GospelType.SUPPORT
+  },
+  {
+    field: 'supportType',
+    headerName: 'SupportType',
+    editable: true,
+    resizable: true,
+    width: 300,
+    hide: type !== GospelType.SUPPORT
+  }
+];
+
+export const gospelRows = (
+  data: ResultsObject<Gospel> | undefined
+) => {
+  let resultMap: readonly { [key: string]: any }[] = [];
+    if (data !== undefined) {
+      resultMap = data.items.map((x) => ({
+        id: randomId(),
+        oId: x.id,
+        userId: x.userId,
+        gospelType: x.gospelType,
+        timeInHour: x.timeInHour,
+        timeInMinute: x.timeInMinute,
+        goal: x.goal,
+        total: x.total,
+        name: x.gospelContact !== undefined ? x.gospelContact.name : null,
+        email: x.gospelContact !== undefined ? x.gospelContact.email : null,
+        telephone:
+          x.gospelContact !== undefined ? x.gospelContact.telephone : null,
+        city: x.gospelContact !== undefined ? x.gospelContact.city : null,
+        title: x.gospelSupport !== undefined ? x.gospelSupport.title : null,
+        supportType:
+          x.gospelSupport !== undefined ? x.gospelSupport.supportType : null,
+        weekOfYear:x.weekOfYear
+      }));
+  }
+  const allRows: GridRowsProp = resultMap;
+  return allRows;
+};

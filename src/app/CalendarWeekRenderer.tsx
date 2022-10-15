@@ -1,32 +1,24 @@
 import * as React from 'react';
-import { endOfWeek, startOfWeek } from 'date-fns';
+import {endOfWeek, startOfWeek} from 'date-fns';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import StaticDatePicker from '@mui/lab/StaticDatePicker';
-import { customDay } from './WeekPicker';
+import {customDay} from './WeekPicker';
 import TextField from '@mui/material/TextField';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 interface CalenderWeekRendererProps {
-  setMethode: (methode: string) => void;
-  setStartWeek: (start: string) => void;
-  setEndWeek: (end: string) => void;
+  setWeekOfYear: (weekOfYear: number) => void;
 }
 
-export function CalenderWeekRenderer({
-  setMethode,
-  setStartWeek,
-  setEndWeek
-}: CalenderWeekRendererProps) {
+export function CalenderWeekRenderer(calenderWeekRendererProps: CalenderWeekRendererProps) {
   const [valueDate, setValueDate] = React.useState<Date | null>(new Date());
   const onChangeDateHandling = (valueDate: Date | null) => {
     if (valueDate) {
       setValueDate(valueDate);
-      setMethode('');
-      const startOfW = startOfWeek(valueDate);
       const endOfW = endOfWeek(valueDate);
+      const weekOfYear= getWeekNumber(endOfW)
+     calenderWeekRendererProps.setWeekOfYear(weekOfYear)
 
-      setStartWeek(startOfW.toISOString());
-      setEndWeek(endOfW.toISOString());
     }
   };
 
@@ -43,4 +35,12 @@ export function CalenderWeekRenderer({
       />
     </LocalizationProvider>
   );
+}
+export const getWeekNumber=(currentDate :Date):number=>{
+
+ const startDate:Date = new Date(currentDate.getFullYear(), 0, 1);
+  let days = Math.floor((currentDate.getMilliseconds()- startDate.getMilliseconds()) /
+    (24 * 60 * 60 * 1000));
+
+  return Math.ceil(days / 7);
 }

@@ -33,8 +33,6 @@ export const readingRowsRendererByWeek = (
       resultMap = data.items.map((x) => ({
         id: randomId(),
         oId: x.id,
-        postboxId: x.userTime.postboxId,
-        userId: x.userTime.userId,
         readingType: x.readingType,
         totalCap: x.totalCap,
         title: x.title,
@@ -42,15 +40,8 @@ export const readingRowsRendererByWeek = (
         timeInMinute: x.timeInMinute,
         timeInHour: x.timeInHour,
         theEnd: x.theEnd,
-        theme: x.theme,
-        startW: x.userTime.startWeek,
-        week:
-          'von ' +
-          toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() +
-          ' bis ' +
-          toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
-      }));
-      console.log('result ' + resultMap);
+        theme: x.theme
+      }))
     }
   }
   if (methode === 'create') {
@@ -66,6 +57,7 @@ export const readingRowsRendererByWeek = (
       }
     ];
   }
+
 
   const allRows: GridRowsProp = resultMap;
   return allRows;
@@ -135,7 +127,7 @@ export const validateReading = (
   );
 };
 
-export const readingColumns = (disciplineType: string): GridColumns => [
+export const readingColumns2 = (disciplineType: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',

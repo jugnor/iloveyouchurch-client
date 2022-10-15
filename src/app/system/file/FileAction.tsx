@@ -21,12 +21,10 @@ import { DialogMessageRenderer } from '../../DialogMessageRenderer';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { useFile } from '../../../hooks/useFile';
 import {
-  fileColumns,
-  fileRowsRenderer,
   upsertFileFormData,
   validateUpsertFile
 } from './FileRenderer';
-import { FileModel, UpdateFileRequest } from '../../../models/File';
+import {fileColumns, FileModel, fileRows, UpdateFileRequest} from '../../../models/File';
 import FileViewModal from '../../FileViewModal';
 
 interface FileActionProps {
@@ -301,7 +299,7 @@ export function FileAction({ postboxId, action }: FileActionProps) {
           <br />
           <Suspense fallback={null}>
             <DataGridRows
-              gridRowsProp={fileRowsRenderer(files, methode)}
+              gridRowsProp={fileRows(files)}
               gridColumns={columnsAction}
               page={files.page}
               pageSize={files.size}

@@ -251,8 +251,9 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
             </Button>
             <div style={{ float: 'right' }}>
               <SelectItem
-                setActivityType={setDisciplineType}
-                activityType={disciplineType}
+                setElement={setDisciplineType}
+                element={disciplineType}
+                menuItems={menuItems}
               />
             </div>
           </div>

@@ -26,36 +26,7 @@ import {
 import { FileModel, UpdateFileRequestSchema } from '../../../models/File';
 import { useCallback } from 'react';
 
-export const fileRowsRenderer = (
-  data: ResultsObject<FileModel> | undefined,
-  methode: string
-) => {
-  let resultMap: readonly { [key: string]: any }[] = [];
-  if (methode === 'get' || methode === '' || methode === 'createGet') {
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        filename: x.filename,
-        mimeType: x.mimeType,
-        description: x.description,
-        size: x.size,
-        createdAt: x.createdAt
-      }));
-    }
-  }
-  if (methode === 'create') {
-    return [
-      {
-        id: randomId(),
-        filename: ''
-      }
-    ];
-  }
 
-  const allRows: GridRowsProp = resultMap;
-  return allRows;
-};
 
 export const upsertFileFormData = (
   postboxId: string,
@@ -77,39 +48,4 @@ export const validateUpsertFile = (upsertUserFile: {}): boolean => {
   );
 };
 
-export const fileColumns = (): GridColumns => [
-  {
-    field: 'filename',
-    headerName: 'Filename',
-    width: 220,
-    editable: true
-  },
-  {
-    field: 'description',
-    headerName: 'Beschreibung',
-    editable: true,
-    resizable: true,
-    width: 200
-  },
-  {
-    field: 'mimeType',
-    headerName: 'MimeType',
-    editable: false,
-    resizable: true,
-    width: 200
-  },
-  {
-    field: 'size',
-    headerName: 'Länge',
-    editable: false,
-    resizable: true,
-    width: 200
-  },
-  {
-    field: 'createdAt',
-    headerName: 'Erstellt_Am',
-    editable: false,
-    resizable: true,
-    width: 200
-  }
-];
+

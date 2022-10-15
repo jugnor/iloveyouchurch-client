@@ -28,7 +28,7 @@ export function RegulationRecap(regulationRecapProps : RegulationRecapProps ) {
 
   const { data:result } = useSWR<ResultsObject<Regulation>>(
     `/postboxes/${regulationRecapProps.postboxId}/regulation-results?` +
-      `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
+      `page=${page}&size=5&sortBy=CREATED_AT&order=DESC`
   );
 
   const rows = setRegulationRows(result);

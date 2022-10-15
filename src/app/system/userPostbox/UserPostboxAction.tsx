@@ -273,8 +273,9 @@ export function UserPostboxAction({
             <div style={{ float: 'right' }}>
               {postbox?.postboxType === PostboxType.SYSTEM && (
                 <SelectItem
-                  setActivityType={setDisciplineType}
-                  activityType={disciplineType}
+                  setElement={setDisciplineType}
+                  element={disciplineType}
+                  menuItems={menuItems}
                 />
               )}
             </div>

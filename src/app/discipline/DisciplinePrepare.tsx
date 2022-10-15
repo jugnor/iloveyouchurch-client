@@ -3,39 +3,37 @@ import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellParams';
 import { Discipline } from '../../models/Discipline';
 import {
-  readingColumns,
+  readingColumns2,
   readingRowsRendererByWeek,
   upsertReadingFormData,
   validateReading
 } from './reading/ReadingRender';
 import { ResultsObject } from '../../models/ResultsObject';
 import {
-  prayerColumns,
+  prayerColumns2,
   prayerRowsRendererByWeek,
   upsertPrayerFormData,
   validatePrayer
 } from './prayer/PrayerRender';
 import {
-  meditationColumns,
+  meditationColumns2,
   meditationRowsRendererByWeek,
   upsertMeditationFormData,
   validateMeditation
 } from './meditation/MeditationRender';
 import {
-  gospelColumns,
+  gospelCol,
   gospelRowsRendererByWeek,
   upsertGospelFormData,
   validateGospel
 } from './gospel/GospelRender';
 import {
-  fastingColumns,
+  fastingColumns2,
   fastingRowsRendererByWeek,
   upsertFastingFormData,
   validateFasting
 } from './fasting/FastingRender';
 import {
-  godGivingColumns,
-  godGivingRowsRendererByWeek,
   upsertGodGivingFormData,
   validateGodGiving
 } from './godGiving/GodGivingRender';
@@ -43,7 +41,7 @@ import { ReadingType } from '../../models/Reading';
 import { PrayerType } from '../../models/Prayer';
 import { RetreatType } from '../../models/Meditation';
 import { GospelType } from '../../models/Gospel';
-import { FastingType } from '../../models/Fasting';
+import { FastingType } from '../../models/Fasting/Fasting';
 import { GodGivingType } from '../../models/GodGiving';
 
 export const disciplineRowsRendererByWeek = (
@@ -72,7 +70,7 @@ export const disciplineRowsRendererByWeek = (
     case GodGivingType.MONEY:
     case GodGivingType.CHORE:
     case GodGivingType.THANKS:
-      return godGivingRowsRendererByWeek(data, startWeek, methode);
+      return []
     default:
       return [];
   }
@@ -196,24 +194,24 @@ export const disciplineColumns = (disciplineType: string): GridColumns => {
   switch (disciplineType) {
     case ReadingType.BIBLE:
     case ReadingType.C_BOOK:
-      return readingColumns(disciplineType);
+      return readingColumns2(disciplineType);
     case PrayerType.ALONE:
     case PrayerType.GROUP:
-      return prayerColumns(disciplineType);
+      return prayerColumns2(disciplineType);
     case RetreatType.MEDITATION:
     case RetreatType.RETREAT:
-      return meditationColumns(disciplineType);
+      return meditationColumns2(disciplineType);
     case GospelType.GOSPEL:
     case GospelType.SUPPORT:
     case GospelType.CONTACT:
-      return gospelColumns(disciplineType);
+      return gospelCol(disciplineType);
     case FastingType.COMPLETE:
     case FastingType.PARTIAL:
-      return fastingColumns(disciplineType);
+      return fastingColumns2(disciplineType);
     case GodGivingType.MONEY:
     case GodGivingType.CHORE:
     case GodGivingType.THANKS:
-      return godGivingColumns(disciplineType);
+      return [];
     default:
       return [];
   }

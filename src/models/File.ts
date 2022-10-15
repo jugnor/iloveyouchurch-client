@@ -1,6 +1,9 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { PostboxModel } from './PostboxModel';
+import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
+import {ResultsObject} from "./ResultsObject";
+import {randomId} from "@mui/x-data-grid-generator";
 
 export interface FileModel {
   id: string;
@@ -51,3 +54,59 @@ export function fileToByteArray(file: File) {
     reader.readAsDataURL(file);
   });
 }
+
+export const fileColumns = (): GridColumns => [
+  {
+    field: 'filename',
+    headerName: 'Filename',
+    width: 220,
+    editable: true
+  },
+  {
+    field: 'description',
+    headerName: 'Beschreibung',
+    editable: true,
+    resizable: true,
+    width: 200
+  },
+  {
+    field: 'mimeType',
+    headerName: 'MimeType',
+    editable: false,
+    resizable: true,
+    width: 200
+  },
+  {
+    field: 'size',
+    headerName: 'Länge',
+    editable: false,
+    resizable: true,
+    width: 200
+  },
+  {
+    field: 'createdAt',
+    headerName: 'Erstellt_Am',
+    editable: false,
+    resizable: true,
+    width: 200
+  }
+];
+
+export const fileRows= (
+  data: ResultsObject<FileModel> | undefined
+) => {
+  let resultMap: readonly { [key: string]: any }[] = [];
+    if (data !== undefined) {
+      resultMap = data.items.map((x) => ({
+        id: randomId(),
+        oId: x.id,
+        filename: x.filename,
+        mimeType: x.mimeType,
+        description: x.description,
+        size: x.size,
+        createdAt: x.createdAt
+      }));
+    }
+  const allRows: GridRowsProp = resultMap;
+  return allRows;
+};

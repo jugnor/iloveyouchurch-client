@@ -1,6 +1,10 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { UserTime } from './UserTime';
+import {ResultsObject} from "./ResultsObject";
+import {randomId} from "@mui/x-data-grid-generator";
+import {toDate} from "date-fns";
+import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
 
 export enum PrayerType {
   ALONE = 'ALONE',
@@ -9,12 +13,13 @@ export enum PrayerType {
 
 export interface Prayer {
   id: string;
+  userId:string
   timeInMinute: number;
   timeInHour: number;
   theme: string;
   prayerNight: number;
   prayerType: PrayerType;
-  userTime: UserTime;
+  weekOfYear: number;
   createdAt?: Date;
 }
 
@@ -46,3 +51,60 @@ export const UpdatePrayerRequestSchema: Schema = Joi.object({
     otherwise: null
   })
 });
+
+export const prayerRows = (
+  data: ResultsObject<Prayer> | undefined
+) => {
+  let resultMap: readonly { [key: string]: any }[] = [];
+    if (data !== undefined) {
+      resultMap = data.items.map((x) => ({
+        id: randomId(),
+        oId: x.id,
+        userId: x.userId,
+        prayerType: x.prayerType,
+        timeInHour: x.timeInHour,
+        timeInMinute: x.timeInMinute,
+        prayerNight: x.prayerNight,
+        theme: x.theme,
+        weekOfYear:x.weekOfYear
+      }));
+    }
+
+  const allRows: GridRowsProp = resultMap;
+  return allRows;
+}
+
+export const prayerColumns = (disciplineType: string): GridColumns => [
+  {
+    field: 'weekOfYear',
+    headerName: 'Kalenderwoche',
+    width: 300,
+    type:"number",
+    editable: false
+  },
+  {
+    field: 'timeInMinute',
+    headerName: 'Zeit(min)',
+    type: 'number',
+    editable: true,
+    resizable: true,
+    width: 100
+  },
+  {
+    field: 'theme',
+    headerName: 'Thema',
+    editable: true,
+    resizable: true,
+    width: 500
+  },
+  {
+    field: 'prayerNight',
+    headerName: 'Gebetsnacht',
+    type: 'number',
+    editable: true,
+    resizable: true,
+    width: 100,
+    hide: disciplineType === PrayerType.ALONE
+  }
+];
+

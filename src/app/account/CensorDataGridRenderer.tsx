@@ -95,9 +95,7 @@ export function CensorDataGridRenderer({
         >
           {tab === 'Censor' ? (
             <CalenderWeekRenderer
-              setMethode={setMethode}
-              setStartWeek={setStartWeek}
-              setEndWeek={setEndWeek}
+              setWeekOfYear={setPage}
             />
           ) : (
             ''
@@ -109,8 +107,9 @@ export function CensorDataGridRenderer({
           {menuItems.length > 0 ? (
             <div>
               <SelectItem
-                setActivityType={setDisciplineType}
-                activityType={disciplineType}
+                setElement={setDisciplineType}
+                element={disciplineType}
+                menuItems={menuItems}
               />
             </div>
           ) : (

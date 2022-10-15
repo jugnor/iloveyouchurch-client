@@ -28,19 +28,12 @@ export const prayerRowsRendererByWeek = (
       resultMap = data.items.map((x) => ({
         id: randomId(),
         oId: x.id,
-        postboxId: x.userTime.postboxId,
-        userId: x.userTime.userId,
         prayerType: x.prayerType,
         timeInHour: x.timeInHour,
         timeInMinute: x.timeInMinute,
         prayerNight: x.prayerNight,
         theme: x.theme,
-        startW: x.userTime.startWeek,
-        week:
-          'von ' +
-          toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() +
-          ' bis ' +
-          toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
+
       }));
     }
   }
@@ -110,11 +103,12 @@ export const validatePrayer = (upsertPrayer: {}, create: boolean): boolean => {
   );
 };
 
-export const prayerColumns = (disciplineType: string): GridColumns => [
+export const prayerColumns2 = (disciplineType: string): GridColumns => [
   {
-    field: 'week',
-    headerName: 'Woche',
+    field: 'weekOfYear',
+    headerName: 'Kalenderwoche',
     width: 220,
+    type:"number",
     editable: false
   },
   {
@@ -139,6 +133,6 @@ export const prayerColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 150,
-    hide: disciplineType == PrayerType.ALONE
+    hide: disciplineType === PrayerType.ALONE
   }
 ];

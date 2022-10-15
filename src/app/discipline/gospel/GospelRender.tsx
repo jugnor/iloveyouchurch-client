@@ -28,8 +28,7 @@ export const gospelRowsRendererByWeek = (
       resultMap = data.items.map((x) => ({
         id: randomId(),
         oId: x.id,
-        postboxId: x.userTime.postboxId,
-        userId: x.userTime.userId,
+
         gospelType: x.gospelType,
         timeInHour: x.timeInHour,
         timeInMinute: x.timeInMinute,
@@ -43,12 +42,7 @@ export const gospelRowsRendererByWeek = (
         title: x.gospelSupport !== undefined ? x.gospelSupport.title : null,
         supportType:
           x.gospelSupport !== undefined ? x.gospelSupport.supportType : null,
-        startW: x.userTime.startWeek,
-        week:
-          'von ' +
-          toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() +
-          ' bis ' +
-          toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
+
       }));
       console.log('result ' + resultMap);
     }
@@ -173,7 +167,7 @@ export const validateGospel = (upsertGospel: {}, create: boolean): boolean => {
   );
 };
 
-export const gospelColumns = (disciplineType: string): GridColumns => [
+export const gospelCol = (type: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',
@@ -187,7 +181,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 100,
-    hide: disciplineType !== GospelType.GOSPEL
+    hide: type !== GospelType.GOSPEL
   },
   {
     field: 'total',
@@ -197,8 +191,8 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     resizable: true,
     width: 100,
     hide:
-      disciplineType !== GospelType.GOSPEL &&
-      disciplineType !== GospelType.SUPPORT
+      type !== GospelType.GOSPEL &&
+      type !== GospelType.SUPPORT
   },
   {
     field: 'goal',
@@ -206,7 +200,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 500,
-    hide: disciplineType !== GospelType.GOSPEL
+    hide: type !== GospelType.GOSPEL
   },
   {
     field: 'name',
@@ -214,7 +208,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 200,
-    hide: disciplineType !== GospelType.CONTACT
+    hide: type !== GospelType.CONTACT
   },
   {
     field: 'email',
@@ -222,7 +216,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 200,
-    hide: disciplineType !== GospelType.CONTACT
+    hide: type !== GospelType.CONTACT
   },
   {
     field: 'telephone',
@@ -230,7 +224,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 100,
-    hide: disciplineType !== GospelType.CONTACT
+    hide: type !== GospelType.CONTACT
   },
   {
     field: 'city',
@@ -238,7 +232,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 100,
-    hide: disciplineType !== GospelType.CONTACT
+    hide: type !== GospelType.CONTACT
   },
   {
     field: 'title',
@@ -246,7 +240,7 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 200,
-    hide: disciplineType !== GospelType.SUPPORT
+    hide: type !== GospelType.SUPPORT
   },
   {
     field: 'supportType',
@@ -254,6 +248,6 @@ export const gospelColumns = (disciplineType: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 150,
-    hide: disciplineType !== GospelType.SUPPORT
+    hide: type !== GospelType.SUPPORT
   }
 ];

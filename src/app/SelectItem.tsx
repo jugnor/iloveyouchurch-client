@@ -1,30 +1,23 @@
 import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { ActivityType } from '../models/ActivityType';
-import { translateActivityType } from '../models/Activity';
+
 
 interface SelectItemProps {
-  setActivityType: (disciplineType: string) => void;
-  activityType: string;
+  setElement: (element: string) => void;
+  element: string;
+  menuItems:string[]
 }
 
-export function SelectItem({ setActivityType, activityType }: SelectItemProps) {
+export function SelectItem({ setElement, element,menuItems }: SelectItemProps) {
   const [localDiscipleType, setLocalDisciplineType] =
-    React.useState(activityType);
-  const menuItems = Array.of(
-    ActivityType.NEWS,
-    ActivityType.PENALTY,
-    ActivityType.EVENT,
-    ActivityType.ANNOUNCEMENT,
-    ActivityType.PROGRAM
-  );
+    React.useState(element);
+
   const handleChange = (event: SelectChangeEvent) => {
     setLocalDisciplineType(event.target.value);
-    setActivityType(event.target.value);
+    setElement(event.target.value);
   };
   return (
     <div>
@@ -38,8 +31,8 @@ export function SelectItem({ setActivityType, activityType }: SelectItemProps) {
           onChange={handleChange}
         >
           {menuItems.map((item) => (
-            <MenuItem value={item}>
-              <em>{translateActivityType(item)}</em>
+            <MenuItem value={item.split("|")[0]}>
+              <em>{item.split("|")[1]}</em>
             </MenuItem>
           ))}
         </Select>

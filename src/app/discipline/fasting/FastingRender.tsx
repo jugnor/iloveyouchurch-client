@@ -10,7 +10,7 @@ import {
   CreateFastingRequestSchema,
   Fasting,
   UpdateFastingRequestSchema
-} from '../../../models/Fasting';
+} from '../../../models/Fasting/Fasting';
 
 export const fastingRowsRendererByWeek = (
   data: ResultsObject<Fasting> | undefined,
@@ -27,17 +27,11 @@ export const fastingRowsRendererByWeek = (
       resultMap = data.items.map((x) => ({
         id: randomId(),
         oId: x.id,
-        postboxId: x.userTime.postboxId,
-        userId: x.userTime.userId,
+
         fastingType: x.fastingType,
         goal: x.goal,
         days: x.days,
-        startW: x.userTime.startWeek,
-        week:
-          'von ' +
-          toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() +
-          ' bis ' +
-          toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
+
       }));
       console.log('result ' + resultMap);
     }
@@ -105,7 +99,7 @@ export const validateFasting = (
   );
 };
 
-export const fastingColumns = (disciplineType: string): GridColumns => [
+export const fastingColumns2 = (disciplineType: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',

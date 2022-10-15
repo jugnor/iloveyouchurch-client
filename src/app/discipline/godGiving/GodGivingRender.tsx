@@ -13,55 +13,7 @@ import {
 } from '../../../models/GodGiving';
 import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
 
-export const godGivingRowsRendererByWeek = (
-  data: ResultsObject<GodGiving> | undefined,
-  startWeek: string,
-  methode: string
-) => {
-  let resultMap: readonly { [key: string]: any }[] = [];
-  if (
-    methode === 'get' + startWeek ||
-    methode === '' ||
-    methode === 'createGet'
-  ) {
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        postboxId: x.userTime.postboxId,
-        userId: x.userTime.userId,
-        godGivingType: x.godGivingType,
-        timeInHour: x.timeInHour,
-        timeInMinute: x.timeInMinute,
-        amount: x.amount,
-        total: x.total,
-        description: x.description,
-        presence: x.presence,
-        startW: x.userTime.startWeek,
-        week:
-          'von ' +
-          toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() +
-          ' bis ' +
-          toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
-      }));
-      console.log('result ' + resultMap);
-    }
-  } else if (methode === 'create') {
-    return [
-      {
-        id: randomId(),
-        timeInMinute: 0,
-        amount: 0,
-        total: 0,
-        description: '',
-        presence: false
-      }
-    ];
-  }
 
-  const allRows: GridRowsProp = resultMap;
-  return allRows;
-};
 
 export const upsertGodGivingFormData = (
   postboxId: string,
@@ -126,54 +78,3 @@ export const validateGodGiving = (
   );
 };
 
-export const godGivingColumns = (disciplineType: string): GridColumns => [
-  {
-    field: 'week',
-    headerName: 'Woche',
-    width: 220,
-    editable: false
-  },
-  {
-    field: 'timeInMinute',
-    headerName: 'Zeit(min)',
-    type: 'number',
-    editable: true,
-    resizable: true,
-    width: 100,
-    hide: disciplineType !== GodGivingType.THANKS
-  },
-  {
-    field: 'amount',
-    headerName: 'Betrag',
-    type: 'number',
-    editable: true,
-    resizable: true,
-    width: 100,
-    hide: disciplineType !== GodGivingType.MONEY
-  },
-  {
-    field: 'total',
-    headerName: 'Total',
-    type: 'number',
-    editable: true,
-    resizable: true,
-    width: 100,
-    hide: disciplineType !== GodGivingType.THANKS
-  },
-  {
-    field: 'presence',
-    headerName: 'Teilnahme',
-    type: 'boolean',
-    editable: true,
-    resizable: true,
-    width: 100,
-    hide: disciplineType !== GodGivingType.CHORE
-  },
-  {
-    field: 'description',
-    headerName: 'Beschreibung',
-    editable: true,
-    resizable: true,
-    width: 500
-  }
-];

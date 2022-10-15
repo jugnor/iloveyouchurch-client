@@ -269,11 +269,6 @@ export function DisciplineAction({
           className={'program'}
           style={{ overflowY: 'auto' }}
         >
-          <CalenderWeekRenderer
-            setMethode={setMethode}
-            setStartWeek={setStartWeek}
-            setEndWeek={setEndWeek}
-          />
           <div>
             <Button
               color="primary"
@@ -284,8 +279,9 @@ export function DisciplineAction({
             </Button>
             <div style={{ float: 'right' }}>
               <SelectItem
-                setActivityType={setDisciplineType}
-                activityType={disciplineType}
+                setElement={setDisciplineType}
+                element={disciplineType}
+                menuItems={menuItems}
               />
             </div>
           </div>

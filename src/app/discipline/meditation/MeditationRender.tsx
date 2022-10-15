@@ -27,20 +27,12 @@ export const meditationRowsRendererByWeek = (
       resultMap = data.items.map((x) => ({
         id: randomId(),
         oId: x.id,
-        postboxId: x.userTime.postboxId,
-        userId: x.userTime.userId,
         retreatType: x.retreatType,
         timeInHour: x.timeInHour,
         timeInMinute: x.timeInMinute,
         verse: x.verse,
         total: x.total,
         theme: x.theme,
-        startW: x.userTime.startWeek,
-        week:
-          'von ' +
-          toDate(Date.parse(x.userTime.startWeek)).toLocaleDateString() +
-          ' bis ' +
-          toDate(Date.parse(x.userTime.endWeek)).toLocaleDateString()
       }));
       console.log('result ' + resultMap);
     }
@@ -119,7 +111,7 @@ export const validateMeditation = (
   );
 };
 
-export const meditationColumns = (disciplineType: string): GridColumns => [
+export const meditationColumns2 = (disciplineType: string): GridColumns => [
   {
     field: 'week',
     headerName: 'Woche',
