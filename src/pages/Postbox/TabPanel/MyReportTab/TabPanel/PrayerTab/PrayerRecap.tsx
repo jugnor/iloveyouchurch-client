@@ -9,8 +9,13 @@ import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import { FastingType} from "../../../../../../models/Fasting/Fasting";
-import {Prayer, prayerColumns, prayerRows, PrayerType} from "../../../../../../models/Prayer";
+import { FastingType } from '../../../../../../models/Fasting/Fasting';
+import {
+  Prayer,
+  prayerColumns,
+  prayerRows,
+  PrayerType
+} from '../../../../../../models/Prayer';
 
 interface PrayerRecapRecapProps {
   postboxId: string;
@@ -25,11 +30,8 @@ export function PrayerRecap({
   path,
   menuItems
 }: PrayerRecapRecapProps) {
-
   const [page, setPage] = React.useState(0);
-  const [prayerType, setPrayerType] = useState<string>(
-    PrayerType.ALONE
-  );
+  const [prayerType, setPrayerType] = useState<string>(PrayerType.ALONE);
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
@@ -42,9 +44,7 @@ export function PrayerRecap({
 
   const columns = prayerColumns(prayerType);
 
-  const rows = prayerRows(
-    results
-  );
+  const rows = prayerRows(results);
 
   return results && columns && rows ? (
     <>

@@ -3,17 +3,21 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { FastingType } from '../models/Fasting/Fasting';
 
-
+export type SelectElement = Partial<FastingType | string>;
 interface SelectItemProps {
-  setElement: (element: string) => void;
+  setElement: (element: SelectElement) => void;
   element: string;
-  menuItems:string[]
+  menuItems: string[];
 }
 
-export function SelectItem({ setElement, element,menuItems }: SelectItemProps) {
-  const [localDiscipleType, setLocalDisciplineType] =
-    React.useState(element);
+export function SelectItem({
+  setElement,
+  element,
+  menuItems
+}: SelectItemProps) {
+  const [localDiscipleType, setLocalDisciplineType] = React.useState(element);
 
   const handleChange = (event: SelectChangeEvent) => {
     setLocalDisciplineType(event.target.value);
@@ -31,8 +35,8 @@ export function SelectItem({ setElement, element,menuItems }: SelectItemProps) {
           onChange={handleChange}
         >
           {menuItems.map((item) => (
-            <MenuItem value={item.split("|")[0]}>
-              <em>{item.split("|")[1]}</em>
+            <MenuItem value={item.split('|')[0]}>
+              <em>{item.split('|')[1]}</em>
             </MenuItem>
           ))}
         </Select>

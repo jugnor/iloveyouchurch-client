@@ -6,29 +6,31 @@ import useSWR from 'swr';
 import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellParams';
 import { AlertColor } from '@mui/material/Alert';
 
-
-import {fileColumns, FileModel, fileRows} from "../../../../../../models/File";
-import {ResultsObject} from "../../../../../../models/ResultsObject";
-import {DataGridRows} from "../../../../../../app/DataGridRows";
+import {
+  fileColumns,
+  FileModel,
+  fileRows
+} from '../../../../../../models/File';
+import { ResultsObject } from '../../../../../../models/ResultsObject';
+import { DataGridRows } from '../../../../../../app/DataGridRows';
 
 interface FileRecapProps {
   postboxId: string;
 }
 
 export function FileRecap(fileRecapProps: FileRecapProps) {
-
   const [page, setPage] = React.useState(0);
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
   };
-  const columns= fileColumns();
+  const columns = fileColumns();
 
   const { data: results } = useSWR<ResultsObject<FileModel>>(
     `/postboxes/${fileRecapProps.postboxId}/file-meta-data-results?` +
       `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
-  const rows = fileRows(results)
+  const rows = fileRows(results);
   return results ? (
     <>
       {' '}

@@ -94,9 +94,7 @@ export function CensorDataGridRenderer({
           style={{ overflowY: 'auto' }}
         >
           {tab === 'Censor' ? (
-            <CalenderWeekRenderer
-              setWeekOfYear={setPage}
-            />
+            <CalenderWeekRenderer setWeekOfYear={setPage} />
           ) : (
             ''
           )}

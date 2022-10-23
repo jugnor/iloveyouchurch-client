@@ -118,5 +118,3 @@ export const validateRegulation = (upsertRegulation: {}): boolean => {
     !UpsertRegulationRequestSchema.validate(upsertRegulation).error
   );
 };
-
-

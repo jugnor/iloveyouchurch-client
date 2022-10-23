@@ -1,9 +1,9 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { PostboxModel } from './PostboxModel';
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
-import {ResultsObject} from "./ResultsObject";
-import {randomId} from "@mui/x-data-grid-generator";
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
+import { ResultsObject } from './ResultsObject';
+import { randomId } from '@mui/x-data-grid-generator';
 
 export interface FileModel {
   id: string;
@@ -92,21 +92,19 @@ export const fileColumns = (): GridColumns => [
   }
 ];
 
-export const fileRows= (
-  data: ResultsObject<FileModel> | undefined
-) => {
+export const fileRows = (data: ResultsObject<FileModel> | undefined) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        filename: x.filename,
-        mimeType: x.mimeType,
-        description: x.description,
-        size: x.size,
-        createdAt: x.createdAt
-      }));
-    }
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      filename: x.filename,
+      mimeType: x.mimeType,
+      description: x.description,
+      size: x.size,
+      createdAt: x.createdAt
+    }));
+  }
   const allRows: GridRowsProp = resultMap;
   return allRows;
 };

@@ -9,7 +9,12 @@ import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import {Fasting, fastingColumns, fastingRows, FastingType} from "../../../../../../models/Fasting/Fasting";
+import {
+  Fasting,
+  fastingColumns,
+  fastingRows,
+  FastingType
+} from '../../../../../../models/Fasting/Fasting';
 
 interface FastingRecapProps {
   postboxId: string;
@@ -24,11 +29,8 @@ export function FastingRecap({
   path,
   menuItems
 }: FastingRecapProps) {
-
   const [page, setPage] = React.useState(0);
-  const [fastingType, setFastingType] = useState<string>(
-    FastingType.PARTIAL
-  );
+  const [fastingType, setFastingType] = useState<string>(FastingType.PARTIAL);
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
@@ -41,9 +43,7 @@ export function FastingRecap({
 
   const columns = fastingColumns();
 
-  const rows = fastingRows(
-    results
-  );
+  const rows = fastingRows(results);
 
   return results && columns && rows ? (
     <>

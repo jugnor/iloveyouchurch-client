@@ -32,7 +32,7 @@ export const meditationRowsRendererByWeek = (
         timeInMinute: x.timeInMinute,
         verse: x.verse,
         total: x.total,
-        theme: x.theme,
+        theme: x.theme
       }));
       console.log('result ' + resultMap);
     }

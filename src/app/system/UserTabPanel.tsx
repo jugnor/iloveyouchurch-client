@@ -60,7 +60,7 @@ export interface UserTabPanelProps {
   userId: string;
 }
 
-export function UserTabPanel({  userId }: UserTabPanelProps) {
+export function UserTabPanel({ userId }: UserTabPanelProps) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -107,9 +107,7 @@ export function UserTabPanel({  userId }: UserTabPanelProps) {
             <UserAction />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <UserPostboxAction
-              menuItems={extractPostboxes()}
-            />
+            <UserPostboxAction menuItems={extractPostboxes()} />
           </TabPanel>
         </AppBar>
       </div>

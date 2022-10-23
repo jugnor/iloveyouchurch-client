@@ -70,7 +70,7 @@ export const disciplineRowsRendererByWeek = (
     case GodGivingType.MONEY:
     case GodGivingType.CHORE:
     case GodGivingType.THANKS:
-      return []
+      return [];
     default:
       return [];
   }

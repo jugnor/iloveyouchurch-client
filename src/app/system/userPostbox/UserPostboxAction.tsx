@@ -37,9 +37,7 @@ interface UserPostboxActionProps {
   menuItems: string[];
 }
 
-export function UserPostboxAction({
-  menuItems
-}: UserPostboxActionProps) {
+export function UserPostboxAction({ menuItems }: UserPostboxActionProps) {
   const { currentPostboxId } = useUserProperties();
 
   const { data: postbox } = useSWR<PostboxModel>(
@@ -82,9 +80,7 @@ export function UserPostboxAction({
   );
   const { addUserToPostbox, updateUserToPostbox, removeUserFromPostbox } =
     useUserPostbox(
-      postbox?.postboxType === PostboxType.SYSTEM
-        ? disciplineType
-        : ""
+      postbox?.postboxType === PostboxType.SYSTEM ? disciplineType : ''
     );
 
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -115,9 +111,7 @@ export function UserPostboxAction({
       params.api.commitRowChange(params.row.id);
       if (methode === 'create') {
         let addUser = upsertUserToPostboxFormData(
-          postbox?.postboxType === PostboxType.SYSTEM
-            ? disciplineType
-            : "",
+          postbox?.postboxType === PostboxType.SYSTEM ? disciplineType : '',
           params
         );
         if (validateUpsertUserToPostbox(addUser)) {
@@ -143,7 +137,7 @@ export function UserPostboxAction({
         let updateUser = upsertUserToPostboxFormData(
           postbox?.postboxType === PostboxType.SYSTEM
             ? disciplineType
-            : "currentPostboxId",
+            : 'currentPostboxId',
           params
         );
         if (validateUpsertUserToPostbox(updateUser)) {

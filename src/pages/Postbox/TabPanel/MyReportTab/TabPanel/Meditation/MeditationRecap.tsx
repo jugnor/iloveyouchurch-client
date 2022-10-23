@@ -9,9 +9,13 @@ import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import { FastingType} from "../../../../../../models/Fasting/Fasting";
-import { meditationColumns} from "../../../../../../models/Reading";
-import {Meditation, meditationRows, RetreatType} from "../../../../../../models/Meditation";
+import { FastingType } from '../../../../../../models/Fasting/Fasting';
+import { meditationColumns } from '../../../../../../models/Reading';
+import {
+  Meditation,
+  meditationRows,
+  RetreatType
+} from '../../../../../../models/Meditation';
 
 interface MeditationRecapProps {
   postboxId: string;
@@ -26,7 +30,6 @@ export function MeditationRecap({
   path,
   menuItems
 }: MeditationRecapProps) {
-
   const [page, setPage] = React.useState(0);
   const [meditationType, setMeditationType] = useState<string>(
     RetreatType.MEDITATION
@@ -43,9 +46,7 @@ export function MeditationRecap({
 
   const columns = meditationColumns(meditationType);
 
-  const rows = meditationRows(
-    results
-  );
+  const rows = meditationRows(results);
 
   return results && columns && rows ? (
     <>

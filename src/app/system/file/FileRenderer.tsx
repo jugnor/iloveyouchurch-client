@@ -26,8 +26,6 @@ import {
 import { FileModel, UpdateFileRequestSchema } from '../../../models/File';
 import { useCallback } from 'react';
 
-
-
 export const upsertFileFormData = (
   postboxId: string,
   params: GridRenderCellParams
@@ -47,5 +45,3 @@ export const validateUpsertFile = (upsertUserFile: {}): boolean => {
     !UpdateFileRequestSchema.validate(upsertUserFile).error
   );
 };
-
-

@@ -32,8 +32,7 @@ export const prayerRowsRendererByWeek = (
         timeInHour: x.timeInHour,
         timeInMinute: x.timeInMinute,
         prayerNight: x.prayerNight,
-        theme: x.theme,
-
+        theme: x.theme
       }));
     }
   }
@@ -108,7 +107,7 @@ export const prayerColumns2 = (disciplineType: string): GridColumns => [
     field: 'weekOfYear',
     headerName: 'Kalenderwoche',
     width: 220,
-    type:"number",
+    type: 'number',
     editable: false
   },
   {

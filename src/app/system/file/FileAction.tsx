@@ -20,11 +20,13 @@ import { DataGridRows } from '../../DataGridRows';
 import { DialogMessageRenderer } from '../../DialogMessageRenderer';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { useFile } from '../../../hooks/useFile';
+import { upsertFileFormData, validateUpsertFile } from './FileRenderer';
 import {
-  upsertFileFormData,
-  validateUpsertFile
-} from './FileRenderer';
-import {fileColumns, FileModel, fileRows, UpdateFileRequest} from '../../../models/File';
+  fileColumns,
+  FileModel,
+  fileRows,
+  UpdateFileRequest
+} from '../../../models/File';
 import FileViewModal from '../../FileViewModal';
 
 interface FileActionProps {

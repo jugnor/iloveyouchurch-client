@@ -1,8 +1,8 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
-import {ResultsObject} from "./ResultsObject";
-import {randomId} from "@mui/x-data-grid-generator";
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
+import { ResultsObject } from './ResultsObject';
+import { randomId } from '@mui/x-data-grid-generator';
 
 export interface Regulation {
   id: string;
@@ -60,7 +60,7 @@ export const setRegulationColumns = (): GridColumns => [
     field: 'createdAt',
     headerName: 'Erstellt am',
     editable: true,
-    type: "date",
+    type: 'date',
     resizable: true,
     width: 100
   },
@@ -199,33 +199,32 @@ export const setRegulationColumns = (): GridColumns => [
 ];
 
 export const setRegulationRows = (
-  data: ResultsObject<Regulation> | undefined,
+  data: ResultsObject<Regulation> | undefined
 ) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        postboxId: x.postboxId,
-        prayerAlone: x.prayerAlone,
-        prayerInGroup: x.prayerInGroup,
-        prayerNight: x.prayerNight,
-        bibleReading: x.bibleReading,
-        clReading: x.clReading,
-        thanksGiving: x.thanksGiving,
-        godGiving: x.godGiving,
-        partialFasting: x.partialFasting,
-        completeFasting: x.completeFasting,
-        retreat: x.retreat,
-        choreRepeat: x.choreRepeat,
-        meditation: x.meditation,
-        gospel: x.gospel,
-        gospelContact: x.gospelContact,
-        gospelSupport: x.gospelSupport,
-        createdAt: new Date(x.createdAt).toLocaleDateString()
-      }));
-    }
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      postboxId: x.postboxId,
+      prayerAlone: x.prayerAlone,
+      prayerInGroup: x.prayerInGroup,
+      prayerNight: x.prayerNight,
+      bibleReading: x.bibleReading,
+      clReading: x.clReading,
+      thanksGiving: x.thanksGiving,
+      godGiving: x.godGiving,
+      partialFasting: x.partialFasting,
+      completeFasting: x.completeFasting,
+      retreat: x.retreat,
+      choreRepeat: x.choreRepeat,
+      meditation: x.meditation,
+      gospel: x.gospel,
+      gospelContact: x.gospelContact,
+      gospelSupport: x.gospelSupport,
+      createdAt: new Date(x.createdAt).toLocaleDateString()
+    }));
+  }
   const allRows: GridRowsProp = resultMap;
   return allRows;
-  }
-
+};

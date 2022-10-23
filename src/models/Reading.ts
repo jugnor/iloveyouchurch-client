@@ -1,11 +1,11 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { UserTime } from './UserTime';
-import {ResultsObject} from "./ResultsObject";
-import {Prayer} from "./Prayer";
-import {randomId} from "@mui/x-data-grid-generator";
-import {toDate} from "date-fns";
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
+import { ResultsObject } from './ResultsObject';
+import { Prayer } from './Prayer';
+import { randomId } from '@mui/x-data-grid-generator';
+import { toDate } from 'date-fns';
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 
 export enum ReadingType {
   BIBLE = 'BIBLE',
@@ -14,7 +14,7 @@ export enum ReadingType {
 
 export interface Reading {
   id: string;
-  userId:string
+  userId: string;
   title: string;
   timeInMinute: number;
   timeInHour: number;
@@ -58,37 +58,35 @@ export const UpdateReadingRequestSchema: Schema = Joi.object({
   })
 });
 
-export const readingRows = (
-  data: ResultsObject<Reading> | undefined
-) => {
+export const readingRows = (data: ResultsObject<Reading> | undefined) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        userId: x.userId,
-        readingType: x.readingType,
-        totalCap: x.totalCap,
-        title: x.title,
-        referenceEnd: x.referenceEnd,
-        timeInMinute: x.timeInMinute,
-        timeInHour: x.timeInHour,
-        theEnd: x.theEnd,
-        theme: x.theme,
-        weekOfYear:x.weekOfYear
-      }));
-    }
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      userId: x.userId,
+      readingType: x.readingType,
+      totalCap: x.totalCap,
+      title: x.title,
+      referenceEnd: x.referenceEnd,
+      timeInMinute: x.timeInMinute,
+      timeInHour: x.timeInHour,
+      theEnd: x.theEnd,
+      theme: x.theme,
+      weekOfYear: x.weekOfYear
+    }));
+  }
 
-const allRows: GridRowsProp = resultMap;
-return allRows;
-}
+  const allRows: GridRowsProp = resultMap;
+  return allRows;
+};
 
 export const meditationColumns = (type: string): GridColumns => [
   {
     field: 'weekOYear',
     headerName: 'Kalenderwoche',
     width: 200,
-    type:"number",
+    type: 'number',
     editable: false
   },
   {

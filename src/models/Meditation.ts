@@ -1,9 +1,9 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { UserTime } from './UserTime';
-import {ResultsObject} from "./ResultsObject";
-import {randomId} from "@mui/x-data-grid-generator";
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
+import { ResultsObject } from './ResultsObject';
+import { randomId } from '@mui/x-data-grid-generator';
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 
 export enum RetreatType {
   MEDITATION = 'MEDITATION',
@@ -12,7 +12,7 @@ export enum RetreatType {
 
 export interface Meditation {
   id: string;
-  userId:string,
+  userId: string;
   timeInMinute: number;
   timeInHour: number;
   theme: string;
@@ -46,24 +46,22 @@ export const UpdateMeditationRequestSchema: Schema = Joi.object({
   verse: Joi.string().optional().allow('')
 });
 
-export const meditationRows= (
-  data: ResultsObject<Meditation> | undefined
-) => {
+export const meditationRows = (data: ResultsObject<Meditation> | undefined) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        userId: x.userId,
-        retreatType: x.retreatType,
-        timeInHour: x.timeInHour,
-        timeInMinute: x.timeInMinute,
-        verse: x.verse,
-        total: x.total,
-        theme: x.theme,
-       weekOfYear:x.weekOfYear
-      }));
-    }
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      userId: x.userId,
+      retreatType: x.retreatType,
+      timeInHour: x.timeInHour,
+      timeInMinute: x.timeInMinute,
+      verse: x.verse,
+      total: x.total,
+      theme: x.theme,
+      weekOfYear: x.weekOfYear
+    }));
+  }
   const allRows: GridRowsProp = resultMap;
   return allRows;
 };
@@ -73,7 +71,7 @@ export const meditationColumns = (): GridColumns => [
     field: 'weekOfYear',
     headerName: 'Kalenderwoche',
     width: 200,
-    type:"number",
+    type: 'number',
     editable: false
   },
   {
@@ -108,4 +106,3 @@ export const meditationColumns = (): GridColumns => [
     width: 200
   }
 ];
-

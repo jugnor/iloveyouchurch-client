@@ -13,8 +13,6 @@ import {
 } from '../../../models/GodGiving';
 import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
 
-
-
 export const upsertGodGivingFormData = (
   postboxId: string,
   userId: string,
@@ -77,4 +75,3 @@ export const validateGodGiving = (
     !UpdateGodGivingRequestSchema.validate(upsertGodGiving).error
   );
 };
-

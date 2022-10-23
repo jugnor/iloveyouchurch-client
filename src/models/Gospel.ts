@@ -1,10 +1,10 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { UserTime } from './UserTime';
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
-import {ResultsObject} from "./ResultsObject";
-import {randomId} from "@mui/x-data-grid-generator";
-import {toDate} from "date-fns";
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
+import { ResultsObject } from './ResultsObject';
+import { randomId } from '@mui/x-data-grid-generator';
+import { toDate } from 'date-fns';
 
 export enum GospelType {
   GOSPEL = 'GOSPEL',
@@ -14,7 +14,7 @@ export enum GospelType {
 
 export interface Gospel {
   id: string;
-  userId:string,
+  userId: string;
   timeInMinute: number;
   timeInHour: number;
   goal: string;
@@ -140,7 +140,7 @@ export const gospelColumns = (type: string): GridColumns => [
     field: 'weekOfYear',
     headerName: 'kalenderwoche',
     width: 200,
-    type:"number",
+    type: 'number',
     editable: false
   },
   {
@@ -159,9 +159,7 @@ export const gospelColumns = (type: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 100,
-    hide:
-      type !== GospelType.GOSPEL &&
-      type !== GospelType.SUPPORT
+    hide: type !== GospelType.GOSPEL && type !== GospelType.SUPPORT
   },
   {
     field: 'goal',
@@ -221,30 +219,28 @@ export const gospelColumns = (type: string): GridColumns => [
   }
 ];
 
-export const gospelRows = (
-  data: ResultsObject<Gospel> | undefined
-) => {
+export const gospelRows = (data: ResultsObject<Gospel> | undefined) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        userId: x.userId,
-        gospelType: x.gospelType,
-        timeInHour: x.timeInHour,
-        timeInMinute: x.timeInMinute,
-        goal: x.goal,
-        total: x.total,
-        name: x.gospelContact !== undefined ? x.gospelContact.name : null,
-        email: x.gospelContact !== undefined ? x.gospelContact.email : null,
-        telephone:
-          x.gospelContact !== undefined ? x.gospelContact.telephone : null,
-        city: x.gospelContact !== undefined ? x.gospelContact.city : null,
-        title: x.gospelSupport !== undefined ? x.gospelSupport.title : null,
-        supportType:
-          x.gospelSupport !== undefined ? x.gospelSupport.supportType : null,
-        weekOfYear:x.weekOfYear
-      }));
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      userId: x.userId,
+      gospelType: x.gospelType,
+      timeInHour: x.timeInHour,
+      timeInMinute: x.timeInMinute,
+      goal: x.goal,
+      total: x.total,
+      name: x.gospelContact !== undefined ? x.gospelContact.name : null,
+      email: x.gospelContact !== undefined ? x.gospelContact.email : null,
+      telephone:
+        x.gospelContact !== undefined ? x.gospelContact.telephone : null,
+      city: x.gospelContact !== undefined ? x.gospelContact.city : null,
+      title: x.gospelSupport !== undefined ? x.gospelSupport.title : null,
+      supportType:
+        x.gospelSupport !== undefined ? x.gospelSupport.supportType : null,
+      weekOfYear: x.weekOfYear
+    }));
   }
   const allRows: GridRowsProp = resultMap;
   return allRows;

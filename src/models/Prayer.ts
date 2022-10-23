@@ -1,10 +1,10 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { UserTime } from './UserTime';
-import {ResultsObject} from "./ResultsObject";
-import {randomId} from "@mui/x-data-grid-generator";
-import {toDate} from "date-fns";
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
+import { ResultsObject } from './ResultsObject';
+import { randomId } from '@mui/x-data-grid-generator';
+import { toDate } from 'date-fns';
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 
 export enum PrayerType {
   ALONE = 'ALONE',
@@ -13,7 +13,7 @@ export enum PrayerType {
 
 export interface Prayer {
   id: string;
-  userId:string
+  userId: string;
   timeInMinute: number;
   timeInHour: number;
   theme: string;
@@ -52,34 +52,32 @@ export const UpdatePrayerRequestSchema: Schema = Joi.object({
   })
 });
 
-export const prayerRows = (
-  data: ResultsObject<Prayer> | undefined
-) => {
+export const prayerRows = (data: ResultsObject<Prayer> | undefined) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        userId: x.userId,
-        prayerType: x.prayerType,
-        timeInHour: x.timeInHour,
-        timeInMinute: x.timeInMinute,
-        prayerNight: x.prayerNight,
-        theme: x.theme,
-        weekOfYear:x.weekOfYear
-      }));
-    }
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      userId: x.userId,
+      prayerType: x.prayerType,
+      timeInHour: x.timeInHour,
+      timeInMinute: x.timeInMinute,
+      prayerNight: x.prayerNight,
+      theme: x.theme,
+      weekOfYear: x.weekOfYear
+    }));
+  }
 
   const allRows: GridRowsProp = resultMap;
   return allRows;
-}
+};
 
 export const prayerColumns = (disciplineType: string): GridColumns => [
   {
     field: 'weekOfYear',
     headerName: 'Kalenderwoche',
     width: 300,
-    type:"number",
+    type: 'number',
     editable: false
   },
   {
@@ -107,4 +105,3 @@ export const prayerColumns = (disciplineType: string): GridColumns => [
     hide: disciplineType === PrayerType.ALONE
   }
 ];
-

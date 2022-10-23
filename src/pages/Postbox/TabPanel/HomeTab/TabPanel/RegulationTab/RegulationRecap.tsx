@@ -8,15 +8,14 @@ import {
   Regulation,
   setRegulationColumns,
   setRegulationRows
-} from "../../../../../../models/Regulation";
-import {ResultsObject} from "../../../../../../models/ResultsObject";
+} from '../../../../../../models/Regulation';
+import { ResultsObject } from '../../../../../../models/ResultsObject';
 
 interface RegulationRecapProps {
   postboxId: string;
 }
 
-export function RegulationRecap(regulationRecapProps : RegulationRecapProps ) {
-
+export function RegulationRecap(regulationRecapProps: RegulationRecapProps) {
   const [page, setPage] = React.useState(0);
 
   const onChangePage = (newPage: number) => {
@@ -25,8 +24,7 @@ export function RegulationRecap(regulationRecapProps : RegulationRecapProps ) {
 
   const columns = setRegulationColumns();
 
-
-  const { data:result } = useSWR<ResultsObject<Regulation>>(
+  const { data: result } = useSWR<ResultsObject<Regulation>>(
     `/postboxes/${regulationRecapProps.postboxId}/regulation-results?` +
       `page=${page}&size=5&sortBy=CREATED_AT&order=DESC`
   );

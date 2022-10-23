@@ -149,9 +149,7 @@ export function DataGridRenderer({
           style={{ overflowY: 'auto' }}
         >
           {type === 'Censor' ? (
-            <CalenderWeekRenderer
-             setWeekOfYear={setPage}
-            />
+            <CalenderWeekRenderer setWeekOfYear={setPage} />
           ) : (
             ''
           )}

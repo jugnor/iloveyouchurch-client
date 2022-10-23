@@ -67,7 +67,7 @@ export const setActivityColumns = (activityType: string): GridColumns => [
     field: 'description',
     headerName: 'Beschreibung',
     editable: true,
-    width: activityType === ActivityType.PROGRAM?750:1000
+    width: activityType === ActivityType.PROGRAM ? 750 : 1000
   }
 ];
 

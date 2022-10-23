@@ -11,14 +11,14 @@ import BookIcon from '@mui/icons-material/Book';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import FreeBreakfastIcon from '@mui/icons-material/FreeBreakfast';
-import {FastingBoard} from "./FastingTabPanel/FastingBoard";
-import {DisciplineAction} from "../../../../../app/discipline/DisciplineAction";
+import { FastingBoard } from './FastingTabPanel/FastingBoard';
+import { DisciplineAction } from '../../../../../app/discipline/DisciplineAction';
 import { FastingType } from '../../../../../models/Fasting/Fasting';
-import {RetreatType} from "../../../../../models/Meditation";
-import {PrayerType} from "../../../../../models/Prayer";
-import {ReadingType} from "../../../../../models/Reading";
-import {GospelType} from "../../../../../models/Gospel";
-import {GodGivingType} from "../../../../../models/GodGiving";
+import { RetreatType } from '../../../../../models/Meditation';
+import { PrayerType } from '../../../../../models/Prayer';
+import { ReadingType } from '../../../../../models/Reading';
+import { GospelType } from '../../../../../models/Gospel';
+import { GodGivingType } from '../../../../../models/GodGiving';
 
 interface TabPanelProps {
   children?: React.ReactNode;

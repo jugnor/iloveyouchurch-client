@@ -41,8 +41,7 @@ export const gospelRowsRendererByWeek = (
         city: x.gospelContact !== undefined ? x.gospelContact.city : null,
         title: x.gospelSupport !== undefined ? x.gospelSupport.title : null,
         supportType:
-          x.gospelSupport !== undefined ? x.gospelSupport.supportType : null,
-
+          x.gospelSupport !== undefined ? x.gospelSupport.supportType : null
       }));
       console.log('result ' + resultMap);
     }
@@ -190,9 +189,7 @@ export const gospelCol = (type: string): GridColumns => [
     editable: true,
     resizable: true,
     width: 100,
-    hide:
-      type !== GospelType.GOSPEL &&
-      type !== GospelType.SUPPORT
+    hide: type !== GospelType.GOSPEL && type !== GospelType.SUPPORT
   },
   {
     field: 'goal',

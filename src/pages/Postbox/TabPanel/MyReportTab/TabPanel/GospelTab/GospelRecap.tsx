@@ -9,7 +9,12 @@ import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import {Gospel, gospelColumns, gospelRows, GospelType} from "../../../../../../models/Gospel";
+import {
+  Gospel,
+  gospelColumns,
+  gospelRows,
+  GospelType
+} from '../../../../../../models/Gospel';
 
 interface GospelRecapProps {
   postboxId: string;
@@ -24,11 +29,8 @@ export function GospelRecap({
   path,
   menuItems
 }: GospelRecapProps) {
-
   const [page, setPage] = React.useState(0);
-  const [gospelType, setGospelType] = useState<string>(
-    GospelType.GOSPEL
-  );
+  const [gospelType, setGospelType] = useState<string>(GospelType.GOSPEL);
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
@@ -41,9 +43,7 @@ export function GospelRecap({
 
   const columns = gospelColumns(gospelType);
 
-  const rows = gospelRows(
-    results
-  );
+  const rows = gospelRows(results);
 
   return results && columns && rows ? (
     <>

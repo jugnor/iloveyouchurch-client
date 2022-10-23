@@ -41,7 +41,7 @@ export const readingRowsRendererByWeek = (
         timeInHour: x.timeInHour,
         theEnd: x.theEnd,
         theme: x.theme
-      }))
+      }));
     }
   }
   if (methode === 'create') {
@@ -57,7 +57,6 @@ export const readingRowsRendererByWeek = (
       }
     ];
   }
-
 
   const allRows: GridRowsProp = resultMap;
   return allRows;

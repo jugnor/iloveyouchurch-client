@@ -9,8 +9,12 @@ import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import { FastingType} from "../../../../../../models/Fasting/Fasting";
-import {Reading, meditationColumns, readingRows} from "../../../../../../models/Reading";
+import { FastingType } from '../../../../../../models/Fasting/Fasting';
+import {
+  Reading,
+  meditationColumns,
+  readingRows
+} from '../../../../../../models/Reading';
 
 interface ReadingRecapProps {
   postboxId: string;
@@ -25,11 +29,8 @@ export function ReadingRecap({
   path,
   menuItems
 }: ReadingRecapProps) {
-
   const [page, setPage] = React.useState(0);
-  const [readingType, setReadingType] = useState<string>(
-    FastingType.PARTIAL
-  );
+  const [readingType, setReadingType] = useState<string>(FastingType.PARTIAL);
 
   const onChangePage = (newPage: number) => {
     setPage(newPage);
@@ -42,9 +43,7 @@ export function ReadingRecap({
 
   const columns = meditationColumns(readingType);
 
-  const rows = readingRows(
-    results
-  );
+  const rows = readingRows(results);
 
   return results && columns && rows ? (
     <>

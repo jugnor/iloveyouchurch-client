@@ -1,9 +1,9 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
-import {ResultsObject} from "../ResultsObject";
-import {randomId} from "@mui/x-data-grid-generator";
-import {toDate} from "date-fns";
-import {GridColumns, GridRowsProp} from "@mui/x-data-grid";
+import { ResultsObject } from '../ResultsObject';
+import { randomId } from '@mui/x-data-grid-generator';
+import { toDate } from 'date-fns';
+import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 
 export enum FastingType {
   COMPLETE = 'COMPLETE',
@@ -12,12 +12,12 @@ export enum FastingType {
 
 export interface Fasting {
   id: string;
-  userId:string
+  userId: string;
   goal: string;
   days: number;
   fastingType: FastingType;
   weekOfYear: number;
-  createdAt?: Date;
+  createdAt: Date;
 }
 
 export type UpsertFastingRequest = Except<Fasting, 'id' | 'createdAt'>;
@@ -39,24 +39,22 @@ export const UpdateFastingRequestSchema: Schema = Joi.object({
   goal: Joi.string().optional().allow('')
 });
 
-export const fastingRows = (
-  data: ResultsObject<Fasting> | undefined
-) => {
+export const fastingRows = (data: ResultsObject<Fasting> | undefined) => {
   let resultMap: readonly { [key: string]: any }[] = [];
-    if (data !== undefined) {
-      resultMap = data.items.map((x) => ({
-        id: randomId(),
-        oId: x.id,
-        userId: x.userId,
-        fastingType: x.fastingType,
-        goal: x.goal,
-        days: x.days,
-        weekOfYear:x.weekOfYear
-      }));
-      console.log('result ' + resultMap);
-    }
+  if (data !== undefined) {
+    resultMap = data.items.map((x) => ({
+      id: randomId(),
+      oId: x.id,
+      userId: x.userId,
+      fastingType: x.fastingType,
+      goal: x.goal,
+      days: x.days,
+      weekOfYear: x.weekOfYear
+    }));
+    console.log('result ' + resultMap);
+  }
 
-const allRows: GridRowsProp = resultMap;
+  const allRows: GridRowsProp = resultMap;
   return allRows;
 };
 
@@ -83,4 +81,3 @@ export const fastingColumns = (): GridColumns => [
     width: 500
   }
 ];
-

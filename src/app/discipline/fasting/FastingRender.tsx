@@ -30,8 +30,7 @@ export const fastingRowsRendererByWeek = (
 
         fastingType: x.fastingType,
         goal: x.goal,
-        days: x.days,
-
+        days: x.days
       }));
       console.log('result ' + resultMap);
     }

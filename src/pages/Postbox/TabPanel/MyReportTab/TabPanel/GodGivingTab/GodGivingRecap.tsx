@@ -14,7 +14,7 @@ import {
   godGivingColumns,
   godGivingRows,
   GodGivingType
-} from "../../../../../../models/GodGiving";
+} from '../../../../../../models/GodGiving';
 
 interface GodGivingRecapProps {
   postboxId: string;
@@ -29,7 +29,6 @@ export function GodGivingRecap({
   path,
   menuItems
 }: GodGivingRecapProps) {
-
   const [page, setPage] = React.useState(0);
   const [godGivingType, setGodGivingType] = useState<string>(
     GodGivingType.MONEY
@@ -46,9 +45,7 @@ export function GodGivingRecap({
 
   const columns = godGivingColumns(godGivingType);
 
-  const rows = godGivingRows(
-    results
-  );
+  const rows = godGivingRows(results);
 
   return results && columns && rows ? (
     <>

@@ -25,7 +25,11 @@ import {
   upsertRegulationFormData,
   validateRegulation
 } from './RegulationRenderer';
-import {Regulation, setRegulationColumns, UpsertRegulationRequest} from '../../models/Regulation';
+import {
+  Regulation,
+  setRegulationColumns,
+  UpsertRegulationRequest
+} from '../../models/Regulation';
 
 interface RegulationActionProps {
   postboxId: string;
