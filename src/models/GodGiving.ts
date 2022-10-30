@@ -20,7 +20,7 @@ export interface GodGiving {
   description: string;
   presence: boolean;
   weekOfYear: number;
-  createdAt?: string;
+  createdAt: string;
 }
 
 export type UpsertGodGivingRequest = Except<
@@ -56,28 +56,23 @@ export const CreateGodGivingRequestSchema: Schema = Joi.object({
   userTime: Joi.object().required()
 });
 
-export const UpdateGodGivingRequestSchema: Schema = Joi.object({
+export const UpsertGodGivingRequestSchema: Schema = Joi.object({
   godGivingType: Joi.string()
     .valid(...Object.values(GodGivingType))
     .required(),
   amount: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.MONEY,
     then: Joi.number().positive().required(),
-    otherwise: null
+    otherwise: undefined
   }),
   total: Joi.alternatives().conditional('godGivingType', {
-    is: GodGivingType.THANKS,
-    then: Joi.number().positive().required(),
-    otherwise: null
+    is: GodGivingType.MONEY,
+    then: undefined,
+    otherwise: Joi.number().positive().required()
   }),
   timeInMinute: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS,
     then: Joi.number().min(0).optional(),
-    otherwise: null
-  }),
-  presence: Joi.alternatives().conditional('godGivingType', {
-    is: GodGivingType.CHORE,
-    then: Joi.boolean().optional().allow(false),
     otherwise: null
   }),
   description: Joi.string().optional().empty('')

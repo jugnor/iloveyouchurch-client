@@ -1,9 +1,7 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
-import { UserTime } from './UserTime';
 import { ResultsObject } from './ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';
-import { toDate } from 'date-fns';
 import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 
 export enum PrayerType {
@@ -20,7 +18,7 @@ export interface Prayer {
   prayerNight: number;
   prayerType: PrayerType;
   weekOfYear: number;
-  createdAt?: Date;
+  createdAt: Date;
 }
 
 export type UpsertPrayerRequest = Except<Prayer, 'id' | 'createdAt' | 'userId'>;
@@ -34,12 +32,12 @@ export const CreatePrayerRequestSchema: Schema = Joi.object({
   prayerNight: Joi.alternatives().conditional('prayerType', {
     is: PrayerType.GROUP,
     then: Joi.number().min(0).required(),
-    otherwise: null
+    otherwise: undefined
   }),
   userTime: Joi.object().required()
 });
 
-export const UpdatePrayerRequestSchema: Schema = Joi.object({
+export const UpsertPrayerRequestSchema: Schema = Joi.object({
   prayerType: Joi.string()
     .valid(...Object.values(PrayerType))
     .required(),
@@ -49,7 +47,8 @@ export const UpdatePrayerRequestSchema: Schema = Joi.object({
     is: PrayerType.GROUP,
     then: Joi.number().min(0).required(),
     otherwise: null
-  })
+  }),
+  weekOfYear:Joi.number().positive()
 });
 
 export const prayerRows = (data: ResultsObject<Prayer> | undefined) => {

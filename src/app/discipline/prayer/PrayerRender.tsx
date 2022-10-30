@@ -10,7 +10,7 @@ import {
   CreatePrayerRequestSchema,
   Prayer,
   PrayerType,
-  UpdatePrayerRequestSchema
+  UpsertPrayerRequestSchema
 } from '../../../models/Prayer';
 
 export const prayerRowsRendererByWeek = (
@@ -98,7 +98,7 @@ export const validatePrayer = (upsertPrayer: {}, create: boolean): boolean => {
   }
   return (
     upsertPrayer !== undefined &&
-    !UpdatePrayerRequestSchema.validate(upsertPrayer).error
+    !UpsertPrayerRequestSchema.validate(upsertPrayer).error
   );
 };
 

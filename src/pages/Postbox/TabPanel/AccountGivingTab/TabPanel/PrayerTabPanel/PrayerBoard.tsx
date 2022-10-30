@@ -1,14 +1,7 @@
 import * as React from 'react';
-import {
-  Fasting,
-  FastingType,
-  UpsertFastingRequest,
-  UpsertFastingRequestSchema
-} from '../../../../../../models/Fasting/Fasting';
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
-import { FastingInputField } from './FastingInputField';
 import useSWR from 'swr';
 import {
   CalenderWeekRenderer,
@@ -24,19 +17,26 @@ import { DeleteDialog } from '../../../../../../shared/DeleteDialog';
 import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
+import {
+  Prayer,
+  PrayerType,
+  UpsertPrayerRequest,
+  UpsertPrayerRequestSchema
+} from "../../../../../../models/Prayer";
+import {PrayerInputField} from "./PrayerInputField";
 
-export interface FastingBoardProps {
+export interface PrayerBoardProps {
   postboxId: string;
   menuItems: string[];
   path: string;
   userId: string;
 }
 
-export function FastingBoard(fastingBoardProps: FastingBoardProps) {
+export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
   const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
-    fastingBoardProps.postboxId,
-    fastingBoardProps.userId,
-    fastingBoardProps.path
+    prayerBoardProps.postboxId,
+    prayerBoardProps.userId,
+    prayerBoardProps.path
   );
   const date = new Date(now());
 
@@ -48,48 +48,49 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
-  const [fastingType, setFastingType] = useState<SelectElement>(
-    FastingType.PARTIAL
+  const [prayerType, setPrayerType] = useState<SelectElement>(
+    PrayerType.ALONE
   );
-  const [fasting, setFasting] = useState<Fasting>();
+  const [prayer, setPrayer] = useState<Prayer>();
 
-  const { data: fastingData } = useSWR<Fasting>(
-    `/postboxes/${fastingBoardProps.postboxId}/fastings?` +
-      `fastingType=${fastingType}&weekOfYear=${weekOfYear}`
+  const { data: prayerData } = useSWR<Prayer>(
+    `/postboxes/${prayerBoardProps.postboxId}/prayers?` +
+      `prayerType=${prayerType}&weekOfYear=${weekOfYear}`
   );
-  const handleFastingForm = (fastingForm: Map<string, any>) => {
-    const upsertFastingRequest = {
-      days: fastingForm.get('days'),
-      goal: fastingForm.get('goal'),
-      fastingType: fastingType,
+  const handlePrayerForm = (prayerForm: Map<string, any>) => {
+    const upsertPrayerRequest = {
+      timeInMinute: prayerForm.get('timeInMinute'),
+      theme: prayerForm.get('theme'),
+      prayerNight:prayerType===PrayerType.GROUP?prayerForm.get("prayerNight"):undefined,
+      prayerType: prayerType,
       weekOfYear: weekOfYear
-    } as UpsertFastingRequest;
+    } as UpsertPrayerRequest;
 
     const error =
-      UpsertFastingRequestSchema.validate(upsertFastingRequest).error;
+      UpsertPrayerRequestSchema.validate(upsertPrayerRequest ).error;
     if (error) {
       setMode('create');
       setSeverity('error');
-      if (fasting === undefined) {
+      if (prayer === undefined) {
         setAlert(
-          'Das neue Fasting Item konnte leider nicht hinzugefügt werden'
+          'Das neue Prayer Item konnte leider nicht hinzugefügt werden'
         );
       } else {
         setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
+          'Das Prayer Item von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
     }
-    createDiscipline(upsertFastingRequest).then((r) => {
+    createDiscipline(upsertPrayerRequest).then((r) => {
       setMode('edit');
       setSeverity('success');
-      if (fasting === undefined) {
-        setAlert('Das Fasting neue Item wurde erfolgreich hinzugefügt');
+      if (prayer === undefined) {
+        setAlert('Das neue Prayer Item wurde erfolgreich hinzugefügt');
       } else {
         setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
+          'Das Prayer Item von Kalenderwoche ' +
             weekOfYear +
             ' wurde erfolgreich geändert'
         );
@@ -104,11 +105,11 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   };
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (fasting !== undefined) {
-        deleteDiscipline(fasting?.id).then((r) => {
+      if (prayer !== undefined) {
+        deleteDiscipline(prayer?.id).then((r) => {
           setMode('edit');
           setOpenAlert(true);
-          setAlert('Das Fasting Item wurde erfolgreich gelöscht');
+          setAlert('Das Prayer Item wurde erfolgreich gelöscht');
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -118,20 +119,20 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
       }
     }
   };
-  const deleteFastingAction = () => {
+  const deletePrayerAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
   useEffect(() => {
     if (mode === '') {
-      if (fastingData !== undefined && fastingData !== null) {
+      if (prayerData !== undefined && prayerData !== null) {
         setMode('edit');
       } else {
         setMode('create');
       }
-      setFasting(fastingData);
+      setPrayer(prayerData);
     }
-  }, [mode, fastingData]);
+  }, [mode, prayerData]);
   return (
     <Container>
       <Typography
@@ -152,24 +153,25 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
 
             <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
             <SelectItem
-              setElement={setFastingType}
-              element={fastingType}
-              menuItems={fastingBoardProps.menuItems}
+              setElement={setPrayerType}
+              element={prayerType}
+              menuItems={prayerBoardProps.menuItems}
             />
           </div>
         </div>
         {mode === 'edit' && (
           <div>
-            <FastingInputField
-              deleteFastingAction={deleteFastingAction}
-              fasting={fastingData}
-              handleFastingForm={handleFastingForm}
+            <PrayerInputField
+              deletePrayerAction ={deletePrayerAction}
+              prayerType={prayerType as PrayerType}
+              prayer={prayerData}
+              handlePrayerForm={handlePrayerForm}
             />
           </div>
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Item Fasting hinzufügen !!!
+            Neues Item Prayer hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (

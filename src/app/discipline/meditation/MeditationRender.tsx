@@ -9,7 +9,7 @@ import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellPar
 import {
   CreateMeditationRequestSchema,
   Meditation,
-  UpdateMeditationRequestSchema
+  UpsertMeditationRequestSchema
 } from '../../../models/Meditation';
 
 export const meditationRowsRendererByWeek = (
@@ -104,10 +104,10 @@ export const validateMeditation = (
       !CreateMeditationRequestSchema.validate(upsertMeditation).error
     );
   }
-  console.log(UpdateMeditationRequestSchema.validate(upsertMeditation).error);
+  console.log(UpsertMeditationRequestSchema.validate(upsertMeditation).error);
   return (
     upsertMeditation !== undefined &&
-    !UpdateMeditationRequestSchema.validate(upsertMeditation).error
+    !UpsertMeditationRequestSchema.validate(upsertMeditation).error
   );
 };
 

@@ -1,14 +1,7 @@
 import * as React from 'react';
-import {
-  Fasting,
-  FastingType,
-  UpsertFastingRequest,
-  UpsertFastingRequestSchema
-} from '../../../../../../models/Fasting/Fasting';
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
-import { FastingInputField } from './FastingInputField';
 import useSWR from 'swr';
 import {
   CalenderWeekRenderer,
@@ -25,18 +18,26 @@ import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
 
-export interface FastingBoardProps {
+import {
+  GodGiving,
+  GodGivingType,
+  UpsertGodGivingRequest,
+  UpsertGodGivingRequestSchema
+} from "../../../../../../models/GodGiving";
+import {GodGivingInputField} from "./GodGivingInputField";
+
+export interface GodGivingBoardBoardProps {
   postboxId: string;
   menuItems: string[];
   path: string;
   userId: string;
 }
 
-export function FastingBoard(fastingBoardProps: FastingBoardProps) {
+export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
   const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
-    fastingBoardProps.postboxId,
-    fastingBoardProps.userId,
-    fastingBoardProps.path
+    godgivingBoardProps.postboxId,
+    godgivingBoardProps.userId,
+    godgivingBoardProps.path
   );
   const date = new Date(now());
 
@@ -48,48 +49,50 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
-  const [fastingType, setFastingType] = useState<SelectElement>(
-    FastingType.PARTIAL
+  const [godGivingType, setGodGivingType] = useState<SelectElement>(
+    GodGivingType.MONEY
   );
-  const [fasting, setFasting] = useState<Fasting>();
+  const [godGiving, setGodGiving] = useState<GodGiving>();
 
-  const { data: fastingData } = useSWR<Fasting>(
-    `/postboxes/${fastingBoardProps.postboxId}/fastings?` +
-      `fastingType=${fastingType}&weekOfYear=${weekOfYear}`
+  const { data: godGivingData } = useSWR<GodGiving>(
+    `/postboxes/${godgivingBoardProps.postboxId}/godGivings?` +
+      `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
   );
-  const handleFastingForm = (fastingForm: Map<string, any>) => {
-    const upsertFastingRequest = {
-      days: fastingForm.get('days'),
-      goal: fastingForm.get('goal'),
-      fastingType: fastingType,
+  const handleGodGivingForm = (godGivingForm: Map<string, any>) => {
+    const upsertGodGivingRequest = {
+      timeInMinute: godGivingForm.get('timeInMinute'),
+      amount: godGivingForm.get('amount'),
+      total: godGivingForm.get('total'),
+      description: godGivingForm.get('description'),
+      godGivingType: godGivingType,
       weekOfYear: weekOfYear
-    } as UpsertFastingRequest;
+    } as UpsertGodGivingRequest;
 
     const error =
-      UpsertFastingRequestSchema.validate(upsertFastingRequest).error;
+      UpsertGodGivingRequestSchema.validate(upsertGodGivingRequest ).error;
     if (error) {
       setMode('create');
       setSeverity('error');
-      if (fasting === undefined) {
+      if (godGiving === undefined) {
         setAlert(
-          'Das neue Fasting Item konnte leider nicht hinzugefügt werden'
+          'Das neue Item GodGiving konnte leider nicht hinzugefügt werden'
         );
       } else {
         setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
+          'Das Item GodGiving von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
     }
-    createDiscipline(upsertFastingRequest).then((r) => {
+    createDiscipline(upsertGodGivingRequest).then((r) => {
       setMode('edit');
       setSeverity('success');
-      if (fasting === undefined) {
-        setAlert('Das Fasting neue Item wurde erfolgreich hinzugefügt');
+      if (godGiving === undefined) {
+        setAlert('Das neue Item GodGiving wurde erfolgreich hinzugefügt');
       } else {
         setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
+          'Das Item GodGiving von Kalenderwoche ' +
             weekOfYear +
             ' wurde erfolgreich geändert'
         );
@@ -104,11 +107,11 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   };
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (fasting !== undefined) {
-        deleteDiscipline(fasting?.id).then((r) => {
+      if (godGiving !== undefined) {
+        deleteDiscipline(godGiving?.id).then((r) => {
           setMode('edit');
           setOpenAlert(true);
-          setAlert('Das Fasting Item wurde erfolgreich gelöscht');
+          setAlert('Das Item GodGiving wurde erfolgreich gelöscht');
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -118,20 +121,20 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
       }
     }
   };
-  const deleteFastingAction = () => {
+  const deleteGodGivingAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
   useEffect(() => {
     if (mode === '') {
-      if (fastingData !== undefined && fastingData !== null) {
+      if (godGivingData !== undefined && godGivingData !== null) {
         setMode('edit');
       } else {
         setMode('create');
       }
-      setFasting(fastingData);
+      setGodGiving(godGivingData);
     }
-  }, [mode, fastingData]);
+  }, [mode, godGivingData]);
   return (
     <Container>
       <Typography
@@ -152,24 +155,25 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
 
             <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
             <SelectItem
-              setElement={setFastingType}
-              element={fastingType}
-              menuItems={fastingBoardProps.menuItems}
+              setElement={setGodGivingType}
+              element={godGivingType}
+              menuItems={godgivingBoardProps.menuItems}
             />
           </div>
         </div>
         {mode === 'edit' && (
           <div>
-            <FastingInputField
-              deleteFastingAction={deleteFastingAction}
-              fasting={fastingData}
-              handleFastingForm={handleFastingForm}
+            <GodGivingInputField
+              deleteGodGivingAction={deleteGodGivingAction}
+              godGivingType={godGivingType as GodGivingType}
+              godGiving={godGivingData}
+              handleGodGivingForm={handleGodGivingForm}
             />
           </div>
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Item Fasting hinzufügen !!!
+            Neues Item GodGiving hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (

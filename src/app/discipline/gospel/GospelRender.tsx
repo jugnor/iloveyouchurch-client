@@ -9,7 +9,7 @@ import {
   CreateGospelRequestSchema,
   Gospel,
   GospelType,
-  UpdateGospelRequestSchema
+  UpsertGospelRequestSchema
 } from '../../../models/Gospel';
 import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
 
@@ -162,7 +162,7 @@ export const validateGospel = (upsertGospel: {}, create: boolean): boolean => {
   }
   return (
     upsertGospel !== undefined &&
-    !UpdateGospelRequestSchema.validate(upsertGospel).error
+    !UpsertGospelRequestSchema.validate(upsertGospel).error
   );
 };
 

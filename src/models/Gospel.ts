@@ -88,14 +88,14 @@ export const CreateGospelRequestSchema: Schema = Joi.object({
   userTime: Joi.object().required()
 });
 
-export const UpdateGospelRequestSchema: Schema = Joi.object({
+export const UpsertGospelRequestSchema: Schema = Joi.object({
   gospelType: Joi.string()
     .valid(...Object.values(GospelType))
     .required(),
   timeInMinute: Joi.alternatives().conditional('gospelType', {
     is: GospelType.GOSPEL,
     then: Joi.number().min(0).optional(),
-    otherwise: null
+    otherwise: undefined
   }),
   total: Joi.alternatives()
     .conditional('gospelType', {
@@ -105,12 +105,12 @@ export const UpdateGospelRequestSchema: Schema = Joi.object({
     .conditional('gospelType', {
       is: GospelType.SUPPORT,
       then: Joi.number().positive().required(),
-      otherwise: null
+      otherwise: undefined
     }),
   goal: Joi.alternatives().conditional('gospelType', {
     is: GospelType.GOSPEL,
     then: Joi.string().optional().allow(''),
-    otherwise: null
+    otherwise: undefined
   }),
   gospelContact: Joi.alternatives().conditional('gospelType', {
     is: GospelType.CONTACT,
@@ -123,7 +123,7 @@ export const UpdateGospelRequestSchema: Schema = Joi.object({
       telephone: Joi.string().optional().allow(null, ''),
       city: Joi.string().optional().allow(null, '')
     }).required(),
-    otherwise: null
+    otherwise: undefined
   }),
   gospelSupport: Joi.alternatives().conditional('gospelType', {
     is: GospelType.SUPPORT,
@@ -131,7 +131,7 @@ export const UpdateGospelRequestSchema: Schema = Joi.object({
       title: Joi.string().required(),
       supportType: Joi.string().required()
     }).required(),
-    otherwise: null
+    otherwise: undefined
   })
 });
 

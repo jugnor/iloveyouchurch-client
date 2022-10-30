@@ -9,7 +9,7 @@ import {
   CreateGodGivingRequestSchema,
   GodGiving,
   GodGivingType,
-  UpdateGodGivingRequestSchema
+  UpsertGodGivingRequestSchema
 } from '../../../models/GodGiving';
 import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
 
@@ -72,6 +72,6 @@ export const validateGodGiving = (
   }
   return (
     upsertGodGiving !== undefined &&
-    !UpdateGodGivingRequestSchema.validate(upsertGodGiving).error
+    !UpsertGodGivingRequestSchema.validate(upsertGodGiving).error
   );
 };

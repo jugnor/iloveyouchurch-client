@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
-import { Fasting } from './Fasting';
+import { Fasting } from '../../../../../../models/Fasting/Fasting';
 import { useState } from 'react';
 import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
 import { Button } from '@material-ui/core';
@@ -60,13 +60,13 @@ export function FastingInputField(
           variant="filled"
         ></TextField>
       </div>
-      {fastingInputFieldProps.fasting !== undefined && (
+
         <div style={{ marginLeft: '14em', marginTop: '1em' }}>
           <TextField
             id="filled-select-currency-native"
-            label="Das Teil-Fasting Item wurde am"
+            label="Das Fasting Item wurde am"
             value={
-              new Date(
+              new Date( fastingInputFieldProps.fasting===undefined?'':
                 fastingInputFieldProps.fasting?.createdAt
               ).toLocaleString() + ' erstellt'
             }
@@ -74,7 +74,6 @@ export function FastingInputField(
             variant="filled"
           ></TextField>
         </div>
-      )}
 
       <div style={{ marginLeft: '7em', marginTop: '2em' }}>
         <Button

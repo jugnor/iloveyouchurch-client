@@ -20,7 +20,7 @@ export interface Meditation {
   total: number;
   retreatType: RetreatType;
   weekOfYear: number;
-  createdAt?: Date;
+  createdAt: Date;
 }
 
 export type UpsertMeditationRequest = Except<
@@ -36,17 +36,19 @@ export const CreateMeditationRequestSchema: Schema = Joi.object({
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
   verse: Joi.string().optional().allow(''),
-  userTime: Joi.object().required()
+  weekOfYear:Joi.number().positive()
 });
 
-export const UpdateMeditationRequestSchema: Schema = Joi.object({
+export const UpsertMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()
     .valid(...Object.values(RetreatType))
     .required(),
   timeInMinute: Joi.number().min(0).required(),
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
-  verse: Joi.string().optional().allow('')
+  verse: Joi.string().optional().allow(''),
+  weekOfYear:Joi.number().positive()
+
 });
 
 export const meditationRows = (data: ResultsObject<Meditation> | undefined) => {

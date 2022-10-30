@@ -1,14 +1,7 @@
 import * as React from 'react';
-import {
-  Fasting,
-  FastingType,
-  UpsertFastingRequest,
-  UpsertFastingRequestSchema
-} from '../../../../../../models/Fasting/Fasting';
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
-import { FastingInputField } from './FastingInputField';
 import useSWR from 'swr';
 import {
   CalenderWeekRenderer,
@@ -24,19 +17,25 @@ import { DeleteDialog } from '../../../../../../shared/DeleteDialog';
 import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
+import {
+  Meditation,
+  RetreatType,
+  UpsertMeditationRequest, UpsertMeditationRequestSchema
+} from "../../../../../../models/Meditation";
+import {MeditationInputField} from "../Meditation/MeditationInputField";
 
-export interface FastingBoardProps {
+export interface MeditationBoardProps {
   postboxId: string;
   menuItems: string[];
   path: string;
   userId: string;
 }
 
-export function FastingBoard(fastingBoardProps: FastingBoardProps) {
+export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
   const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
-    fastingBoardProps.postboxId,
-    fastingBoardProps.userId,
-    fastingBoardProps.path
+    meditationBoardProps.postboxId,
+    meditationBoardProps.userId,
+    meditationBoardProps.path
   );
   const date = new Date(now());
 
@@ -48,48 +47,50 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
-  const [fastingType, setFastingType] = useState<SelectElement>(
-    FastingType.PARTIAL
+  const [retreatType, setRetreatType] = useState<SelectElement>(
+    RetreatType.MEDITATION
   );
-  const [fasting, setFasting] = useState<Fasting>();
+  const [meditation, setMeditation] = useState<Meditation>();
 
-  const { data: fastingData } = useSWR<Fasting>(
-    `/postboxes/${fastingBoardProps.postboxId}/fastings?` +
-      `fastingType=${fastingType}&weekOfYear=${weekOfYear}`
+  const { data: meditationData } = useSWR<Meditation>(
+    `/postboxes/${meditationBoardProps.postboxId}/meditations?` +
+      `retreatType=${retreatType}&weekOfYear=${weekOfYear}`
   );
-  const handleFastingForm = (fastingForm: Map<string, any>) => {
-    const upsertFastingRequest = {
-      days: fastingForm.get('days'),
-      goal: fastingForm.get('goal'),
-      fastingType: fastingType,
+  const handleMeditationForm = (meditationForm: Map<string, any>) => {
+    const upsertMeditationRequest = {
+      timeInMinute: meditationForm.get('timeInMinute'),
+      theme: meditationForm.get('theme'),
+      verse: meditationForm.get('verse'),
+     retreatType: retreatType,
       weekOfYear: weekOfYear
-    } as UpsertFastingRequest;
+    } as UpsertMeditationRequest;
+
 
     const error =
-      UpsertFastingRequestSchema.validate(upsertFastingRequest).error;
+      UpsertMeditationRequestSchema.validate(upsertMeditationRequest ).error;
     if (error) {
       setMode('create');
       setSeverity('error');
-      if (fasting === undefined) {
+      if (meditation === undefined) {
         setAlert(
-          'Das neue Fasting Item konnte leider nicht hinzugefügt werden'
+          'Das neue Item Meditation konnte leider nicht hinzugefügt werden'
         );
       } else {
         setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
+          'Das Item Meditation von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
     }
-    createDiscipline(upsertFastingRequest).then((r) => {
+    createDiscipline(upsertMeditationRequest).then((r) => {
       setMode('edit');
       setSeverity('success');
-      if (fasting === undefined) {
-        setAlert('Das Fasting neue Item wurde erfolgreich hinzugefügt');
+      if (meditation === undefined) {
+        setAlert('Das neue Item Meditation wurde erfolgreich hinzugefügt');
       } else {
         setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
+          'Das Item Meditation von Kalenderwoche ' +
             weekOfYear +
             ' wurde erfolgreich geändert'
         );
@@ -104,11 +105,11 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   };
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (fasting !== undefined) {
-        deleteDiscipline(fasting?.id).then((r) => {
+      if (meditation !== undefined) {
+        deleteDiscipline(meditation?.id).then((r) => {
           setMode('edit');
           setOpenAlert(true);
-          setAlert('Das Fasting Item wurde erfolgreich gelöscht');
+          setAlert('Das Item Meditation wurde erfolgreich gelöscht');
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -118,20 +119,20 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
       }
     }
   };
-  const deleteFastingAction = () => {
+  const deleteMeditationAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
   useEffect(() => {
     if (mode === '') {
-      if (fastingData !== undefined && fastingData !== null) {
+      if (meditationData !== undefined && meditationData !== null) {
         setMode('edit');
       } else {
         setMode('create');
       }
-      setFasting(fastingData);
+      setMeditation(meditationData);
     }
-  }, [mode, fastingData]);
+  }, [mode, meditationData]);
   return (
     <Container>
       <Typography
@@ -152,24 +153,24 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
 
             <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
             <SelectItem
-              setElement={setFastingType}
-              element={fastingType}
-              menuItems={fastingBoardProps.menuItems}
+              setElement={setRetreatType}
+              element={retreatType}
+              menuItems={meditationBoardProps.menuItems}
             />
           </div>
         </div>
         {mode === 'edit' && (
           <div>
-            <FastingInputField
-              deleteFastingAction={deleteFastingAction}
-              fasting={fastingData}
-              handleFastingForm={handleFastingForm}
+            <MeditationInputField
+              deleteMeditationAction={deleteMeditationAction}
+              meditation={meditationData}
+              handleMeditationForm={handleMeditationForm}
             />
           </div>
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Item Fasting hinzufügen !!!
+            Neues Item Meditation hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (
