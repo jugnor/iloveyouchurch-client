@@ -9,7 +9,7 @@ import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellPar
 import {
   CreateFastingRequestSchema,
   Fasting,
-  UpdateFastingRequestSchema
+  UpsertFastingRequestSchema
 } from '../../../models/Fasting/Fasting';
 
 export const fastingRowsRendererByWeek = (
@@ -94,7 +94,7 @@ export const validateFasting = (
   }
   return (
     upsertFasting !== undefined &&
-    !UpdateFastingRequestSchema.validate(upsertFasting).error
+    !UpsertFastingRequestSchema.validate(upsertFasting).error
   );
 };
 

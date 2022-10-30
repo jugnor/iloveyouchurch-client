@@ -23,7 +23,7 @@ export interface Prayer {
   createdAt?: Date;
 }
 
-export type UpsertPrayerRequest = Except<Prayer, 'id' | 'createdAt'>;
+export type UpsertPrayerRequest = Except<Prayer, 'id' | 'createdAt' | 'userId'>;
 
 export const CreatePrayerRequestSchema: Schema = Joi.object({
   prayerType: Joi.string()

@@ -176,6 +176,8 @@ export function AccountGivingTabPanel({
                 FastingType.COMPLETE + '|Komplettes Fasten',
                 FastingType.PARTIAL + '|Teil-Fasten'
               ]}
+              userId={userId}
+              path={'fasting'}
             />
           </TabPanel>
         </AppBar>

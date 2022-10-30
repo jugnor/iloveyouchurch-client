@@ -28,9 +28,6 @@ export function AlertMessage({
     event?: React.SyntheticEvent | Event,
     reason?: string
   ) => {
-    {
-      console.log(open + ' ' + reason);
-    }
     if (reason === 'clickaway') {
       return;
     }
@@ -40,23 +37,21 @@ export function AlertMessage({
 
   return (
     <>
-      {openAlert && (
-        <Stack spacing={2} sx={{ width: '100%' }}>
-          <Snackbar
-            open={openAlert}
-            autoHideDuration={6000}
+      <Stack spacing={2} sx={{ width: '100%' }}>
+        <Snackbar
+          open={openAlert}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
+          <Alert
             onClose={handleClose}
+            severity={severity}
+            sx={{ width: '100%' }}
           >
-            <Alert
-              onClose={handleClose}
-              severity={severity}
-              sx={{ width: '100%' }}
-            >
-              {message}!
-            </Alert>
-          </Snackbar>
-        </Stack>
-      )}
+            {message}!
+          </Alert>
+        </Snackbar>
+      </Stack>
     </>
   );
 }

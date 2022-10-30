@@ -90,6 +90,7 @@ export function FastingInputField(
           style={{ marginLeft: '15em' }}
           color="secondary"
           variant="outlined"
+          disabled={fastingInputFieldProps.fasting === undefined}
           endIcon={<DeleteIcon />}
         >
           Fasting Item löschen

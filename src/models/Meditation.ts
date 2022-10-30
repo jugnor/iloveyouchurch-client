@@ -23,7 +23,10 @@ export interface Meditation {
   createdAt?: Date;
 }
 
-export type UpsertMeditationRequest = Except<Meditation, 'id' | 'createdAt'>;
+export type UpsertMeditationRequest = Except<
+  Meditation,
+  'id' | 'createdAt' | 'userId'
+>;
 
 export const CreateMeditationRequestSchema: Schema = Joi.object({
   retreatType: Joi.string()

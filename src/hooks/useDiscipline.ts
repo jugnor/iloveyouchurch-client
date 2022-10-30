@@ -5,12 +5,14 @@ import { useApi } from './useApi';
 import { mutate } from 'swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
 import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
+import { ILCError } from '../utils/ErrorCode';
 
 export function useDiscipline(postboxId: string, userId: string, path: string) {
   const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
     const {
@@ -21,7 +23,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
   }*/
 
   const createDiscipline = useCallback(
-    async (data: UpsertDisciplineRequest, silent?: boolean) => {
+    async (data: UpsertDisciplineRequest) => {
       setLoading(true);
       try {
         const newUseDisciplineResponse =
@@ -40,20 +42,17 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
             `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
           )
         );
-        if (!silent) {
-          alert('success: Fall erfolgreich erstellt.');
-        }
-        setLoading(false);
 
         return newUseDisciplineResponse.data;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Das Speichern konnte nicht ausgeführt werden: ' + ilcError.httpStatus
+        );
         throw e;
       }
     },
-    [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
   const deleteDiscipline = useCallback(
@@ -75,15 +74,15 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
             `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
           )
         );
-        setLoading(false);
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Das Löschen konnte nicht ausgeführt werden: ' + ilcError.httpStatus
+        );
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [makeRequest, postboxId, t]
   );
 
   const updateDiscipline = useCallback(
@@ -123,8 +122,8 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [makeRequest, postboxId, t]
   );
 
-  return { createDiscipline, deleteDiscipline, updateDiscipline, loading };
+  return { createDiscipline, deleteDiscipline, updateDiscipline, alertMessage };
 }

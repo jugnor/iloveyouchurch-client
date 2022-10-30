@@ -27,7 +27,10 @@ export interface Reading {
   createdAt?: Date;
 }
 
-export type UpsertReadingRequest = Except<Reading, 'id' | 'createdAt'>;
+export type UpsertReadingRequest = Except<
+  Reading,
+  'id' | 'createdAt' | 'userId'
+>;
 
 export const CreateReadingRequestSchema: Schema = Joi.object({
   readingType: Joi.string().required(),

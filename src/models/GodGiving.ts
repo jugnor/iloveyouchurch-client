@@ -23,7 +23,10 @@ export interface GodGiving {
   createdAt?: string;
 }
 
-export type UpsertGodGivingRequest = Except<GodGiving, 'id' | 'createdAt'>;
+export type UpsertGodGivingRequest = Except<
+  GodGiving,
+  'id' | 'createdAt' | 'userId'
+>;
 
 export const CreateGodGivingRequestSchema: Schema = Joi.object({
   godGivingType: Joi.string()

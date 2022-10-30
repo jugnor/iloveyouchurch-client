@@ -2,7 +2,6 @@ import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
 import { ResultsObject } from '../ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';
-import { toDate } from 'date-fns';
 import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 
 export enum FastingType {
@@ -20,7 +19,10 @@ export interface Fasting {
   createdAt: Date;
 }
 
-export type UpsertFastingRequest = Except<Fasting, 'id' | 'createdAt'>;
+export type UpsertFastingRequest = Except<
+  Fasting,
+  'id' | 'createdAt' | 'userId'
+>;
 
 export const CreateFastingRequestSchema: Schema = Joi.object({
   fastingType: Joi.string()
@@ -31,7 +33,7 @@ export const CreateFastingRequestSchema: Schema = Joi.object({
   userTime: Joi.object().required()
 });
 
-export const UpdateFastingRequestSchema: Schema = Joi.object({
+export const UpsertFastingRequestSchema: Schema = Joi.object({
   fastingType: Joi.string()
     .valid(...Object.values(FastingType))
     .required(),

@@ -12,9 +12,10 @@ export type Discipline = Reading &
   Gospel &
   Fasting;
 
-export type UpsertDisciplineRequest = UpsertReadingRequest &
-  UpsertGodGivingRequest &
-  UpsertPrayerRequest &
-  UpsertMeditationRequest &
-  UpsertGospelRequest &
-  UpsertFastingRequest;
+export type UpsertDisciplineRequest =
+  | UpsertReadingRequest
+  | UpsertGodGivingRequest
+  | UpsertPrayerRequest
+  | UpsertMeditationRequest
+  | UpsertGospelRequest
+  | UpsertFastingRequest;

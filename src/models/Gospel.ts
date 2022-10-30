@@ -38,7 +38,7 @@ export interface GospelContact {
   city: string;
 }
 
-export type UpsertGospelRequest = Except<Gospel, 'id' | 'createdAt'>;
+export type UpsertGospelRequest = Except<Gospel, 'id' | 'createdAt' | 'userId'>;
 
 export const CreateGospelRequestSchema: Schema = Joi.object({
   gospelType: Joi.string()

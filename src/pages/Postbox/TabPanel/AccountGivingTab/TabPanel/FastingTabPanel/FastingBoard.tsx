@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { Fasting, FastingType } from '../../../../../../models/Fasting/Fasting';
+import {
+  Fasting,
+  FastingType,
+  UpsertFastingRequest,
+  UpsertFastingRequestSchema
+} from '../../../../../../models/Fasting/Fasting';
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
@@ -16,33 +21,102 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import { now } from '@mui/x-data-grid/lib/lodash/date';
 import { DeleteDialog } from '../../../../../../shared/DeleteDialog';
+import { useDiscipline } from '../../../../../../hooks/useDiscipline';
+import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
+import { AlertColor } from '@mui/material/Alert';
 
 export interface FastingBoardProps {
   postboxId: string;
   menuItems: string[];
+  path: string;
+  userId: string;
 }
 
 export function FastingBoard(fastingBoardProps: FastingBoardProps) {
+  const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
+    fastingBoardProps.postboxId,
+    fastingBoardProps.userId,
+    fastingBoardProps.path
+  );
   const date = new Date(now());
 
   const woy: number = getWeekNumber(startOfISOWeek(date));
 
+  const [alert, setAlert] = useState('');
+  const [severity, setSeverity] = useState<AlertColor>();
   const [mode, setMode] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
   const [fastingType, setFastingType] = useState<SelectElement>(
     FastingType.PARTIAL
   );
+  const [fasting, setFasting] = useState<Fasting>();
 
   const { data: fastingData } = useSWR<Fasting>(
     `/postboxes/${fastingBoardProps.postboxId}/fastings?` +
       `fastingType=${fastingType}&weekOfYear=${weekOfYear}`
   );
   const handleFastingForm = (fastingForm: Map<string, any>) => {
-    // Todo
+    const upsertFastingRequest = {
+      days: fastingForm.get('days'),
+      goal: fastingForm.get('goal'),
+      fastingType: fastingType,
+      weekOfYear: weekOfYear
+    } as UpsertFastingRequest;
+
+    const error =
+      UpsertFastingRequestSchema.validate(upsertFastingRequest).error;
+    if (error) {
+      setMode('create');
+      setSeverity('error');
+      if (fasting === undefined) {
+        setAlert(
+          'Das neue Item Fasting konnte leider nicht hinzugefügt werden'
+        );
+      } else {
+        setAlert(
+          'Das Item von Kalenderwoche ' +
+            weekOfYear +
+            ' konnte leider nicht geändert werden'
+        );
+      }
+    }
+    createDiscipline(upsertFastingRequest).then((r) => {
+      setMode('edit');
+      setSeverity('success');
+      if (fasting === undefined) {
+        setAlert('Das neue Item wurde erfolgreich hinzugefügt');
+      } else {
+        setAlert(
+          'Das Item von Kalenderwoche ' +
+            weekOfYear +
+            ' wurde erfolgreich geändert'
+        );
+      }
+    });
+    if (alertMessage !== '') {
+      setAlert(alertMessage);
+      setMode('');
+      setSeverity('error');
+    }
+    setOpenAlert(true);
   };
-  const handleDeleteClick = () => {
-    // Todo
+  const handleDeleteClick = (shouldDelete: boolean) => {
+    if (shouldDelete) {
+      if (fasting !== undefined) {
+        deleteDiscipline(fasting?.id).then((r) => {
+          setMode('edit');
+          setOpenAlert(true);
+          setAlert('Das Item Fasting wurde erfolgreich gelöscht');
+          setSeverity('success');
+          setOpenDialog(false);
+        });
+      } else {
+        setMode('edit');
+        setOpenDialog(false);
+      }
+    }
   };
   const deleteFastingAction = () => {
     setMode('delete');
@@ -55,6 +129,7 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
       } else {
         setMode('create');
       }
+      setFasting(fastingData);
     }
   }, [mode, fastingData]);
   return (
@@ -100,8 +175,15 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
         {mode === 'delete' && openDialog && (
           <DeleteDialog
             openDialog={openDialog}
-            setOpenDialog={setOpenDialog}
             handleDeleteClick={handleDeleteClick}
+          />
+        )}
+        {openAlert && severity !== undefined && (
+          <AlertMessage
+            openAlert={openAlert}
+            setOpenAlert={setOpenAlert}
+            message={alert}
+            severity={severity}
           />
         )}
       </Typography>

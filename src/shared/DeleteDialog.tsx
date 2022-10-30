@@ -5,19 +5,16 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import * as React from 'react';
-import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellParams';
 import { TransitionProps } from '@mui/material/transitions';
 import Slide from '@mui/material/Slide';
 
 interface DeleteDialogProps {
   openDialog: boolean;
-  setOpenDialog: (open: boolean) => void;
-  handleDeleteClick: () => void;
+  handleDeleteClick: (shouldDelete: boolean) => void;
 }
 
 export function DeleteDialog({
   openDialog,
-  setOpenDialog,
   handleDeleteClick
 }: DeleteDialogProps) {
   const Transition = React.forwardRef(function Transition(
@@ -37,7 +34,7 @@ export function DeleteDialog({
             open={openDialog}
             TransitionComponent={Transition}
             keepMounted
-            onClose={() => setOpenDialog(false)}
+            onClose={() => handleDeleteClick(false)}
             aria-describedby="alert-dialog-slide-description"
           >
             <DialogTitle>{'Änderung Übernehmen'}</DialogTitle>
@@ -48,8 +45,12 @@ export function DeleteDialog({
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenDialog(false)}>Nein, Zurück</Button>
-              <Button onClick={handleDeleteClick}>Ja, ich will</Button>
+              <Button onClick={() => handleDeleteClick(false)}>
+                Nein, Zurück
+              </Button>
+              <Button onClick={() => handleDeleteClick(true)}>
+                Ja, ich will
+              </Button>
             </DialogActions>
           </Dialog>
         </div>
