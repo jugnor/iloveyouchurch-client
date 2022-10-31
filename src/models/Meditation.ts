@@ -36,7 +36,7 @@ export const CreateMeditationRequestSchema: Schema = Joi.object({
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
   verse: Joi.string().optional().allow(''),
-  weekOfYear:Joi.number().positive()
+  weekOfYear: Joi.number().positive()
 });
 
 export const UpsertMeditationRequestSchema: Schema = Joi.object({
@@ -47,8 +47,7 @@ export const UpsertMeditationRequestSchema: Schema = Joi.object({
   total: Joi.number().positive().required(),
   theme: Joi.string().optional().allow(''),
   verse: Joi.string().optional().allow(''),
-  weekOfYear:Joi.number().positive()
-
+  weekOfYear: Joi.number().positive()
 });
 
 export const meditationRows = (data: ResultsObject<Meditation> | undefined) => {

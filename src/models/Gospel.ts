@@ -23,7 +23,7 @@ export interface Gospel {
   gospelSupport: GospelSupport;
   gospelType: GospelType;
   weekOfYear: number;
-  createdAt?: Date;
+  createdAt: Date;
 }
 
 export interface GospelSupport {
@@ -132,7 +132,8 @@ export const UpsertGospelRequestSchema: Schema = Joi.object({
       supportType: Joi.string().required()
     }).required(),
     otherwise: undefined
-  })
+  }),
+  weekOfYear: Joi.number().positive().required()
 });
 
 export const gospelColumns = (type: string): GridColumns => [

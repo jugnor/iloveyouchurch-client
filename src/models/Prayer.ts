@@ -48,7 +48,7 @@ export const UpsertPrayerRequestSchema: Schema = Joi.object({
     then: Joi.number().min(0).required(),
     otherwise: null
   }),
-  weekOfYear:Joi.number().positive()
+  weekOfYear: Joi.number().positive()
 });
 
 export const prayerRows = (data: ResultsObject<Prayer> | undefined) => {

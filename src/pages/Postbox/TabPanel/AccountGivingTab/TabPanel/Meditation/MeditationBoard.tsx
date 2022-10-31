@@ -20,9 +20,10 @@ import { AlertColor } from '@mui/material/Alert';
 import {
   Meditation,
   RetreatType,
-  UpsertMeditationRequest, UpsertMeditationRequestSchema
-} from "../../../../../../models/Meditation";
-import {MeditationInputField} from "../Meditation/MeditationInputField";
+  UpsertMeditationRequest,
+  UpsertMeditationRequestSchema
+} from '../../../../../../models/Meditation';
+import { MeditationInputField } from '../Meditation/MeditationInputField';
 
 export interface MeditationBoardProps {
   postboxId: string;
@@ -61,13 +62,13 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
       timeInMinute: meditationForm.get('timeInMinute'),
       theme: meditationForm.get('theme'),
       verse: meditationForm.get('verse'),
-     retreatType: retreatType,
+      retreatType: retreatType,
       weekOfYear: weekOfYear
     } as UpsertMeditationRequest;
 
-
-    const error =
-      UpsertMeditationRequestSchema.validate(upsertMeditationRequest ).error;
+    const error = UpsertMeditationRequestSchema.validate(
+      upsertMeditationRequest
+    ).error;
     if (error) {
       setMode('create');
       setSeverity('error');
@@ -170,7 +171,7 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Item Meditation hinzufügen !!!
+            Neues Meditation Item hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (

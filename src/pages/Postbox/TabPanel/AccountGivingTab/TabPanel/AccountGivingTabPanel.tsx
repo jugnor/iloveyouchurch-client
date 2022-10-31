@@ -19,9 +19,11 @@ import { PrayerType } from '../../../../../models/Prayer';
 import { ReadingType } from '../../../../../models/Reading';
 import { GospelType } from '../../../../../models/Gospel';
 import { GodGivingType } from '../../../../../models/GodGiving';
-import {PrayerBoard} from "./PrayerTabPanel/PrayerBoard";
-import {MeditationBoard} from "./Meditation/MeditationBoard";
-import {GodGivingBoard} from "./GodGiving/GodGivingBoard";
+import { PrayerBoard } from './PrayerTabPanel/PrayerBoard';
+import { MeditationBoard } from './Meditation/MeditationBoard';
+import { GodGivingBoard } from './GodGiving/GodGivingBoard';
+import { GospelBoard } from './Gospel/GospelBoard';
+import { ReadingBoard } from './ReadingTabPanel/ReadingBoard';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -127,7 +129,7 @@ export function AccountGivingTabPanel({
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <DisciplineAction
+            <GospelBoard
               postboxId={postboxId}
               userId={userId}
               path={'gospel'}
@@ -139,7 +141,7 @@ export function AccountGivingTabPanel({
             />
           </TabPanel>
           <TabPanel value={value} index={2}>
-            <DisciplineAction
+            <ReadingBoard
               postboxId={postboxId}
               userId={userId}
               path={'reading'}

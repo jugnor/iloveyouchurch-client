@@ -61,19 +61,21 @@ export function FastingInputField(
         ></TextField>
       </div>
 
-        <div style={{ marginLeft: '14em', marginTop: '1em' }}>
-          <TextField
-            id="filled-select-currency-native"
-            label="Das Fasting Item wurde am"
-            value={
-              new Date( fastingInputFieldProps.fasting===undefined?'':
-                fastingInputFieldProps.fasting?.createdAt
-              ).toLocaleString() + ' erstellt'
-            }
-            disabled={true}
-            variant="filled"
-          ></TextField>
-        </div>
+      <div style={{ marginLeft: '14em', marginTop: '1em' }}>
+        <TextField
+          id="filled-select-currency-native"
+          label="Das Fasting Item wurde am"
+          value={
+            new Date(
+              fastingInputFieldProps.fasting === undefined
+                ? ''
+                : fastingInputFieldProps.fasting?.createdAt
+            ).toLocaleString() + ' erstellt'
+          }
+          disabled={true}
+          variant="filled"
+        ></TextField>
+      </div>
 
       <div style={{ marginLeft: '7em', marginTop: '2em' }}>
         <Button

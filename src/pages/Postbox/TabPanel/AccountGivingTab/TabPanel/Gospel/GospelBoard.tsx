@@ -19,25 +19,25 @@ import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
 
 import {
-  GodGiving,
-  GodGivingType,
-  UpsertGodGivingRequest,
-  UpsertGodGivingRequestSchema
-} from '../../../../../../models/GodGiving';
-import { GodGivingInputField } from './GodGivingInputField';
+  Gospel,
+  GospelType,
+  UpsertGospelRequest,
+  UpsertGospelRequestSchema
+} from '../../../../../../models/Gospel';
+import { GospelInputField } from './GospelInputField';
 
-export interface GodGivingBoardBoardProps {
+export interface GospelBoardBoardProps {
   postboxId: string;
   menuItems: string[];
   path: string;
   userId: string;
 }
 
-export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
+export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
   const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
-    godgivingBoardProps.postboxId,
-    godgivingBoardProps.userId,
-    godgivingBoardProps.path
+    gospelBoardBoardProps.postboxId,
+    gospelBoardBoardProps.userId,
+    gospelBoardBoardProps.path
   );
   const date = new Date(now());
 
@@ -49,51 +49,74 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
-  const [godGivingType, setGodGivingType] = useState<SelectElement>(
-    GodGivingType.MONEY
+  const [gospelType, setGospelType] = useState<SelectElement>(
+    GospelType.GOSPEL
   );
-  const [godGiving, setGodGiving] = useState<GodGiving>();
+  const [godGospel, setGodGospel] = useState<Gospel>();
 
-  const { data: godGivingData } = useSWR<GodGiving>(
-    `/postboxes/${godgivingBoardProps.postboxId}/godGivings?` +
-      `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
+  const { data: gospelData } = useSWR<Gospel>(
+    `/postboxes/${gospelBoardBoardProps.postboxId}/gospels?` +
+      `gospelType=${gospelType}&weekOfYear=${weekOfYear}`
   );
-  const handleGodGivingForm = (godGivingForm: Map<string, any>) => {
-    const upsertGodGivingRequest = {
-      timeInMinute: godGivingForm.get('timeInMinute'),
-      amount: godGivingForm.get('amount'),
-      total: godGivingForm.get('total'),
-      description: godGivingForm.get('description'),
-      godGivingType: godGivingType,
-      weekOfYear: weekOfYear
-    } as UpsertGodGivingRequest;
-
-    const error = UpsertGodGivingRequestSchema.validate(
-      upsertGodGivingRequest
-    ).error;
+  const handleGospelForm = (gospelForm: Map<string, any>) => {
+    let upsertGospelRequest0;
+    switch (gospelType) {
+      case GospelType.GOSPEL:
+        upsertGospelRequest0 = {
+          timeInMinute: gospelForm.get('timeInMinute'),
+          total: gospelForm.get('total'),
+          goal: gospelForm.get('goal'),
+          gospelType: gospelType,
+          weekOfYear: weekOfYear
+        } as UpsertGospelRequest;
+        break;
+      case GospelType.SUPPORT:
+        upsertGospelRequest0 = {
+          total: gospelForm.get('total'),
+          gospelSupport: {
+            title: gospelForm.get('title'),
+            supportType: gospelForm.get('supportType')
+          },
+          gospelType: gospelType,
+          weekOfYear: weekOfYear
+        } as UpsertGospelRequest;
+        break;
+      case GospelType.CONTACT:
+        upsertGospelRequest0 = {
+          gospelContact: {
+            name: gospelForm.get('name'),
+            email: gospelForm.get('email'),
+            telephone: gospelForm.get('telephone'),
+            city: gospelForm.get('city')
+          },
+          gospelType: gospelType,
+          weekOfYear: weekOfYear
+        } as UpsertGospelRequest;
+        break;
+    }
+    const upsertGospelRequest = upsertGospelRequest0 as UpsertGospelRequest;
+    const error = UpsertGospelRequestSchema.validate(upsertGospelRequest).error;
     if (error) {
       setMode('create');
       setSeverity('error');
-      if (godGiving === undefined) {
-        setAlert(
-          'Das neue GodGiving Item konnte leider nicht hinzugefügt werden'
-        );
+      if (godGospel === undefined) {
+        setAlert('Das neue Gospel Item konnte leider nicht hinzugefügt werden');
       } else {
         setAlert(
-          'Das GodGiving Item von Kalenderwoche ' +
+          'Das Gospel Item von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
     }
-    createDiscipline(upsertGodGivingRequest).then((r) => {
+    createDiscipline(upsertGospelRequest).then((r) => {
       setMode('edit');
       setSeverity('success');
-      if (godGiving === undefined) {
-        setAlert('Das neue GodGiving Item wurde erfolgreich hinzugefügt');
+      if (godGospel === undefined) {
+        setAlert('Das neue Gospel Item wurde erfolgreich hinzugefügt');
       } else {
         setAlert(
-          'Das GodGiving Item von Kalenderwoche ' +
+          'Das Gospel Item von Kalenderwoche ' +
             weekOfYear +
             ' wurde erfolgreich geändert'
         );
@@ -108,11 +131,11 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
   };
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (godGiving !== undefined) {
-        deleteDiscipline(godGiving?.id).then((r) => {
+      if (godGospel !== undefined) {
+        deleteDiscipline(godGospel?.id).then((r) => {
           setMode('edit');
           setOpenAlert(true);
-          setAlert('Das GodGiving Item wurde erfolgreich gelöscht');
+          setAlert('Das Gospel Item wurde erfolgreich gelöscht');
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -122,20 +145,20 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
       }
     }
   };
-  const deleteGodGivingAction = () => {
+  const deleteGospelAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
   useEffect(() => {
     if (mode === '') {
-      if (godGivingData !== undefined && godGivingData !== null) {
+      if (gospelData !== undefined && gospelData !== null) {
         setMode('edit');
       } else {
         setMode('create');
       }
-      setGodGiving(godGivingData);
+      setGodGospel(gospelData);
     }
-  }, [mode, godGivingData]);
+  }, [mode, gospelData]);
   return (
     <Container>
       <Typography
@@ -156,25 +179,25 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
 
             <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
             <SelectItem
-              setElement={setGodGivingType}
-              element={godGivingType}
-              menuItems={godgivingBoardProps.menuItems}
+              setElement={setGospelType}
+              element={gospelType}
+              menuItems={gospelBoardBoardProps.menuItems}
             />
           </div>
         </div>
         {mode === 'edit' && (
           <div>
-            <GodGivingInputField
-              deleteGodGivingAction={deleteGodGivingAction}
-              godGivingType={godGivingType as GodGivingType}
-              godGiving={godGivingData}
-              handleGodGivingForm={handleGodGivingForm}
+            <GospelInputField
+              deleteGospelAction={deleteGospelAction}
+              gospelType={gospelType as GospelType}
+              gospel={gospelData}
+              handleGospelForm={handleGospelForm}
             />
           </div>
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues GodGiving Item hinzufügen !!!
+            Neues Gospel Item hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (

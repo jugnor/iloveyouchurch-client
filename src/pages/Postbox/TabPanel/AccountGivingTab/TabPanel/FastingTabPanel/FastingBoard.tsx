@@ -169,7 +169,7 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Item Fasting hinzufügen !!!
+            Neues Fasting Item hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (

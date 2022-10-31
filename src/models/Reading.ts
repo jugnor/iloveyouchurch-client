@@ -24,7 +24,7 @@ export interface Reading {
   theEnd: boolean;
   readingType: ReadingType;
   weekOfYear: number;
-  createdAt?: Date;
+  createdAt: Date;
 }
 
 export type UpsertReadingRequest = Except<
@@ -47,7 +47,7 @@ export const CreateReadingRequestSchema: Schema = Joi.object({
   userTime: Joi.object().required()
 });
 
-export const UpdateReadingRequestSchema: Schema = Joi.object({
+export const UpsertReadingRequestSchema: Schema = Joi.object({
   readingType: Joi.string().required(),
   totalCap: Joi.number().positive().required(),
   referenceEnd: Joi.string().optional().allow(''),
@@ -57,7 +57,7 @@ export const UpdateReadingRequestSchema: Schema = Joi.object({
   title: Joi.alternatives().conditional('readingType', {
     is: ReadingType.C_BOOK,
     then: Joi.string().required(),
-    otherwise: null
+    otherwise: undefined
   })
 });
 

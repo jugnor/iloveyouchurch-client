@@ -39,7 +39,7 @@ export const UpsertFastingRequestSchema: Schema = Joi.object({
     .required(),
   days: Joi.number().positive().required(),
   goal: Joi.string().optional().allow(''),
-  weekOfYear:Joi.number().positive()
+  weekOfYear: Joi.number().positive()
 });
 
 export const fastingRows = (data: ResultsObject<Fasting> | undefined) => {

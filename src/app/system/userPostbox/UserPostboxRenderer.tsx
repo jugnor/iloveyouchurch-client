@@ -7,7 +7,7 @@ import {
   CreateReadingRequestSchema,
   Reading,
   ReadingType,
-  UpdateReadingRequestSchema
+  UpsertReadingRequestSchema
 } from '../../../models/Reading';
 import { GodGiving } from '../../../models/GodGiving';
 import { ResultsObject } from '../../../models/ResultsObject';

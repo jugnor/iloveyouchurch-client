@@ -22,8 +22,8 @@ import {
   PrayerType,
   UpsertPrayerRequest,
   UpsertPrayerRequestSchema
-} from "../../../../../../models/Prayer";
-import {PrayerInputField} from "./PrayerInputField";
+} from '../../../../../../models/Prayer';
+import { PrayerInputField } from './PrayerInputField';
 
 export interface PrayerBoardProps {
   postboxId: string;
@@ -48,9 +48,7 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
-  const [prayerType, setPrayerType] = useState<SelectElement>(
-    PrayerType.ALONE
-  );
+  const [prayerType, setPrayerType] = useState<SelectElement>(PrayerType.ALONE);
   const [prayer, setPrayer] = useState<Prayer>();
 
   const { data: prayerData } = useSWR<Prayer>(
@@ -61,20 +59,20 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
     const upsertPrayerRequest = {
       timeInMinute: prayerForm.get('timeInMinute'),
       theme: prayerForm.get('theme'),
-      prayerNight:prayerType===PrayerType.GROUP?prayerForm.get("prayerNight"):undefined,
+      prayerNight:
+        prayerType === PrayerType.GROUP
+          ? prayerForm.get('prayerNight')
+          : undefined,
       prayerType: prayerType,
       weekOfYear: weekOfYear
     } as UpsertPrayerRequest;
 
-    const error =
-      UpsertPrayerRequestSchema.validate(upsertPrayerRequest ).error;
+    const error = UpsertPrayerRequestSchema.validate(upsertPrayerRequest).error;
     if (error) {
       setMode('create');
       setSeverity('error');
       if (prayer === undefined) {
-        setAlert(
-          'Das neue Prayer Item konnte leider nicht hinzugefügt werden'
-        );
+        setAlert('Das neue Prayer Item konnte leider nicht hinzugefügt werden');
       } else {
         setAlert(
           'Das Prayer Item von Kalenderwoche ' +
@@ -162,7 +160,7 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
         {mode === 'edit' && (
           <div>
             <PrayerInputField
-              deletePrayerAction ={deletePrayerAction}
+              deletePrayerAction={deletePrayerAction}
               prayerType={prayerType as PrayerType}
               prayer={prayerData}
               handlePrayerForm={handlePrayerForm}
@@ -171,7 +169,7 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Item Prayer hinzufügen !!!
+            Neues Prayer Item hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (

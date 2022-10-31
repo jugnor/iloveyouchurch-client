@@ -17,27 +17,26 @@ import { DeleteDialog } from '../../../../../../shared/DeleteDialog';
 import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
-
 import {
-  GodGiving,
-  GodGivingType,
-  UpsertGodGivingRequest,
-  UpsertGodGivingRequestSchema
-} from '../../../../../../models/GodGiving';
-import { GodGivingInputField } from './GodGivingInputField';
+  Reading,
+  ReadingType,
+  UpsertReadingRequest,
+  UpsertReadingRequestSchema
+} from '../../../../../../models/Reading';
+import { ReadingInputField } from './ReadingInputField';
 
-export interface GodGivingBoardBoardProps {
+export interface ReadingBoardProps {
   postboxId: string;
   menuItems: string[];
   path: string;
   userId: string;
 }
 
-export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
+export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
   const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
-    godgivingBoardProps.postboxId,
-    godgivingBoardProps.userId,
-    godgivingBoardProps.path
+    readingBoardProps.postboxId,
+    readingBoardProps.userId,
+    readingBoardProps.path
   );
   const date = new Date(now());
 
@@ -49,51 +48,53 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
-  const [godGivingType, setGodGivingType] = useState<SelectElement>(
-    GodGivingType.MONEY
+  const [readingType, setReadingType] = useState<SelectElement>(
+    ReadingType.C_BOOK
   );
-  const [godGiving, setGodGiving] = useState<GodGiving>();
+  const [reading, setReading] = useState<Reading>();
 
-  const { data: godGivingData } = useSWR<GodGiving>(
-    `/postboxes/${godgivingBoardProps.postboxId}/godGivings?` +
-      `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
+  const { data: readingData } = useSWR<Reading>(
+    `/postboxes/${readingBoardProps.postboxId}/prayers?` +
+      `readingType=${readingType}&weekOfYear=${weekOfYear}`
   );
-  const handleGodGivingForm = (godGivingForm: Map<string, any>) => {
-    const upsertGodGivingRequest = {
-      timeInMinute: godGivingForm.get('timeInMinute'),
-      amount: godGivingForm.get('amount'),
-      total: godGivingForm.get('total'),
-      description: godGivingForm.get('description'),
-      godGivingType: godGivingType,
+  const handleReadingForm = (readingForm: Map<string, any>) => {
+    const upsertReadingRequest = {
+      timeInMinute: readingForm.get('timeInMinute'),
+      totalCap: readingForm.get('totalCap'),
+      title: readingForm.get('title'),
+      referenceEnd: readingForm.get('referenceEnd'),
+      theEnd: readingForm.get('theEnd'),
+
+      theme: readingForm.get('theme'),
+      readingType: readingType,
       weekOfYear: weekOfYear
-    } as UpsertGodGivingRequest;
+    } as UpsertReadingRequest;
 
-    const error = UpsertGodGivingRequestSchema.validate(
-      upsertGodGivingRequest
-    ).error;
+    const error =
+      UpsertReadingRequestSchema.validate(upsertReadingRequest).error;
     if (error) {
       setMode('create');
       setSeverity('error');
-      if (godGiving === undefined) {
+      if (reading === undefined) {
         setAlert(
-          'Das neue GodGiving Item konnte leider nicht hinzugefügt werden'
+          'Das neue Reading Item konnte leider nicht hinzugefügt werden'
         );
       } else {
         setAlert(
-          'Das GodGiving Item von Kalenderwoche ' +
+          'Das Reading Item von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
     }
-    createDiscipline(upsertGodGivingRequest).then((r) => {
+    createDiscipline(upsertReadingRequest).then((r) => {
       setMode('edit');
       setSeverity('success');
-      if (godGiving === undefined) {
-        setAlert('Das neue GodGiving Item wurde erfolgreich hinzugefügt');
+      if (reading === undefined) {
+        setAlert('Das neue Reading Item wurde erfolgreich hinzugefügt');
       } else {
         setAlert(
-          'Das GodGiving Item von Kalenderwoche ' +
+          'Das Reading Item von Kalenderwoche ' +
             weekOfYear +
             ' wurde erfolgreich geändert'
         );
@@ -108,11 +109,11 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
   };
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (godGiving !== undefined) {
-        deleteDiscipline(godGiving?.id).then((r) => {
+      if (reading !== undefined) {
+        deleteDiscipline(reading?.id).then((r) => {
           setMode('edit');
           setOpenAlert(true);
-          setAlert('Das GodGiving Item wurde erfolgreich gelöscht');
+          setAlert('Das Reading Item wurde erfolgreich gelöscht');
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -122,20 +123,20 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
       }
     }
   };
-  const deleteGodGivingAction = () => {
+  const deleteReadingAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
   useEffect(() => {
     if (mode === '') {
-      if (godGivingData !== undefined && godGivingData !== null) {
+      if (readingData !== undefined && readingData !== null) {
         setMode('edit');
       } else {
         setMode('create');
       }
-      setGodGiving(godGivingData);
+      setReading(readingData);
     }
-  }, [mode, godGivingData]);
+  }, [mode, readingData]);
   return (
     <Container>
       <Typography
@@ -156,25 +157,25 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
 
             <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
             <SelectItem
-              setElement={setGodGivingType}
-              element={godGivingType}
-              menuItems={godgivingBoardProps.menuItems}
+              setElement={setReadingType}
+              element={readingType}
+              menuItems={readingBoardProps.menuItems}
             />
           </div>
         </div>
         {mode === 'edit' && (
           <div>
-            <GodGivingInputField
-              deleteGodGivingAction={deleteGodGivingAction}
-              godGivingType={godGivingType as GodGivingType}
-              godGiving={godGivingData}
-              handleGodGivingForm={handleGodGivingForm}
+            <ReadingInputField
+              deleteReadingAction={deleteReadingAction}
+              readingType={readingType as ReadingType}
+              reading={readingData}
+              handleReadingForm={handleReadingForm}
             />
           </div>
         )}
         {mode === 'create' && (
           <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues GodGiving Item hinzufügen !!!
+            Neues Reading Item hinzufügen !!!
           </Button>
         )}
         {mode === 'delete' && openDialog && (
