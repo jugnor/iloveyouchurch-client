@@ -1,8 +1,8 @@
-import { Reading, UpsertReadingRequest } from './Reading';
-import { GodGiving, UpsertGodGivingRequest } from './GodGiving';
-import { Prayer, UpsertPrayerRequest } from './Prayer';
-import { Meditation, UpsertMeditationRequest } from './Meditation';
-import { Gospel, UpsertGospelRequest } from './Gospel';
+import { Reading, ReadingType, UpsertReadingRequest } from './Reading';
+import { GodGiving, GodGivingType, UpsertGodGivingRequest } from './GodGiving';
+import { Prayer, PrayerType, UpsertPrayerRequest } from './Prayer';
+import { Meditation, RetreatType, UpsertMeditationRequest } from './Meditation';
+import { Gospel, GospelType, UpsertGospelRequest } from './Gospel';
 import { Fasting, UpsertFastingRequest } from './Fasting/Fasting';
 
 export type Discipline = Reading &
@@ -19,3 +19,11 @@ export type UpsertDisciplineRequest =
   | UpsertMeditationRequest
   | UpsertGospelRequest
   | UpsertFastingRequest;
+
+export type DisciplineType =
+  | GodGivingType
+  | ReadingType
+  | PrayerType
+  | RetreatType
+  | GospelType
+  | Fasting;

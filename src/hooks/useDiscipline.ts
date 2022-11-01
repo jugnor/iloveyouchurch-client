@@ -2,10 +2,15 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { matchMutate } from '../swr';
 import { useApi } from './useApi';
-import { mutate } from 'swr';
+import useSWR, { mutate } from 'swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
-import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
+import {
+  Discipline,
+  DisciplineType,
+  UpsertDisciplineRequest
+} from '../models/Discipline';
 import { ILCError } from '../utils/ErrorCode';
+import { GodGiving } from '../models/GodGiving';
 
 export function useDiscipline(postboxId: string, userId: string, path: string) {
   const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
@@ -42,6 +47,8 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
             `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
           )
         );
+
+        await matchMutate(new RegExp(`^/postboxes/${postboxId}/${path}s.*$`));
 
         return newUseDisciplineResponse.data;
       } catch (e) {

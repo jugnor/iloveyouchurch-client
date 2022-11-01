@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
@@ -19,17 +19,34 @@ export interface GodGivingInputFieldProps {
 export function GodGivingInputField(
   godGivingInputFieldProps: GodGivingInputFieldProps
 ) {
-  const [min, setMin] = useState(
-    godGivingInputFieldProps.godGiving?.timeInMinute
-  );
-  const [total, setTotal] = useState(godGivingInputFieldProps.godGiving?.total);
-  const [amount, setAmount] = useState(
-    godGivingInputFieldProps.godGiving?.amount
-  );
-  const [description, setDescription] = useState(
-    godGivingInputFieldProps.godGiving?.description
-  );
+  const [min, setMin] = useState<number>();
+  const [total, setTotal] = useState<number>();
+  const [amount, setAmount] = useState<number>();
+  const [description, setDescription] = useState<string>();
 
+  useEffect(() => {
+    if (godGivingInputFieldProps.godGiving !== undefined) {
+      setTotal(godGivingInputFieldProps.godGiving.total);
+      setMin(godGivingInputFieldProps.godGiving.timeInMinute);
+      setAmount(godGivingInputFieldProps.godGiving.amount);
+      setDescription(godGivingInputFieldProps.godGiving.description);
+    } else {
+      setTotal(undefined);
+      setMin(undefined);
+      setAmount(undefined);
+      setDescription(undefined);
+    }
+  }, [godGivingInputFieldProps.godGiving]);
+  const translateType = () => {
+    switch (godGivingInputFieldProps.godGivingType) {
+      case GodGivingType.MONEY:
+        return 'Spende';
+      case GodGivingType.THANKS:
+        return 'Danksagung';
+      case GodGivingType.CHORE:
+        return 'Probe';
+    }
+  };
   const handleChangedMin = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMin(toNumber(event.target.value));
   };
@@ -44,25 +61,26 @@ export function GodGivingInputField(
   ) => {
     setDescription(event.target.value);
   };
-  const meditationSave = () => {
-    let meditation: Map<string, any> = new Map<string, any>();
-    meditation.set('timeInMinute', min);
-    meditation.set('total', total);
-    meditation.set('amount', amount);
-    meditation.set('description', description);
-    godGivingInputFieldProps.handleGodGivingForm(meditation);
+  const godGivingSave = () => {
+    let godGiving: Map<string, any> = new Map<string, any>();
+    godGiving.set('timeInMinute', min);
+    godGiving.set('total', total);
+    godGiving.set('amount', amount);
+    godGiving.set('description', description);
+    godGivingInputFieldProps.handleGodGivingForm(godGiving);
   };
   return (
     <Box
       component="form"
       sx={{
-        '& .MuiTextField-root': { m: 1, width: '50ch' }
+        '& .MuiTextField-root': { m: 1, width: '100ch' }
       }}
       noValidate
       autoComplete="off"
       marginX="15em"
+      overflow="scroll"
     >
-      <div>
+      <div style={{ marginLeft: '7em', display: 'flex' }}>
         <TextField
           id="filled-select-currency"
           label={
@@ -71,19 +89,23 @@ export function GodGivingInputField(
               : 'Anzahl der Probe'
           }
           type={'number'}
-          value={total}
+          value={
+            godGivingInputFieldProps.godGiving !== undefined ? total : undefined
+          }
           onChange={handleChangedTotal}
           disabled={
             godGivingInputFieldProps.godGivingType === GodGivingType.MONEY
           }
+          required={true}
           variant="filled"
         ></TextField>
-
         <TextField
           id="filled-select-currency"
           label="Gebrauchte Minuten"
           type={'number'}
-          value={min}
+          value={
+            godGivingInputFieldProps.godGiving !== undefined ? min : undefined
+          }
           disabled={
             godGivingInputFieldProps.godGivingType === GodGivingType.MONEY
           }
@@ -91,49 +113,54 @@ export function GodGivingInputField(
           variant="filled"
         ></TextField>
       </div>
-      <div>
+      <div style={{ marginLeft: '7em', marginTop: '1em', display: 'flex' }}>
         <TextField
           id="filled-select-currency"
-          label={
-            godGivingInputFieldProps.godGivingType === GodGivingType.MONEY
-              ? 'Gabe zu Gott'
-              : ''
-          }
+          label={'Betrag'}
           type={'number'}
+          defaultValue={godGivingInputFieldProps.godGiving?.amount}
           value={amount}
           onChange={handleChangedAmount}
           disabled={
             godGivingInputFieldProps.godGivingType !== GodGivingType.MONEY
           }
           variant="filled"
+          required={true}
         ></TextField>
         <TextField
           id="outlined-select-currency-native"
-          label="Thema"
+          label="Beschreibung"
           multiline
-          value={description}
+          value={
+            godGivingInputFieldProps.godGiving !== undefined
+              ? description
+              : undefined
+          }
           onChange={handleChangedDescription}
         ></TextField>
       </div>
-      <div style={{ marginLeft: '14em', marginTop: '1em' }}>
+      <div style={{ marginLeft: '7em', marginTop: '1em' }}>
         <TextField
           id="filled-select-currency-native"
-          label="Das Gabe Item wurde am"
+          label=""
           value={
             godGivingInputFieldProps.godGiving === undefined
-              ? ''
-              : new Date(
+              ? 'Es Liegt Momentan kein Datum vor'
+              : 'Das Gabe Item wurde am ' +
+                new Date(
                   godGivingInputFieldProps.godGiving?.createdAt
-                ).toLocaleString() + ' erstellt'
+                ).toLocaleString() +
+                ' erstellt'
           }
           disabled={true}
           variant="filled"
         ></TextField>
       </div>
 
-      <div style={{ marginLeft: '7em', marginTop: '2em' }}>
+      <div style={{ marginLeft: '7em', marginTop: '2em', display: 'flex' }}>
         <Button
-          onClick={() => meditationSave()}
+          style={{ marginRight: '7em' }}
+          onClick={() => godGivingSave()}
           color="primary"
           variant="outlined"
           startIcon={<SaveIcon />}
@@ -142,13 +169,13 @@ export function GodGivingInputField(
         </Button>
         <Button
           onClick={godGivingInputFieldProps.deleteGodGivingAction}
-          style={{ marginLeft: '15em' }}
+          style={{ marginLeft: '14em' }}
           color="secondary"
           variant="outlined"
           disabled={godGivingInputFieldProps.godGiving === undefined}
           endIcon={<DeleteIcon />}
         >
-          Gabe Item löschen
+          {translateType()} Item löschen
         </Button>
       </div>
     </Box>

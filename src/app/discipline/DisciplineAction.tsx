@@ -27,7 +27,6 @@ import { AlertMessage } from '../ArletMessageRenderer';
 import { DialogMessageRenderer } from '../DialogMessageRenderer';
 import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
-import { CalenderWeekRenderer } from '../CalendarWeekRenderer';
 import { DataGridRows } from '../DataGridRows';
 import { SelectItem } from '../SelectItem';
 
@@ -126,19 +125,18 @@ export function DisciplineAction({
         console.log('WEEK ', endOfISOWeek(date).toISOString());
 
         if (validateDiscipline(upsertDiscipline, disciplineType, true)) {
-          createDiscipline(
-            upsertDiscipline as UpsertDisciplineRequest,
-            true
-          ).then((r) => {
-            setMethode('createGet');
-            params.api.setRowMode(params.row.id, 'view');
-            const id = params.row.id;
-            params.api.updateRows([{ id, _action: 'delete' }]);
-            setOpenAlert(true);
+          createDiscipline(upsertDiscipline as UpsertDisciplineRequest).then(
+            (r) => {
+              setMethode('createGet');
+              params.api.setRowMode(params.row.id, 'view');
+              const id = params.row.id;
+              params.api.updateRows([{ id, _action: 'delete' }]);
+              setOpenAlert(true);
 
-            setMessageAlert('Das neue Item wurde erfolgreich hinzugefügt');
-            setSeverity('success');
-          });
+              setMessageAlert('Das neue Item wurde erfolgreich hinzugefügt');
+              setSeverity('success');
+            }
+          );
         } else {
           setOpenAlert(true);
           setMethode('create');
@@ -158,8 +156,7 @@ export function DisciplineAction({
         if (validateDiscipline(upsertDiscipline, disciplineType, false)) {
           updateDiscipline(
             oId,
-            upsertDiscipline as UpsertDisciplineRequest,
-            true
+            upsertDiscipline as UpsertDisciplineRequest
           ).then((r) => {
             setMethode('');
             params.api.setRowMode(params.row.id, 'view');

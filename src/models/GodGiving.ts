@@ -73,9 +73,10 @@ export const UpsertGodGivingRequestSchema: Schema = Joi.object({
   timeInMinute: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.THANKS,
     then: Joi.number().min(0).optional(),
-    otherwise: null
+    otherwise: undefined
   }),
-  description: Joi.string().optional().empty('')
+  description: Joi.string().optional().empty(''),
+  weekOfYear: Joi.number().positive().required()
 });
 export function instanceOfActivity(object?: any): object is GodGiving {
   if (!object) {

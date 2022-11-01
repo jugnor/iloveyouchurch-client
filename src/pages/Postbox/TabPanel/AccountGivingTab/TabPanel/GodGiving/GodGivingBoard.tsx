@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
@@ -17,6 +17,7 @@ import { DeleteDialog } from '../../../../../../shared/DeleteDialog';
 import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
+import AddIcon from '@mui/icons-material/Add';
 
 import {
   GodGiving,
@@ -52,12 +53,42 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
   const [godGivingType, setGodGivingType] = useState<SelectElement>(
     GodGivingType.MONEY
   );
-  const [godGiving, setGodGiving] = useState<GodGiving>();
 
-  const { data: godGivingData } = useSWR<GodGiving>(
-    `/postboxes/${godgivingBoardProps.postboxId}/godGivings?` +
+  const [godGiving, setGodGiving] = useState<GodGiving>();
+  const {
+    data: godGivingData,
+    error,
+    isValidating,
+    mutate
+  } = useSWR<GodGiving>(
+    `/postboxes/${godgivingBoardProps.postboxId}/god-givings?` +
       `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
   );
+
+  useEffect(() => {
+    if (!isValidating) {
+        setMode('edit');
+    }else{
+      if(mode===''){
+        setMode('create')
+      }else
+      if(mode==='create'){
+      setMode('edit')
+    }}
+
+    setGodGiving(godGivingData);
+  }, [mode, godGivingData,isValidating]);
+
+  const translateType = () => {
+    switch (godGivingType) {
+      case GodGivingType.MONEY:
+        return 'Spende';
+      case GodGivingType.THANKS:
+        return 'Danksagung';
+      case GodGivingType.CHORE:
+        return 'Probe';
+    }
+  };
   const handleGodGivingForm = (godGivingForm: Map<string, any>) => {
     const upsertGodGivingRequest = {
       timeInMinute: godGivingForm.get('timeInMinute'),
@@ -72,33 +103,44 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
       upsertGodGivingRequest
     ).error;
     if (error) {
-      setMode('create');
       setSeverity('error');
       if (godGiving === undefined) {
         setAlert(
-          'Das neue GodGiving Item konnte leider nicht hinzugefügt werden'
+          'Das neue ' +
+            translateType() +
+            ' Item konnte leider nicht hinzugefügt werden'
         );
       } else {
         setAlert(
-          'Das GodGiving Item von Kalenderwoche ' +
+          'Das ' +
+            translateType() +
+            ' Item von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
+    } else {
+      createDiscipline(upsertGodGivingRequest).then((r) => {
+        setMode('edit');
+        setSeverity('success');
+        if (godGiving === undefined) {
+          setAlert(
+            'Das neue ' +
+              translateType() +
+              ' Item wurde erfolgreich hinzugefügt'
+          );
+        } else {
+          setAlert(
+            'Das ' +
+              translateType() +
+              ' Item von Kalenderwoche ' +
+              weekOfYear +
+              ' wurde erfolgreich geändert'
+          );
+        }
+      });
     }
-    createDiscipline(upsertGodGivingRequest).then((r) => {
-      setMode('edit');
-      setSeverity('success');
-      if (godGiving === undefined) {
-        setAlert('Das neue GodGiving Item wurde erfolgreich hinzugefügt');
-      } else {
-        setAlert(
-          'Das GodGiving Item von Kalenderwoche ' +
-            weekOfYear +
-            ' wurde erfolgreich geändert'
-        );
-      }
-    });
+
     if (alertMessage !== '') {
       setAlert(alertMessage);
       setMode('');
@@ -112,7 +154,9 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
         deleteDiscipline(godGiving?.id).then((r) => {
           setMode('edit');
           setOpenAlert(true);
-          setAlert('Das GodGiving Item wurde erfolgreich gelöscht');
+          setAlert(
+            'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
+          );
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -120,22 +164,18 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
         setMode('edit');
         setOpenDialog(false);
       }
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
     }
   };
   const deleteGodGivingAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
-  useEffect(() => {
-    if (mode === '') {
-      if (godGivingData !== undefined && godGivingData !== null) {
-        setMode('edit');
-      } else {
-        setMode('create');
-      }
-      setGodGiving(godGivingData);
-    }
-  }, [mode, godGivingData]);
   return (
     <Container>
       <Typography
@@ -153,7 +193,7 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
                 {weekOfYear}
               </MenuItem>
             </FormControl>
-
+            {console.log('Type', godGivingData)}
             <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
             <SelectItem
               setElement={setGodGivingType}
@@ -167,15 +207,27 @@ export function GodGivingBoard(godgivingBoardProps: GodGivingBoardBoardProps) {
             <GodGivingInputField
               deleteGodGivingAction={deleteGodGivingAction}
               godGivingType={godGivingType as GodGivingType}
-              godGiving={godGivingData}
+              godGiving={godGiving}
               handleGodGivingForm={handleGodGivingForm}
             />
           </div>
         )}
         {mode === 'create' && (
-          <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues GodGiving Item hinzufügen !!!
-          </Button>
+          <div style={{ marginLeft: '27rem' }}>
+            {' '}
+            <Typography color={'red'}>
+              Sie haben diese Woche noch kein {translateType()} Item gebucht
+            </Typography>{' '}
+            <Button
+              style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              variant="outlined"
+              color={'primary'}
+              startIcon={<AddIcon />}
+              onClick={() => setMode('edit')}
+            >
+              Neues {translateType()} Item hinzufügen !!!
+            </Button>{' '}
+          </div>
         )}
         {mode === 'delete' && openDialog && (
           <DeleteDialog
