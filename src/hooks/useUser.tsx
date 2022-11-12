@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { matchMutate } from '../swr';
+import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
 import { mutate } from 'swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
@@ -23,7 +23,7 @@ export function useUser() {
           data
         );
 
-        await matchMutate(new RegExp(`^/users.*$`));
+        await MatchMutate(new RegExp(`^/users.*$`));
 
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
@@ -52,7 +52,7 @@ export function useUser() {
           data
         );
 
-        await matchMutate(new RegExp(`^/users.*$`));
+        await MatchMutate(new RegExp(`^/users.*$`));
 
         if (!silent) {
           alert('success: Änderungen gespeichert.');

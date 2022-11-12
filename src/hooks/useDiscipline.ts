@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { matchMutate } from '../swr';
 import { useApi } from './useApi';
-import useSWR, { mutate } from 'swr';
+import { MatchMutate, } from '../swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
 import {
   Discipline,
@@ -10,12 +9,11 @@ import {
   UpsertDisciplineRequest
 } from '../models/Discipline';
 import { ILCError } from '../utils/ErrorCode';
-import { GodGiving } from '../models/GodGiving';
 
 export function useDiscipline(postboxId: string, userId: string, path: string) {
+
   const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
   const { t } = useTranslation();
-
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -37,18 +35,6 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
             'POST',
             data
           );
-
-        await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
-        );
-
-        await matchMutate(
-          new RegExp(
-            `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
-          )
-        );
-
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/${path}s.*$`));
 
         return newUseDisciplineResponse.data;
       } catch (e) {
@@ -72,15 +58,6 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
           'DELETE'
         );
 
-        await matchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
-        );
-
-        await matchMutate(
-          new RegExp(
-            `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
-          )
-        );
       } catch (e) {
         const ilcError = e as ILCError;
         setAlertMessage(
@@ -89,7 +66,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
         throw e;
       }
     },
-    [makeRequest, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse,postboxId, t]
   );
 
   const updateDiscipline = useCallback(
@@ -103,17 +80,16 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
           data
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(
             `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
           )
         );
 
-        await mutate(`/postboxes/${postboxId}/${path}s/${clrId}`);
 
         if (!silent) {
           alert('success: Änderungen gespeichert.');

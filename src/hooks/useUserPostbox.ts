@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, UpsertActivityRequest } from '../models/Activity';
-import { matchMutate } from '../swr';
+import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
 import useSWR, { mutate, SWRResponse } from 'swr';
 import { ActivityType } from '../models/ActivityType';
@@ -30,7 +30,7 @@ export function useUserPostbox(postboxId: string) {
             data
           );
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
+        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
 
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
@@ -59,7 +59,7 @@ export function useUserPostbox(postboxId: string) {
             data
           );
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
+        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
 
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
@@ -84,7 +84,7 @@ export function useUserPostbox(postboxId: string) {
       try {
         await makeRequest(`/postboxes/${postboxId}/users/${userId}`, 'DELETE');
 
-        await matchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
+        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
 
         setLoading(false);
       } catch (e) {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { matchMutate } from '../swr';
+import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
 import { mutate } from 'swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
@@ -30,11 +30,11 @@ export function useFile(postboxId: string) {
           formData
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
         );
         if (!silent) {
@@ -60,10 +60,10 @@ export function useFile(postboxId: string) {
       try {
         await makeRequest(`/postboxes/${postboxId}/files/${fileId}`, 'DELETE');
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/files-description.*$`)
         );
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
         );
 
@@ -89,10 +89,10 @@ export function useFile(postboxId: string) {
           data
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/files-description.*$`)
         );
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
         );
 

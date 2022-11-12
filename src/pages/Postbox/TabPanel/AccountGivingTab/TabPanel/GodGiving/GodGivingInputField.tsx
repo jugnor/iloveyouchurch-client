@@ -77,10 +77,9 @@ export function GodGivingInputField(
       }}
       noValidate
       autoComplete="off"
-      marginX="15em"
       overflow="scroll"
     >
-      <div style={{ marginLeft: '7em', display: 'flex' }}>
+      <div style={{  display: 'flex' }}>
         <TextField
           id="filled-select-currency"
           label={
@@ -113,13 +112,12 @@ export function GodGivingInputField(
           variant="filled"
         ></TextField>
       </div>
-      <div style={{ marginLeft: '7em', marginTop: '1em', display: 'flex' }}>
+      <div style={{  marginTop: '1em', display: 'flex' }}>
         <TextField
           id="filled-select-currency"
           label={'Betrag'}
           type={'number'}
-          defaultValue={godGivingInputFieldProps.godGiving?.amount}
-          value={amount}
+          value={ godGivingInputFieldProps.godGiving !== undefined ?amount : undefined}
           onChange={handleChangedAmount}
           disabled={
             godGivingInputFieldProps.godGivingType !== GodGivingType.MONEY
@@ -139,7 +137,7 @@ export function GodGivingInputField(
           onChange={handleChangedDescription}
         ></TextField>
       </div>
-      <div style={{ marginLeft: '7em', marginTop: '1em' }}>
+      <div style={{  marginTop: '1em' , display: 'flex'}}>
         <TextField
           id="filled-select-currency-native"
           label=""
@@ -155,11 +153,13 @@ export function GodGivingInputField(
           disabled={true}
           variant="filled"
         ></TextField>
+        <div>
+
+        </div>
       </div>
 
-      <div style={{ marginLeft: '7em', marginTop: '2em', display: 'flex' }}>
+      <div style={{  marginTop: '2em', display: 'flex' }}>
         <Button
-          style={{ marginRight: '7em' }}
           onClick={() => godGivingSave()}
           color="primary"
           variant="outlined"
@@ -169,7 +169,7 @@ export function GodGivingInputField(
         </Button>
         <Button
           onClick={godGivingInputFieldProps.deleteGodGivingAction}
-          style={{ marginLeft: '14em' }}
+          style={{ marginLeft: '28rem' }}
           color="secondary"
           variant="outlined"
           disabled={godGivingInputFieldProps.godGiving === undefined}

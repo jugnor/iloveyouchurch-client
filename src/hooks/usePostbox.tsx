@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { matchMutate } from '../swr';
+import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
 import { mutate } from 'swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
@@ -25,8 +25,8 @@ export function usePostbox() {
             data
           );
 
-        await matchMutate(new RegExp(`^/postboxes.*$`));
-        await matchMutate(new RegExp(`^/postbox-results.*$`));
+        await MatchMutate(new RegExp(`^/postboxes.*$`));
+        await MatchMutate(new RegExp(`^/postbox-results.*$`));
 
         if (!silent) {
           alert('success: Fall erfolgreich erstellt.');
@@ -55,8 +55,8 @@ export function usePostbox() {
           data
         );
 
-        await matchMutate(new RegExp(`^postboxes.*$`));
-        await matchMutate(new RegExp(`^/postbox-results.*$`));
+        await MatchMutate(new RegExp(`^postboxes.*$`));
+        await MatchMutate(new RegExp(`^/postbox-results.*$`));
 
         if (!silent) {
           alert('success: Änderungen gespeichert.');

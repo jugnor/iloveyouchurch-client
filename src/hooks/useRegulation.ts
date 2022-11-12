@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { matchMutate } from '../swr';
+import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
 import useSWR, { mutate, SWRResponse } from 'swr';
 import { Regulation, UpsertRegulationRequest } from '../models/Regulation';
@@ -22,11 +22,11 @@ export function useRegulation(postboxId: string) {
             data
           );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/regulations.*$`)
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/regulation-results.*$`)
         );
         if (!silent) {
@@ -55,11 +55,11 @@ export function useRegulation(postboxId: string) {
           'DELETE'
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/regulations.*$`)
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/regulation-results.*$`)
         );
         setLoading(false);
@@ -87,11 +87,11 @@ export function useRegulation(postboxId: string) {
           data
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/regulations.*$`)
         );
 
-        await matchMutate(
+        await MatchMutate(
           new RegExp(`^/postboxes/${postboxId}/regulation-results.*$`)
         );
 

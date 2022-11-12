@@ -1,12 +1,14 @@
-import { createCache } from 'swr';
 
-export const { cache, mutate } = createCache(new Map());
+import { useSWRConfig } from 'swr'
 
-export function matchMutate(
+
+export function MatchMutate(
   matcher: string | RegExp,
   data?: any,
   shouldRevalidate = true
 ) {
+  const { cache, mutate } = useSWRConfig()
+
   const keys = [];
 
   if (matcher instanceof RegExp) {
