@@ -24,6 +24,9 @@ import {
   UpsertReadingRequestSchema
 } from '../../../../../../models/Reading';
 import { ReadingInputField } from './ReadingInputField';
+import {ReadingInputForm} from "./ReadingInputForm";
+import {GodGivingType} from "../../../../../../models/GodGiving";
+import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
 
 export interface ReadingBoardProps {
   postboxId: string;
@@ -52,53 +55,20 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
     ReadingType.C_BOOK
   );
   const [reading, setReading] = useState<Reading>();
+  const {translateType} = useDisciplineType(readingType as ReadingType) ;
 
-  const { data: readingData } = useSWR<Reading>(
-    `/postboxes/${readingBoardProps.postboxId}/prayers?` +
+  const { data: readingData,mutate:mutateReading } = useSWR<Reading>(
+    `/postboxes/${readingBoardProps.postboxId}/readings?` +
       `readingType=${readingType}&weekOfYear=${weekOfYear}`
   );
-  const handleReadingForm = (readingForm: Map<string, any>) => {
-    const upsertReadingRequest = {
-      timeInMinute: readingForm.get('timeInMinute'),
-      totalCap: readingForm.get('totalCap'),
-      title: readingForm.get('title'),
-      referenceEnd: readingForm.get('referenceEnd'),
-      theEnd: readingForm.get('theEnd'),
 
-      theme: readingForm.get('theme'),
-      readingType: readingType,
-      weekOfYear: weekOfYear
-    } as UpsertReadingRequest;
-
-    const error =
-      UpsertReadingRequestSchema.validate(upsertReadingRequest).error;
-    if (error) {
-      setMode('create');
-      setSeverity('error');
-      if (reading === undefined) {
-        setAlert(
-          'Das neue Reading Item konnte leider nicht hinzugefügt werden'
-        );
-      } else {
-        setAlert(
-          'Das Reading Item von Kalenderwoche ' +
-            weekOfYear +
-            ' konnte leider nicht geändert werden'
-        );
-      }
-    }
-    createDiscipline(upsertReadingRequest).then((r) => {
-      setMode('edit');
+  const handleReadingForm = (data:UpsertReadingRequest) => {
+    createDiscipline(data).then((r) => {
+      mutateReading(readingData,true)
       setSeverity('success');
-      if (reading === undefined) {
-        setAlert('Das neue Reading Item wurde erfolgreich hinzugefügt');
-      } else {
-        setAlert(
-          'Das Reading Item von Kalenderwoche ' +
-            weekOfYear +
-            ' wurde erfolgreich geändert'
-        );
-      }
+      setAlert(
+        'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
+      );
     });
     if (alertMessage !== '') {
       setAlert(alertMessage);
@@ -165,11 +135,13 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
         </div>
         {mode === 'edit' && (
           <div>
-            <ReadingInputField
+            <ReadingInputForm
               deleteReadingAction={deleteReadingAction}
               readingType={readingType as ReadingType}
               reading={readingData}
-              handleReadingForm={handleReadingForm}
+              weekOfYear={weekOfYear}
+              loading={}
+              onSubmit={handleReadingForm}
             />
           </div>
         )}

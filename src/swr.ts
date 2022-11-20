@@ -1,13 +1,11 @@
-
-import { useSWRConfig } from 'swr'
-
+import { useSWRConfig } from 'swr';
 
 export function MatchMutate(
   matcher: string | RegExp,
   data?: any,
   shouldRevalidate = true
 ) {
-  const { cache, mutate } = useSWRConfig()
+  const { cache, mutate } = useSWRConfig();
 
   const keys = [];
 

@@ -19,24 +19,24 @@ export function GospelInputField(gospelInputFieldProps: GospelInputFieldProps) {
   const [min, setMin] = useState(gospelInputFieldProps.gospel?.timeInMinute);
   const [total, setTotal] = useState(gospelInputFieldProps.gospel?.total);
   const [name, setName] = useState(
-    gospelInputFieldProps.gospel?.gospelContact.name
+    gospelInputFieldProps.gospel?.gospelContact?.name
   );
   const [email, setEmail] = useState(
-    gospelInputFieldProps.gospel?.gospelContact.email
+    gospelInputFieldProps.gospel?.gospelContact?.email
   );
 
   const [goal, setGoal] = useState(gospelInputFieldProps.gospel?.goal);
   const [title, setTitle] = useState(
-    gospelInputFieldProps.gospel?.gospelSupport.title
+    gospelInputFieldProps.gospel?.gospelSupport?.title
   );
   const [telephone, setTelephone] = useState(
-    gospelInputFieldProps.gospel?.gospelContact.telephone
+    gospelInputFieldProps.gospel?.gospelContact?.telephone
   );
   const [city, setCity] = useState(
-    gospelInputFieldProps.gospel?.gospelContact.city
+    gospelInputFieldProps.gospel?.gospelContact?.city
   );
   const [supportType, setSupportType] = useState(
-    gospelInputFieldProps.gospel?.gospelSupport.supportType
+    gospelInputFieldProps.gospel?.gospelSupport?.supportType
   );
 
   const handleChangedMin = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,8 +78,8 @@ export function GospelInputField(gospelInputFieldProps: GospelInputFieldProps) {
         gospelMap.set('timeInMinute', min);
         gospelMap.set('total', total);
         gospelMap.set('goal', goal);
-
         break;
+
       case GospelType.SUPPORT:
         gospelMap.set('total', total);
         gospelMap.set('title', title);
@@ -99,116 +99,133 @@ export function GospelInputField(gospelInputFieldProps: GospelInputFieldProps) {
     <Box
       component="form"
       sx={{
-        '& .MuiTextField-root': { m: 1, width: '50ch' }
+        '& .MuiTextField-root': { m: 1, width: '100ch' }
       }}
       noValidate
       autoComplete="off"
-      marginX="15em"
+      overflow="scroll"
     >
-      <div>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Ziele"
-          multiline
-          value={goal}
-          onChange={handleChangedGoal}
-        ></TextField>
-        <TextField
-          id="filled-select-currency"
-          label="Gebrauchte Minuten"
-          type={'number'}
-          value={min}
-          disabled={gospelInputFieldProps.gospelType !== GospelType.GOSPEL}
-          onChange={handleChangedMin}
-          variant="filled"
-        ></TextField>
+      <div style={{ display: 'flex' }}>
+        {gospelInputFieldProps.gospelType === GospelType.GOSPEL && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Ziele"
+            multiline
+            value={gospelInputFieldProps.gospel?.goal}
+            onChange={handleChangedGoal}
+          ></TextField>
+        )}
+        {gospelInputFieldProps.gospelType === GospelType.GOSPEL && (
+          <TextField
+            id="filled-select-currency"
+            label="Gebrauchte Minuten"
+            type={'number'}
+            value={min}
+            onChange={handleChangedMin}
+            required={true}
+            variant="filled"
+          ></TextField>
+        )}
       </div>
-      <div>
-        <TextField
-          id="filled-select-currency"
-          label={
-            gospelInputFieldProps.gospelType === GospelType.GOSPEL
-              ? 'Evangelisation'
-              : 'Support'
-          }
-          type={'number'}
-          value={total}
-          onChange={handleChangedTotal}
-          disabled={gospelInputFieldProps.gospelType === GospelType.CONTACT}
-          variant="filled"
-        ></TextField>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
+        {gospelInputFieldProps.gospelType !== GospelType.CONTACT && (
+          <TextField
+            id="filled-select-currency"
+            label={'Anzahl'}
+            type={'number'}
+            value={total}
+            onChange={handleChangedTotal}
+            required={true}
+            variant="filled"
+          ></TextField>
+        )}
       </div>
-      <div>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Titel"
-          multiline
-          disabled={gospelInputFieldProps.gospelType !== GospelType.SUPPORT}
-          value={title}
-          onChange={handleChangedTitle}
-        ></TextField>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Support Type"
-          multiline
-          disabled={gospelInputFieldProps.gospelType !== GospelType.SUPPORT}
-          value={supportType}
-          onChange={handleChangedSupportType}
-        ></TextField>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
+        {gospelInputFieldProps.gospelType === GospelType.SUPPORT && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Titel"
+            multiline
+            required={true}
+            value={title}
+            onChange={handleChangedTitle}
+          ></TextField>
+        )}
+        {gospelInputFieldProps.gospelType === GospelType.SUPPORT && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Support Type"
+            multiline
+            required={true}
+            value={supportType}
+            onChange={handleChangedSupportType}
+          ></TextField>
+        )}
       </div>
-      <div>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Name"
-          multiline
-          disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
-          value={name}
-          onChange={handleChangedName}
-        ></TextField>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Email"
-          multiline
-          disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
-          value={email}
-          onChange={handleChangedEmail}
-        ></TextField>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
+        {gospelInputFieldProps.gospelType === GospelType.CONTACT && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Name"
+            multiline
+            required={true}
+            disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
+            value={name}
+            onChange={handleChangedName}
+          ></TextField>
+        )}
+        {gospelInputFieldProps.gospelType === GospelType.CONTACT && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Email"
+            multiline
+            disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
+            value={email}
+            onChange={handleChangedEmail}
+          ></TextField>
+        )}
       </div>
-      <div>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Telefon"
-          multiline
-          disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
-          value={telephone}
-          onChange={handleChangedTelephone}
-        ></TextField>
-        <TextField
-          id="outlined-select-currency-native"
-          label="Stadt"
-          multiline
-          disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
-          value={city}
-          onChange={handleChangedCity}
-        ></TextField>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
+        {gospelInputFieldProps.gospelType === GospelType.CONTACT && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Telefon"
+            multiline
+            disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
+            value={telephone}
+            onChange={handleChangedTelephone}
+          ></TextField>
+        )}
+        {gospelInputFieldProps.gospelType === GospelType.CONTACT && (
+          <TextField
+            id="outlined-select-currency-native"
+            label="Stadt"
+            multiline
+            disabled={gospelInputFieldProps.gospelType !== GospelType.CONTACT}
+            value={city}
+            onChange={handleChangedCity}
+          ></TextField>
+        )}
       </div>
-      <div style={{ marginLeft: '14em', marginTop: '1em' }}>
-        <TextField
-          id="filled-select-currency-native"
-          label="Das Gospel Item wurde am"
-          value={
-            gospelInputFieldProps.gospel === undefined
-              ? ''
-              : new Date(
-                  gospelInputFieldProps.gospel?.createdAt
-                ).toLocaleString() + ' erstellt'
-          }
-          disabled={true}
-          variant="filled"
-        ></TextField>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
+        {gospelInputFieldProps.gospel !== undefined && (
+          <TextField
+            id="filled-select-currency-native"
+            label="Das Gospel Item wurde am"
+            value={
+              gospelInputFieldProps.gospel === undefined
+                ? ''
+                : new Date(
+                    gospelInputFieldProps.gospel?.createdAt
+                  ).toLocaleString() + ' erstellt'
+            }
+            disabled={true}
+            variant="filled"
+          ></TextField>
+        )}
       </div>
 
-      <div style={{ marginLeft: '7em', marginTop: '2em' }}>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
         <Button
           onClick={() => meditationSave()}
           color="primary"

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApi } from './useApi';
-import { MatchMutate, } from '../swr';
+import { MatchMutate } from '../swr';
 import { Reading, UpsertReadingRequest } from '../models/Reading';
 import {
   Discipline,
@@ -11,8 +11,7 @@ import {
 import { ILCError } from '../utils/ErrorCode';
 
 export function useDiscipline(postboxId: string, userId: string, path: string) {
-
-  const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
+  const { makeRequest, makeRequestWithFullResponse } = useApi();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -40,7 +39,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
       } catch (e) {
         const ilcError = e as ILCError;
         setAlertMessage(
-          'Das Speichern konnte nicht ausgeführt werden: ' + ilcError.httpStatus
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
         );
         throw e;
       }
@@ -57,16 +56,15 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
           `/postboxes/${postboxId}/${path}s/${godGivingId}`,
           'DELETE'
         );
-
       } catch (e) {
         const ilcError = e as ILCError;
         setAlertMessage(
-          'Das Löschen konnte nicht ausgeführt werden: ' + ilcError.httpStatus
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
         );
         throw e;
       }
     },
-    [makeRequest, makeRequestWithFullResponse,postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
   const updateDiscipline = useCallback(
@@ -90,7 +88,6 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
           )
         );
 
-
         if (!silent) {
           alert('success: Änderungen gespeichert.');
         }
@@ -108,5 +105,11 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
     [makeRequest, postboxId, t]
   );
 
-  return { createDiscipline, deleteDiscipline, updateDiscipline, alertMessage };
+  return {
+    createDiscipline,
+    deleteDiscipline,
+    updateDiscipline,
+    alertMessage,
+    loading
+  };
 }

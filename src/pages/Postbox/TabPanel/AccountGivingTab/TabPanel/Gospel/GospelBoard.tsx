@@ -21,10 +21,12 @@ import { AlertColor } from '@mui/material/Alert';
 import {
   Gospel,
   GospelType,
+  isGospelValidationOk,
   UpsertGospelRequest,
   UpsertGospelRequestSchema
 } from '../../../../../../models/Gospel';
 import { GospelInputField } from './GospelInputField';
+import AddIcon from '@mui/icons-material/Add';
 
 export interface GospelBoardBoardProps {
   postboxId: string;
@@ -45,19 +47,38 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
-  const [mode, setMode] = useState('');
+  const [mode, setMode] = useState('create');
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
   const [gospelType, setGospelType] = useState<SelectElement>(
     GospelType.GOSPEL
   );
-  const [godGospel, setGodGospel] = useState<Gospel>();
 
-  const { data: gospelData } = useSWR<Gospel>(
+  const { data: gospelData, mutate: mutateGospel } = useSWR<Gospel>(
     `/postboxes/${gospelBoardBoardProps.postboxId}/gospels?` +
       `gospelType=${gospelType}&weekOfYear=${weekOfYear}`
   );
+
+  const translateType = () => {
+    switch (gospelType) {
+      case GospelType.GOSPEL:
+        return 'Evangelisation';
+      case GospelType.SUPPORT:
+        return 'Support';
+      case GospelType.CONTACT:
+        return 'Kontakt';
+    }
+  };
+
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
+  const handleGodGivingType = (element: SelectElement) => {
+    setMode('create');
+    setGospelType(element);
+  };
   const handleGospelForm = (gospelForm: Map<string, any>) => {
     let upsertGospelRequest0;
     switch (gospelType) {
@@ -95,54 +116,69 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
         break;
     }
     const upsertGospelRequest = upsertGospelRequest0 as UpsertGospelRequest;
-    const error = UpsertGospelRequestSchema.validate(upsertGospelRequest).error;
-    if (error) {
+    console.log('jet', isGospelValidationOk(upsertGospelRequest));
+    if (!isGospelValidationOk(upsertGospelRequest)) {
       setMode('create');
       setSeverity('error');
-      if (godGospel === undefined) {
-        setAlert('Das neue Gospel Item konnte leider nicht hinzugefügt werden');
+      if (gospelData === undefined) {
+        setAlert(
+          'Das neue ' +
+            translateType() +
+            ' Item konnte leider nicht hinzugefügt werden'
+        );
       } else {
         setAlert(
-          'Das Gospel Item von Kalenderwoche ' +
+          'Das ' +
+            translateType() +
+            ' Item von Kalenderwoche ' +
             weekOfYear +
             ' konnte leider nicht geändert werden'
         );
       }
-    }
-    createDiscipline(upsertGospelRequest).then((r) => {
-      setMode('edit');
-      setSeverity('success');
-      if (godGospel === undefined) {
-        setAlert('Das neue Gospel Item wurde erfolgreich hinzugefügt');
-      } else {
+    } else {
+      createDiscipline(upsertGospelRequest).then((r) => {
+        mutateGospel(gospelData, true);
+        setSeverity('success');
+
         setAlert(
-          'Das Gospel Item von Kalenderwoche ' +
+          'Das ' +
+            translateType() +
+            ' Item von Kalenderwoche ' +
             weekOfYear +
             ' wurde erfolgreich geändert'
         );
+      });
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('create');
+        setSeverity('error');
       }
-    });
-    if (alertMessage !== '') {
-      setAlert(alertMessage);
-      setMode('');
-      setSeverity('error');
     }
     setOpenAlert(true);
   };
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (godGospel !== undefined) {
-        deleteDiscipline(godGospel?.id).then((r) => {
-          setMode('edit');
+      if (gospelData !== undefined) {
+        deleteDiscipline(gospelData?.id).then((r) => {
+          mutateGospel(undefined, true);
+          setMode('create');
           setOpenAlert(true);
-          setAlert('Das Gospel Item wurde erfolgreich gelöscht');
+          setAlert(
+            'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
+          );
           setSeverity('success');
           setOpenDialog(false);
         });
       } else {
-        setMode('edit');
         setOpenDialog(false);
       }
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setSeverity('error');
+        setMode('create');
+      }
+      setOpenAlert(true);
+      setMode('create');
     }
   };
   const deleteGospelAction = () => {
@@ -150,41 +186,38 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
     setOpenDialog(true);
   };
   useEffect(() => {
-    if (mode === '') {
-      if (gospelData !== undefined && gospelData !== null) {
-        setMode('edit');
-      } else {
-        setMode('create');
-      }
-      setGodGospel(gospelData);
+    console.log('Mode', mode);
+    switch (mode) {
+      case 'create':
+        if (gospelData !== undefined) {
+          setMode('edit');
+        }
+        break;
     }
-  }, [mode, gospelData]);
+  }, [mode, gospelData, weekOfYear]);
   return (
     <Container>
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto' }}
+        style={{ overflowY: 'auto', display: 'block' }}
       >
         <div style={{ display: 'flex' }}>
-          <div
-            style={{ marginLeft: 400, display: 'flex', flexDirection: 'row' }}
-          >
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">KW</InputLabel>
-              <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
-                {weekOfYear}
-              </MenuItem>
-            </FormControl>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">KW</InputLabel>
+            <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
+              {weekOfYear}
+            </MenuItem>
+          </FormControl>
 
-            <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
-            <SelectItem
-              setElement={setGospelType}
-              element={gospelType}
-              menuItems={gospelBoardBoardProps.menuItems}
-            />
-          </div>
+          <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
+          <SelectItem
+            setElement={handleGodGivingType}
+            element={gospelType}
+            menuItems={gospelBoardBoardProps.menuItems}
+          />
         </div>
+
         {mode === 'edit' && (
           <div>
             <GospelInputField
@@ -196,9 +229,21 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Gospel Item hinzufügen !!!
-          </Button>
+          <div style={{ marginLeft: '20rem' }}>
+            {' '}
+            <Typography color={'red'}>
+              Sie haben diese Woche noch kein {translateType()} Item gebucht
+            </Typography>{' '}
+            <Button
+              style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              variant="outlined"
+              color={'primary'}
+              startIcon={<AddIcon />}
+              onClick={() => setMode('edit')}
+            >
+              Neues {translateType()} Item hinzufügen !!!
+            </Button>
+          </div>
         )}
         {mode === 'delete' && openDialog && (
           <DeleteDialog

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR, { useSWRConfig } from 'swr';
@@ -21,7 +21,8 @@ import AddIcon from '@mui/icons-material/Add';
 
 import {
   GodGiving,
-  GodGivingType, isGodGivingValidationOk,
+  GodGivingType,
+  isGodGivingValidationOk,
   UpsertGodGivingRequest
 } from '../../../../../../models/GodGiving';
 import { GodGivingInputField } from './GodGivingInputField';
@@ -33,13 +34,14 @@ export interface GodGivingBoardBoardProps {
   userId: string;
 }
 
-export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProps) {
+export function GodGivingBoard(
+  godGivingBoardBoardProps: GodGivingBoardBoardProps
+) {
   const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
     godGivingBoardBoardProps.postboxId,
     godGivingBoardBoardProps.userId,
     godGivingBoardBoardProps.path
   );
-  const { mutate ,cache} = useSWRConfig()
 
   const date = new Date(now());
 
@@ -55,10 +57,7 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
     GodGivingType.MONEY
   );
 
-  const {
-    data: godGivingData,
-    mutate:mutateGodGiving
-  } = useSWR<GodGiving>(
+  const { data: godGivingData, mutate: mutateGodGiving } = useSWR<GodGiving>(
     `/postboxes/${godGivingBoardBoardProps.postboxId}/god-givings?` +
       `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
   );
@@ -67,13 +66,11 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
     switch (mode) {
       case 'create':
         if (godGivingData !== undefined) {
-          setMode("edit")
+          setMode('edit');
         }
         break;
-
-
     }
-  }, [mode, godGivingData,weekOfYear]);
+  }, [mode, godGivingData, weekOfYear]);
 
   const translateType = () => {
     switch (godGivingType) {
@@ -85,15 +82,15 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
         return 'Probe';
     }
   };
-  const handleGodGivingType = (element:SelectElement)=>{
-    setMode('create')
-    setGodGivingType(element)
-  }
+  const handleGodGivingType = (element: SelectElement) => {
+    setMode('create');
+    setGodGivingType(element);
+  };
 
-  const handleWeekOfYear= (weekOfYear:number)=>{
-    setMode('create')
-    setWeekOfYear(weekOfYear)
-  }
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
   const handleGodGivingForm = (godGivingForm: Map<string, any>) => {
     const upsertGodGivingRequest = {
       timeInMinute: godGivingForm.get('timeInMinute'),
@@ -105,12 +102,10 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
     } as UpsertGodGivingRequest;
 
     const isValidationOk = isGodGivingValidationOk(upsertGodGivingRequest);
-    console.log("data",upsertGodGivingRequest)
-    console.log("error",isValidationOk
-    )
+
     if (!isValidationOk) {
       setSeverity('error');
-      if (godGivingData=== undefined) {
+      if (godGivingData === undefined) {
         setAlert(
           'Das neue ' +
             translateType() +
@@ -129,11 +124,9 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
       createDiscipline(upsertGodGivingRequest).then((r) => {
         mutateGodGiving(godGivingData, true);
         setSeverity('success');
-          setAlert(
-            'Das neue ' +
-              translateType() +
-              ' Item wurde erfolgreich hinzugefügt'
-          );
+        setAlert(
+          'Das neue ' + translateType() + ' Item wurde erfolgreich hinzugefügt'
+        );
       });
     }
 
@@ -148,7 +141,7 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
     if (shouldDelete) {
       if (godGivingData !== undefined) {
         deleteDiscipline(godGivingData.id).then((r) => {
-          mutateGodGiving(undefined,true);
+          mutateGodGiving(undefined, true);
           setMode('create');
           setAlert(
             'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
@@ -166,8 +159,8 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
         setSeverity('error');
       }
       setOpenAlert(true);
-    }else{
-      setMode('edit')
+    } else {
+      setMode('edit');
     }
   };
   const deleteGodGivingAction = () => {
@@ -175,16 +168,14 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
     setOpenDialog(true);
   };
   return (
-    <Container >
+    <Container>
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block'  }}
+        style={{ overflowY: 'auto', display: 'block' }}
       >
         <div>
-          <div
-            style={{ display: 'flex' }}
-          >
+          <div style={{ display: 'flex' }}>
             <FormControl>
               <InputLabel id="demo-simple-select-label">KW</InputLabel>
               <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
@@ -226,7 +217,7 @@ export function GodGivingBoard(godGivingBoardBoardProps: GodGivingBoardBoardProp
             </Button>{' '}
           </div>
         )}
-        {mode === 'delete' && openDialog &&(
+        {mode === 'delete' && openDialog && (
           <DeleteDialog
             openDialog={openDialog}
             handleDeleteClick={handleDeleteClick}

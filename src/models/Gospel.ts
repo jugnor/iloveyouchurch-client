@@ -5,6 +5,8 @@ import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 import { ResultsObject } from './ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';
 import { toDate } from 'date-fns';
+import { Email } from '@material-ui/icons';
+import { ok } from 'assert';
 
 export enum GospelType {
   GOSPEL = 'GOSPEL',
@@ -40,6 +42,28 @@ export interface GospelContact {
 
 export type UpsertGospelRequest = Except<Gospel, 'id' | 'createdAt' | 'userId'>;
 
+export function isGospelValidationOk(upsertGospelRequest: UpsertGospelRequest) {
+  const timeInMinute = upsertGospelRequest.timeInMinute;
+  const total = upsertGospelRequest.total;
+  const weekOfYear = upsertGospelRequest.weekOfYear;
+  let isOk = false;
+
+  switch (upsertGospelRequest.gospelType) {
+    case GospelType.GOSPEL:
+      isOk = timeInMinute >= 0 && total > 0;
+      break;
+    case GospelType.CONTACT:
+      const name = upsertGospelRequest.gospelContact.name;
+      isOk = name !== undefined;
+      break;
+    case GospelType.SUPPORT:
+      const support = upsertGospelRequest.gospelSupport.supportType;
+      const title = upsertGospelRequest.gospelSupport.title;
+      isOk = title !== undefined && support !== undefined && total > 0;
+      break;
+  }
+  return isOk && weekOfYear > 0;
+}
 export const CreateGospelRequestSchema: Schema = Joi.object({
   gospelType: Joi.string()
     .valid(...Object.values(GospelType))
@@ -107,11 +131,8 @@ export const UpsertGospelRequestSchema: Schema = Joi.object({
       then: Joi.number().positive().required(),
       otherwise: undefined
     }),
-  goal: Joi.alternatives().conditional('gospelType', {
-    is: GospelType.GOSPEL,
-    then: Joi.string().optional().allow(''),
-    otherwise: undefined
-  }),
+  goal: Joi.string().optional().allow('', null),
+
   gospelContact: Joi.alternatives().conditional('gospelType', {
     is: GospelType.CONTACT,
     then: Joi.object({

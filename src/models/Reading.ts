@@ -17,7 +17,7 @@ export interface Reading {
   userId: string;
   title: string;
   timeInMinute: number;
-  timeInHour: number;
+  timeInHour?: number;
   theme: string;
   referenceEnd: string;
   totalCap: number;

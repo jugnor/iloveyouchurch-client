@@ -1,9 +1,9 @@
-import Joi, {any, Schema} from 'joi';
+import Joi, { any, Schema } from 'joi';
 import { Except } from 'type-fest';
 import { ResultsObject } from './ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';
 import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
-import {MatchMutate} from "../swr";
+import { MatchMutate } from '../swr';
 
 export enum GodGivingType {
   CHORE = 'CHORE',
@@ -76,7 +76,7 @@ export const UpsertGodGivingRequestSchema: Schema = Joi.object({
     then: undefined,
     otherwise: Joi.number().positive().required()
   }),
- description: Joi.alternatives().conditional('godGivingType', {
+  description: Joi.alternatives().conditional('godGivingType', {
     is: GodGivingType.CHORE,
     then: Joi.string().optional().empty(undefined),
     otherwise: Joi.string().required()
@@ -95,31 +95,39 @@ export function instanceOfActivity(object?: any): object is GodGiving {
   );
 }
 
-export function isGodGivingValidationOk(upsertGodGivingRequest:UpsertGodGivingRequest) {
+export function isGodGivingValidationOk(
+  upsertGodGivingRequest: UpsertGodGivingRequest
+) {
   const amount = upsertGodGivingRequest.amount;
   const total = upsertGodGivingRequest.total;
   const min = upsertGodGivingRequest.timeInMinute;
   const description = upsertGodGivingRequest.description;
   const weekOfYear = upsertGodGivingRequest.weekOfYear;
-  const godGivingType = upsertGodGivingRequest.godGivingType
+  const godGivingType = upsertGodGivingRequest.godGivingType;
   let isOk = false;
 
   switch (godGivingType) {
     case GodGivingType.CHORE:
-       isOk = amount===undefined && (total>0) && (min>=0);
+      isOk = amount === undefined && total > 0 && min >= 0;
       break;
 
     case GodGivingType.MONEY:
-       isOk =(amount>=0)  && (total===undefined) && (min===undefined) && description!==undefined;
-       break;
+      isOk =
+        amount >= 0 &&
+        total === undefined &&
+        min === undefined &&
+        description !== undefined;
+      break;
 
     case GodGivingType.THANKS:
-      isOk =(amount===undefined)  && (total>0) && (min>=0) && description!==undefined;
-
+      isOk =
+        amount === undefined &&
+        total > 0 &&
+        min >= 0 &&
+        description !== undefined;
   }
 
-  return isOk && weekOfYear>0;
-
+  return isOk && weekOfYear > 0;
 }
 
 export const godGivingRows = (data: ResultsObject<GodGiving> | undefined) => {

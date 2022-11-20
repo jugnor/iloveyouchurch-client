@@ -6,7 +6,6 @@ import toNumber from '@mui/x-data-grid/lib/lodash/toNumber';
 import { Button } from '@material-ui/core';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { Meditation } from '../../../../../../models/Meditation';
 import { GodGiving, GodGivingType } from '../../../../../../models/GodGiving';
 
 export interface GodGivingInputFieldProps {
@@ -79,52 +78,55 @@ export function GodGivingInputField(
       autoComplete="off"
       overflow="scroll"
     >
-      <div style={{  display: 'flex' }}>
-        <TextField
-          id="filled-select-currency"
-          label={
-            godGivingInputFieldProps.godGivingType === GodGivingType.THANKS
-              ? 'Anzahl der Danksagung'
-              : 'Anzahl der Probe'
-          }
-          type={'number'}
-          value={
-            godGivingInputFieldProps.godGiving !== undefined ? total : undefined
-          }
-          onChange={handleChangedTotal}
-          disabled={
-            godGivingInputFieldProps.godGivingType === GodGivingType.MONEY
-          }
-          required={true}
-          variant="filled"
-        ></TextField>
-        <TextField
-          id="filled-select-currency"
-          label="Gebrauchte Minuten"
-          type={'number'}
-          value={
-            godGivingInputFieldProps.godGiving !== undefined ? min : undefined
-          }
-          disabled={
-            godGivingInputFieldProps.godGivingType === GodGivingType.MONEY
-          }
-          onChange={handleChangedMin}
-          variant="filled"
-        ></TextField>
+      <div style={{ display: 'flex' }}>
+        {godGivingInputFieldProps.godGivingType !== GodGivingType.MONEY && (
+          <TextField
+            id="filled-select-currency"
+            label={
+              godGivingInputFieldProps.godGivingType === GodGivingType.THANKS
+                ? 'Anzahl der Danksagung'
+                : 'Anzahl der Probe'
+            }
+            type={'number'}
+            value={
+              godGivingInputFieldProps.godGiving !== undefined
+                ? total
+                : undefined
+            }
+            onChange={handleChangedTotal}
+            required={true}
+            variant="filled"
+          ></TextField>
+        )}
+        {godGivingInputFieldProps.godGivingType !== GodGivingType.MONEY && (
+          <TextField
+            id="filled-select-currency"
+            label="Gebrauchte Minuten"
+            type={'number'}
+            value={
+              godGivingInputFieldProps.godGiving !== undefined ? min : undefined
+            }
+            onChange={handleChangedMin}
+            variant="filled"
+          ></TextField>
+        )}
       </div>
-      <div style={{  marginTop: '1em', display: 'flex' }}>
-        <TextField
-          id="filled-select-currency"
-          label={'Betrag'}
-          type={'number'}
-          value={ godGivingInputFieldProps.godGiving !== undefined ?amount : undefined}
-          onChange={handleChangedAmount}
-          disabled={
-            godGivingInputFieldProps.godGivingType !== GodGivingType.MONEY
-          }
-          variant="filled"
-          required={true}
-        ></TextField>
+      <div style={{ marginTop: '1em', display: 'flex' }}>
+        {godGivingInputFieldProps.godGivingType === GodGivingType.MONEY && (
+          <TextField
+            id="filled-select-currency"
+            label={'Betrag'}
+            type={'number'}
+            value={
+              godGivingInputFieldProps.godGiving !== undefined
+                ? amount
+                : undefined
+            }
+            onChange={handleChangedAmount}
+            variant="filled"
+            required={true}
+          ></TextField>
+        )}
         <TextField
           id="outlined-select-currency-native"
           label="Beschreibung"
@@ -134,31 +136,33 @@ export function GodGivingInputField(
               ? description
               : undefined
           }
+          required={
+            godGivingInputFieldProps.godGivingType !== GodGivingType.CHORE
+          }
           onChange={handleChangedDescription}
         ></TextField>
       </div>
-      <div style={{  marginTop: '1em' , display: 'flex'}}>
-        <TextField
-          id="filled-select-currency-native"
-          label=""
-          value={
-            godGivingInputFieldProps.godGiving === undefined
-              ? 'Es Liegt Momentan kein Datum vor'
-              : 'Das Gabe Item wurde am ' +
-                new Date(
-                  godGivingInputFieldProps.godGiving?.createdAt
-                ).toLocaleString() +
-                ' erstellt'
-          }
-          disabled={true}
-          variant="filled"
-        ></TextField>
-        <div>
-
+      {godGivingInputFieldProps.godGiving !== undefined && (
+        <div style={{ marginTop: '1em', display: 'flex' }}>
+          <TextField
+            id="filled-select-currency-native"
+            label=""
+            value={
+              godGivingInputFieldProps.godGiving === undefined
+                ? 'Es Liegt Momentan kein Datum vor'
+                : 'Das Gabe Item wurde am ' +
+                  new Date(
+                    godGivingInputFieldProps.godGiving?.createdAt
+                  ).toLocaleString() +
+                  ' erstellt'
+            }
+            disabled={true}
+            variant="filled"
+          ></TextField>
         </div>
-      </div>
+      )}
 
-      <div style={{  marginTop: '2em', display: 'flex' }}>
+      <div style={{ marginTop: '2em', display: 'flex' }}>
         <Button
           onClick={() => godGivingSave()}
           color="primary"
