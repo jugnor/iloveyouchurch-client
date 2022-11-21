@@ -27,10 +27,7 @@ export interface Reading {
   createdAt: Date;
 }
 
-export type UpsertReadingRequest = Except<
-  Reading,
-  'id' | 'createdAt' | 'userId'
->;
+export type UpsertReadingRequest = Except<Reading, 'id' | 'userId'>;
 
 export const CreateReadingRequestSchema: Schema = Joi.object({
   readingType: Joi.string().required(),
@@ -54,11 +51,8 @@ export const UpsertReadingRequestSchema: Schema = Joi.object({
   timeInMinute: Joi.number().min(0).optional(),
   theme: Joi.string().optional().allow(''),
   theEnd: Joi.boolean().optional().allow(false),
-  title: Joi.alternatives().conditional('readingType', {
-    is: ReadingType.C_BOOK,
-    then: Joi.string().required(),
-    otherwise: undefined
-  })
+  title: Joi.string().required(),
+  weekOfYear: Joi.number().positive().required()
 });
 
 export const readingRows = (data: ResultsObject<Reading> | undefined) => {

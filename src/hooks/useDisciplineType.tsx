@@ -1,10 +1,8 @@
-import { useTranslation } from 'react-i18next';
-import {ReadingType} from "../models/Reading";
-import {GodGivingType} from "../models/GodGiving";
-import {DisciplineType} from "../models/Discipline";
+import { ReadingType } from '../models/Reading';
+import { GodGivingType } from '../models/GodGiving';
+import { DisciplineType } from '../models/Discipline';
 
-export function useDisciplineType(disciplineType:DisciplineType) {
-
+export function useDisciplineType(disciplineType: DisciplineType) {
   const translateType = () => {
     switch (disciplineType) {
       case ReadingType.BIBLE:
@@ -16,5 +14,5 @@ export function useDisciplineType(disciplineType:DisciplineType) {
     }
   };
 
-  return { translateType};
+  return { translateType };
 }

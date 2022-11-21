@@ -1,34 +1,38 @@
 import {
-  Reading, ReadingType,
+  Reading,
+  ReadingType,
   UpsertReadingRequest,
   UpsertReadingRequestSchema
 } from '../../../../../../models/Reading';
 import { useJoi } from '../../../../../../hooks/useJoi';
-import {
-  Controller,
-  DeepMap,
-  FieldError,
-  Resolver,
-  useForm
-} from 'react-hook-form';
+import { Controller, Resolver, useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
-import { CircularProgress, Stack } from '@mui/material';
+import {
+  CircularProgress,
+  FormControlLabel,
+  FormLabel,
+  LinearProgress,
+  Radio,
+  RadioGroup,
+  Stack
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import * as React from "react";
-import SaveIcon from "@mui/icons-material/Save";
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import * as React from 'react';
+import SaveIcon from '@mui/icons-material/Save';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
 
 interface ReadingInputFormProps {
   reading?: Reading;
-  weekOfYear:number;
-  readingType:ReadingType;
+  weekOfYear: number;
+  readingType: ReadingType;
   loading: boolean;
-  onSubmit: (data:UpsertReadingRequest) => void;
-  deleteReadingAction:()=>void
+  onSubmit: (data: UpsertReadingRequest) => void;
+  deleteReadingAction: () => void;
 }
 
 export type FormControls = UpsertReadingRequest;
@@ -43,6 +47,7 @@ export function ReadingInputForm({
 }: ReadingInputFormProps) {
   const { validationMessages } = useJoi();
   const { t } = useTranslation();
+  const { translateType } = useDisciplineType(readingType as ReadingType);
 
   const {
     control,
@@ -51,14 +56,14 @@ export function ReadingInputForm({
     watch
   } = useForm<FormControls>({
     defaultValues: {
-      title: undefined,
-      timeInMinute: undefined,
-      theme: undefined,
-      referenceEnd: undefined,
-      totalCap: undefined,
-      theEnd: undefined,
+      title: readingType === ReadingType.BIBLE ? 'Bible' : reading?.title,
+      timeInMinute: reading?.timeInMinute,
+      totalCap: reading?.totalCap,
+      theEnd: reading?.theEnd,
+      referenceEnd: reading?.referenceEnd,
+      theme: reading?.theme,
       readingType: readingType,
-      weekOfYear:weekOfYear
+      weekOfYear: weekOfYear
     },
 
     resolver: joiResolver(
@@ -71,8 +76,7 @@ export function ReadingInputForm({
   return (
     <>
       {' '}
-      {loading && <CircularProgress />}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <div onSubmit={handleSubmit(onSubmit)}>
         <Box
           component="form"
           sx={{
@@ -80,32 +84,42 @@ export function ReadingInputForm({
           }}
           noValidate
           autoComplete="off"
-          marginX="15em"
+          overflow="scroll"
         >
           <Stack spacing={'xl'}>
-            <div>
+            <div style={{ display: 'flex' }}>
               <FormControl
                 id="totalCap"
                 aria-label={t('Totale gelesene Kapiteln')}
-                aria-errormessage={errors.totalCap?.message}
+                aria-errormessage={'errors.totalCap?.message'}
               >
                 <Controller
                   name="totalCap"
                   control={control}
                   render={({ field }) => {
                     return (
-                      <TextField
-                        id="totalCap"
-                        name={field.name}
-                        value={reading?.totalCap}
-                      ></TextField>
+                      <Stack>
+                        <TextField
+                          id="totalCap"
+                          name={field.name}
+                          defaultValue={reading?.totalCap}
+                          type={'number'}
+                          onBlur={field.onBlur}
+                          error={errors.totalCap?.message !== undefined}
+                          onChange={field.onChange}
+                          required={true}
+                          label={t('Totale gelesene Kapiteln')}
+                        ></TextField>
+                        {errors.totalCap?.message && errors.totalCap?.message}
+                      </Stack>
                     );
                   }}
                 ></Controller>
+                {}
               </FormControl>
               <FormControl
                 id="timeInMinute"
-                aria-label={t('"Gebrauchte Zeit')}
+                aria-label={t('Gebrauchte Zeit')}
                 aria-errormessage={errors.timeInMinute?.message}
               >
                 <Controller
@@ -113,17 +127,26 @@ export function ReadingInputForm({
                   control={control}
                   render={({ field }) => {
                     return (
-                      <TextField
-                        id="timeInMinute"
-                        name={field.name}
-                        value={reading?.timeInMinute}
-                      ></TextField>
+                      <Stack>
+                        <TextField
+                          onBlur={field.onBlur}
+                          error={errors.timeInMinute?.message !== undefined}
+                          defaultValue={reading?.timeInMinute}
+                          onChange={field.onChange}
+                          id="timeInMinute"
+                          type={'number'}
+                          name={field.name}
+                          label={t('Gebrauchte Zeit')}
+                        ></TextField>
+                        {errors.timeInMinute?.message &&
+                          errors.timeInMinute?.message}
+                      </Stack>
                     );
                   }}
                 ></Controller>
               </FormControl>
             </div>
-            <div>
+            <div style={{ marginTop: '1em', display: 'flex' }}>
               <FormControl
                 id="theme"
                 aria-label={t('Thema')}
@@ -135,9 +158,13 @@ export function ReadingInputForm({
                   render={({ field }) => {
                     return (
                       <TextField
+                        multiline
+                        defaultValue={reading?.theme}
+                        onBlur={field.onBlur}
+                        onChange={field.onChange}
                         id="theme"
                         name={field.name}
-                        value={reading?.theme}
+                        label={t('Thema')}
                       ></TextField>
                     );
                   }}
@@ -154,16 +181,20 @@ export function ReadingInputForm({
                   render={({ field }) => {
                     return (
                       <TextField
+                        multiline
+                        defaultValue={reading?.referenceEnd}
+                        onBlur={field.onBlur}
+                        onChange={field.onChange}
                         id="referenceEnd"
                         name={field.name}
-                        value={reading?.referenceEnd}
+                        label={t('Referenz')}
                       ></TextField>
                     );
                   }}
                 ></Controller>
               </FormControl>
             </div>
-            <div>
+            <div style={{ marginTop: '1em', display: 'flex' }}>
               <FormControl
                 id="title"
                 aria-label={t('Titel')}
@@ -174,85 +205,97 @@ export function ReadingInputForm({
                   control={control}
                   render={({ field }) => {
                     return (
-                      <TextField
-                        id="title"
-                        name={field.name}
-                        value={readingType === ReadingType.C_BOOK?reading?.title:"Bibel"}
-                        disabled={readingType !== ReadingType.C_BOOK}
-                      ></TextField>
+                      <Stack>
+                        <TextField
+                          multiline
+                          defaultValue={reading?.title}
+                          onBlur={field.onBlur}
+                          error={errors.title?.message !== undefined}
+                          onChange={field.onChange}
+                          id="title"
+                          name={field.name}
+                          disabled={readingType !== ReadingType.C_BOOK}
+                          label={t('Titel')}
+                        ></TextField>
+                        {errors.title?.message && errors.title?.message}
+                      </Stack>
                     );
                   }}
                 ></Controller>
               </FormControl>
-              <FormControl
-                id="Ende"
-                aria-label={t('Ende ?')}
-                aria-errormessage={errors.theEnd?.message}
-              >
+              <FormControl id="theEnd" aria-label={t('Ende ?')}>
                 <Controller
                   name="theEnd"
                   control={control}
                   render={({ field }) => {
                     return (
-                      <TextField
-                        id="title"
-                        name={field.name}
-                        value={reading?.theEnd}
-                      ></TextField>
+                      <Stack style={{ marginLeft: '10em', display: 'flex' }}>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                          Ende des Buches ?
+                        </FormLabel>
+                        <RadioGroup
+                          aria-labelledby="demo-radio-buttons-group-label"
+                          defaultValue={reading?.theEnd}
+                          onBlur={field.onBlur}
+                          name="radio-buttons-group"
+                          onChange={field.onChange}
+                        >
+                          <FormControlLabel
+                            name={field.name}
+                            value={true}
+                            control={<Radio />}
+                            label="Ja"
+                          />
+                          <FormControlLabel
+                            name={field.name}
+                            value={false}
+                            control={<Radio />}
+                            label="Nein"
+                          />
+                        </RadioGroup>
+                      </Stack>
                     );
                   }}
                 ></Controller>
               </FormControl>
             </div>
             {reading && (
-              <div>
-                <FormControl
-                  id="Ende"
-                  aria-label={t('Ende ?')}
-                  aria-errormessage={errors.theEnd?.message}
-                >
-                  <Controller
-                    name="theEnd"
-                    control={control}
-                    render={({ field }) => {
-                      return (
-                        <TextField
-                          id="title"
-                          name={field.name}
-                          value={reading.theEnd}
-                        ></TextField>
-                      );
-                    }}
-                  ></Controller>
-                </FormControl>{' '}
+              <div style={{ marginTop: '1em', display: 'flex' }}>
+                <TextField
+                  id="createdAt"
+                  disabled={true}
+                  value={reading.createdAt}
+                  label={'Datum der Erstellung'}
+                ></TextField>
               </div>
             )}
-            <Stack aria-orientation="horizontal"></Stack>
-           <div>
-             <Button
-               color="secondary"
-               variant="outlined"
-               size="small"
-               disabled={reading === undefined}
-               startIcon={<DeleteIcon />}
-               aria-label={t('Reading Item löschen')}
-               onClick={deleteReadingAction}
-             ></Button>
-             <Button
-               aria-label={t('Reading Item Speichern')}
-               type="submit"
-               size="small"
-               color="primary"
-               variant="outlined"
-               endIcon={<SaveIcon />}
-             >
-               Änderung speichern
-             </Button>
-
-           </div>
+            <Stack aria-orientation="horizontal">
+              <div style={{ marginTop: '1em', display: 'flex' }}>
+                <Button
+                  color={'error'}
+                  variant="outlined"
+                  size="small"
+                  disabled={reading === undefined}
+                  startIcon={<DeleteIcon />}
+                  onClick={deleteReadingAction}
+                >
+                  {translateType()} Item löschen
+                </Button>
+                <Button
+                  style={{ marginLeft: '17em' }}
+                  size="small"
+                  type={'submit'}
+                  color="primary"
+                  variant="outlined"
+                  endIcon={<SaveIcon />}
+                >
+                  {translateType()} Item speichern
+                </Button>
+              </div>
+            </Stack>
           </Stack>
         </Box>
-      </form>
+      </div>
     </>
   );
 }

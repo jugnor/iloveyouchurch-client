@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
@@ -20,13 +20,13 @@ import { AlertColor } from '@mui/material/Alert';
 import {
   Reading,
   ReadingType,
-  UpsertReadingRequest,
-  UpsertReadingRequestSchema
+  UpsertReadingRequest
 } from '../../../../../../models/Reading';
-import { ReadingInputField } from './ReadingInputField';
-import {ReadingInputForm} from "./ReadingInputForm";
-import {GodGivingType} from "../../../../../../models/GodGiving";
-import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
+import { ReadingInputForm } from './ReadingInputForm';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import AddIcon from '@mui/icons-material/Add';
+import { useTranslation } from 'react-i18next';
+import { CircularProgress } from '@mui/material';
 
 export interface ReadingBoardProps {
   postboxId: string;
@@ -36,54 +36,66 @@ export interface ReadingBoardProps {
 }
 
 export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
-  const { alertMessage, createDiscipline, deleteDiscipline } = useDiscipline(
-    readingBoardProps.postboxId,
-    readingBoardProps.userId,
-    readingBoardProps.path
-  );
+  const { alertMessage, createDiscipline, deleteDiscipline, loading } =
+    useDiscipline(
+      readingBoardProps.postboxId,
+      readingBoardProps.userId,
+      readingBoardProps.path
+    );
+  const { t } = useTranslation();
+
   const date = new Date(now());
 
   const woy: number = getWeekNumber(startOfISOWeek(date));
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
-  const [mode, setMode] = useState('');
+  const [mode, setMode] = useState('create');
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
   const [readingType, setReadingType] = useState<SelectElement>(
     ReadingType.C_BOOK
   );
-  const [reading, setReading] = useState<Reading>();
-  const {translateType} = useDisciplineType(readingType as ReadingType) ;
+  const { translateType } = useDisciplineType(readingType as ReadingType);
 
-  const { data: readingData,mutate:mutateReading } = useSWR<Reading>(
+  const {
+    data: readingData,
+    mutate: mutateReading,
+    isValidating: isValidatingReading
+  } = useSWR<Reading>(
     `/postboxes/${readingBoardProps.postboxId}/readings?` +
       `readingType=${readingType}&weekOfYear=${weekOfYear}`
   );
 
-  const handleReadingForm = (data:UpsertReadingRequest) => {
-    createDiscipline(data).then((r) => {
-      mutateReading(readingData,true)
-      setSeverity('success');
-      setAlert(
-        'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
-      );
-    });
-    if (alertMessage !== '') {
-      setAlert(alertMessage);
-      setMode('');
-      setSeverity('error');
-    }
-    setOpenAlert(true);
-  };
+  const handleReadingForm = useCallback(
+    async (data: UpsertReadingRequest) => {
+      await createDiscipline(data).then((r) => {
+        mutateReading(readingData, true);
+        setSeverity('success');
+        setAlert(
+          'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
+        );
+      });
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
+    },
+    [createDiscipline]
+  );
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (reading !== undefined) {
-        deleteDiscipline(reading?.id).then((r) => {
-          setMode('edit');
+      if (readingData !== undefined) {
+        deleteDiscipline(readingData?.id).then((r) => {
+          mutateReading(undefined, true);
+          setMode('create');
           setOpenAlert(true);
-          setAlert('Das Reading Item wurde erfolgreich gelöscht');
+          setAlert(
+            'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
+          );
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -91,43 +103,57 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
         setMode('edit');
         setOpenDialog(false);
       }
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('create');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
+    } else {
+      setMode('edit');
     }
   };
   const deleteReadingAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
+  const handleReadingType = (element: SelectElement) => {
+    setMode('create');
+    setReadingType(element);
+  };
   useEffect(() => {
-    if (mode === '') {
-      if (readingData !== undefined && readingData !== null) {
-        setMode('edit');
-      } else {
-        setMode('create');
-      }
-      setReading(readingData);
+    switch (mode) {
+      case 'create':
+        if (readingData !== undefined) {
+          setMode('edit');
+        }
+        break;
     }
-  }, [mode, readingData]);
+  }, [mode, readingData, weekOfYear]);
   return (
     <Container>
+      {isValidatingReading && <CircularProgress />}
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto' }}
+        style={{ overflowY: 'auto', display: 'block' }}
       >
-        <div style={{ display: 'flex' }}>
-          <div
-            style={{ marginLeft: 400, display: 'flex', flexDirection: 'row' }}
-          >
-            <FormControl fullWidth>
+        <div>
+          <div style={{ display: 'flex' }}>
+            <FormControl>
               <InputLabel id="demo-simple-select-label">KW</InputLabel>
               <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
                 {weekOfYear}
               </MenuItem>
             </FormControl>
 
-            <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
+            <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
             <SelectItem
-              setElement={setReadingType}
+              setElement={handleReadingType}
               element={readingType}
               menuItems={readingBoardProps.menuItems}
             />
@@ -140,15 +166,37 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
               readingType={readingType as ReadingType}
               reading={readingData}
               weekOfYear={weekOfYear}
-              loading={}
+              loading={loading}
               onSubmit={handleReadingForm}
             />
           </div>
         )}
         {mode === 'create' && (
-          <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Reading Item hinzufügen !!!
-          </Button>
+          <div style={{ marginLeft: '20rem' }}>
+            {' '}
+            <Typography color={'red'}>
+              {t(
+                'Sie haben diese Woche noch kein ' +
+                  translateType() +
+                  ' Item gebucht'
+              )}
+            </Typography>{' '}
+            <Button
+              style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              startIcon={<AddIcon />}
+              variant="outlined"
+              color={'primary'}
+              aria-labelledby={
+                'Neues ' + translateType() + ' Item hinzufügen !!!'
+              }
+              aria-label={t(
+                ' Neues ' + translateType() + ' Item hinzufügen !!!'
+              )}
+              onClick={() => setMode('edit')}
+            >
+              Neues {translateType()} Item hinzufügen !!!
+            </Button>
+          </div>
         )}
         {mode === 'delete' && openDialog && (
           <DeleteDialog

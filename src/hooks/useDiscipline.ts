@@ -36,11 +36,14 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
           );
 
         return newUseDisciplineResponse.data;
+        setLoading(false);
       } catch (e) {
         const ilcError = e as ILCError;
         setAlertMessage(
           'Der Server returniert einen Fehler: ' + ilcError.httpStatus
         );
+        setLoading(false);
+
         throw e;
       }
     },
