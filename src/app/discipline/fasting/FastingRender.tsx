@@ -10,7 +10,7 @@ import {
   CreateFastingRequestSchema,
   Fasting,
   UpsertFastingRequestSchema
-} from '../../../models/Fasting/Fasting';
+} from '../../../models/Fasting';
 
 export const fastingRowsRendererByWeek = (
   data: ResultsObject<Fasting> | undefined,

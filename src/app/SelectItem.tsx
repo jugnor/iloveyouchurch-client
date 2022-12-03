@@ -3,7 +3,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { FastingType } from '../models/Fasting/Fasting';
+import { FastingType } from '../models/Fasting';
 
 export type SelectElement = Partial<FastingType | string>;
 interface SelectItemProps {

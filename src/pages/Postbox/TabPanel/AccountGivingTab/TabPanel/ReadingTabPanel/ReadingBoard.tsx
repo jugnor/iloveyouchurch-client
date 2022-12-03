@@ -55,7 +55,7 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
   const [readingType, setReadingType] = useState<SelectElement>(
-    ReadingType.C_BOOK
+    ReadingType.BIBLE
   );
   const { translateType } = useDisciplineType(readingType as ReadingType);
 

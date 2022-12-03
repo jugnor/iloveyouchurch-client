@@ -43,10 +43,10 @@ export const UpsertPrayerRequestSchema: Schema = Joi.object({
     .required(),
   timeInMinute: Joi.number().positive().required(),
   theme: Joi.string().optional().empty(''),
-  prayerNight: Joi.alternatives().conditional('prayerType', {
+  prayerNight: Joi.when('prayerType', {
     is: PrayerType.GROUP,
-    then: Joi.number().min(0).required(),
-    otherwise: null
+    then: Joi.number().optional(),
+    otherwise: Joi.forbidden()
   }),
   weekOfYear: Joi.number().positive()
 });

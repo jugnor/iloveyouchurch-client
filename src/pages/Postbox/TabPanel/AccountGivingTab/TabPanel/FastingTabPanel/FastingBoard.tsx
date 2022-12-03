@@ -4,11 +4,10 @@ import {
   FastingType,
   UpsertFastingRequest,
   UpsertFastingRequestSchema
-} from '../../../../../../models/Fasting/Fasting';
-import { useEffect, useState } from 'react';
+} from '../../../../../../models/Fasting';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
-import { FastingInputField } from './FastingInputField';
 import useSWR from 'swr';
 import {
   CalenderWeekRenderer,
@@ -24,6 +23,12 @@ import { DeleteDialog } from '../../../../../../shared/DeleteDialog';
 import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import {
+  ReadingType,
+  UpsertReadingRequest
+} from '../../../../../../models/Reading';
+import { FastingInputForm } from './FastingInputForm';
 
 export interface FastingBoardProps {
   postboxId: string;
@@ -51,64 +56,46 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   const [fastingType, setFastingType] = useState<SelectElement>(
     FastingType.PARTIAL
   );
+  const { translateType } = useDisciplineType(fastingType as FastingType);
+
   const [fasting, setFasting] = useState<Fasting>();
 
-  const { data: fastingData } = useSWR<Fasting>(
+  const {
+    data: fastingData,
+    mutate: mutateFasting,
+    isValidating: isValidatingFasting
+  } = useSWR<Fasting>(
     `/postboxes/${fastingBoardProps.postboxId}/fastings?` +
       `fastingType=${fastingType}&weekOfYear=${weekOfYear}`
   );
-  const handleFastingForm = (fastingForm: Map<string, any>) => {
-    const upsertFastingRequest = {
-      days: fastingForm.get('days'),
-      goal: fastingForm.get('goal'),
-      fastingType: fastingType,
-      weekOfYear: weekOfYear
-    } as UpsertFastingRequest;
-
-    const error =
-      UpsertFastingRequestSchema.validate(upsertFastingRequest).error;
-    if (error) {
-      setMode('create');
-      setSeverity('error');
-      if (fasting === undefined) {
+  const handleFastingForm = useCallback(
+    async (data: UpsertFastingRequest) => {
+      await createDiscipline(data).then((r) => {
+        mutateFasting(fastingData, true);
+        setSeverity('success');
         setAlert(
-          'Das neue Fasting Item konnte leider nicht hinzugefügt werden'
+          'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
         );
-      } else {
-        setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
-            weekOfYear +
-            ' konnte leider nicht geändert werden'
-        );
+      });
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('');
+        setSeverity('error');
       }
-    }
-    createDiscipline(upsertFastingRequest).then((r) => {
-      setMode('edit');
-      setSeverity('success');
-      if (fasting === undefined) {
-        setAlert('Das Fasting neue Item wurde erfolgreich hinzugefügt');
-      } else {
-        setAlert(
-          'Das Fasting Item von Kalenderwoche ' +
-            weekOfYear +
-            ' wurde erfolgreich geändert'
-        );
-      }
-    });
-    if (alertMessage !== '') {
-      setAlert(alertMessage);
-      setMode('');
-      setSeverity('error');
-    }
-    setOpenAlert(true);
-  };
+      setOpenAlert(true);
+    },
+    [createDiscipline]
+  );
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (fasting !== undefined) {
-        deleteDiscipline(fasting?.id).then((r) => {
-          setMode('edit');
+      if (fastingData !== undefined) {
+        deleteDiscipline(fastingData?.id).then((r) => {
+          mutateFasting(undefined, true);
+          setMode('create');
           setOpenAlert(true);
-          setAlert('Das Fasting Item wurde erfolgreich gelöscht');
+          setAlert(
+            'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
+          );
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -116,33 +103,45 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
         setMode('edit');
         setOpenDialog(false);
       }
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('create');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
+    } else {
+      setMode('edit');
     }
   };
   const deleteFastingAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
+  const handleFastingType = (element: SelectElement) => {
+    setMode('create');
+    setFastingType(element);
+  };
   useEffect(() => {
-    if (mode === '') {
-      if (fastingData !== undefined && fastingData !== null) {
-        setMode('edit');
-      } else {
-        setMode('create');
-      }
-      setFasting(fastingData);
+    switch (mode) {
+      case 'create':
+        if (fastingData !== undefined) {
+          setMode('edit');
+        }
+        break;
     }
-  }, [mode, fastingData]);
+  }, [mode, fastingData, weekOfYear]);
   return (
     <Container>
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto' }}
+        style={{ overflowY: 'auto', display: 'block' }}
       >
         <div style={{ display: 'flex' }}>
-          <div
-            style={{ marginLeft: 400, display: 'flex', flexDirection: 'row' }}
-          >
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">KW</InputLabel>
               <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
@@ -150,20 +149,22 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
               </MenuItem>
             </FormControl>
 
-            <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
+            <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
             <SelectItem
-              setElement={setFastingType}
+              setElement={handleFastingType}
               element={fastingType}
               menuItems={fastingBoardProps.menuItems}
             />
           </div>
-        </div>
+
         {mode === 'edit' && (
           <div>
-            <FastingInputField
+            <FastingInputForm
               deleteFastingAction={deleteFastingAction}
               fasting={fastingData}
-              handleFastingForm={handleFastingForm}
+              fastingType={fastingType as FastingType}
+              onSubmit={handleFastingForm}
+              weekOfYear={weekOfYear}
             />
           </div>
         )}

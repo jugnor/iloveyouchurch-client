@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
@@ -24,6 +24,14 @@ import {
   UpsertMeditationRequestSchema
 } from '../../../../../../models/Meditation';
 import { MeditationInputField } from '../Meditation/MeditationInputField';
+import {
+  ReadingType,
+  UpsertReadingRequest
+} from '../../../../../../models/Reading';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { MeditationInputForm } from './MeditationInputForm';
+import AddIcon from '@mui/icons-material/Add';
+import { useTranslation } from 'react-i18next';
 
 export interface MeditationBoardProps {
   postboxId: string;
@@ -51,66 +59,45 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
   const [retreatType, setRetreatType] = useState<SelectElement>(
     RetreatType.MEDITATION
   );
-  const [meditation, setMeditation] = useState<Meditation>();
+  const { t } = useTranslation();
+  const { translateType } = useDisciplineType(retreatType as RetreatType);
 
-  const { data: meditationData } = useSWR<Meditation>(
+  const {
+    data: meditationData,
+    mutate: mutateMeditation,
+    isValidating: isValidatingMediation
+  } = useSWR<Meditation>(
     `/postboxes/${meditationBoardProps.postboxId}/meditations?` +
       `retreatType=${retreatType}&weekOfYear=${weekOfYear}`
   );
-  const handleMeditationForm = (meditationForm: Map<string, any>) => {
-    const upsertMeditationRequest = {
-      timeInMinute: meditationForm.get('timeInMinute'),
-      theme: meditationForm.get('theme'),
-      verse: meditationForm.get('verse'),
-      retreatType: retreatType,
-      weekOfYear: weekOfYear
-    } as UpsertMeditationRequest;
-
-    const error = UpsertMeditationRequestSchema.validate(
-      upsertMeditationRequest
-    ).error;
-    if (error) {
-      setMode('create');
-      setSeverity('error');
-      if (meditation === undefined) {
+  const handleMeditationForm = useCallback(
+    async (data: UpsertMeditationRequest) => {
+      await createDiscipline(data).then((r) => {
+        mutateMeditation(meditationData, true);
+        setSeverity('success');
         setAlert(
-          'Das neue Item Meditation konnte leider nicht hinzugefügt werden'
+          'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
         );
-      } else {
-        setAlert(
-          'Das Item Meditation von Kalenderwoche ' +
-            weekOfYear +
-            ' konnte leider nicht geändert werden'
-        );
+      });
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('');
+        setSeverity('error');
       }
-    }
-    createDiscipline(upsertMeditationRequest).then((r) => {
-      setMode('edit');
-      setSeverity('success');
-      if (meditation === undefined) {
-        setAlert('Das neue Item Meditation wurde erfolgreich hinzugefügt');
-      } else {
-        setAlert(
-          'Das Item Meditation von Kalenderwoche ' +
-            weekOfYear +
-            ' wurde erfolgreich geändert'
-        );
-      }
-    });
-    if (alertMessage !== '') {
-      setAlert(alertMessage);
-      setMode('');
-      setSeverity('error');
-    }
-    setOpenAlert(true);
-  };
+      setOpenAlert(true);
+    },
+    [createDiscipline]
+  );
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (meditation !== undefined) {
-        deleteDiscipline(meditation?.id).then((r) => {
-          setMode('edit');
+      if (meditationData !== undefined) {
+        deleteDiscipline(meditationData?.id).then((r) => {
+          mutateMeditation(undefined, true);
+          setMode('create');
           setOpenAlert(true);
-          setAlert('Das Item Meditation wurde erfolgreich gelöscht');
+          setAlert(
+            'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
+          );
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -118,61 +105,98 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
         setMode('edit');
         setOpenDialog(false);
       }
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('create');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
+    } else {
+      setMode('edit');
     }
   };
   const deleteMeditationAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
+
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
+  const handleRetreatType = (element: SelectElement) => {
+    setMode('create');
+    setRetreatType(element);
+  };
   useEffect(() => {
-    if (mode === '') {
-      if (meditationData !== undefined && meditationData !== null) {
-        setMode('edit');
-      } else {
-        setMode('create');
-      }
-      setMeditation(meditationData);
+    switch (mode) {
+      case 'create':
+        if (meditationData !== undefined) {
+          setMode('edit');
+        }
+        break;
     }
-  }, [mode, meditationData]);
+  }, [mode, meditationData, weekOfYear]);
   return (
     <Container>
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto' }}
+        style={{ overflowY: 'auto', display: 'block' }}
       >
         <div style={{ display: 'flex' }}>
-          <div
-            style={{ marginLeft: 400, display: 'flex', flexDirection: 'row' }}
-          >
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">KW</InputLabel>
-              <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
-                {weekOfYear}
-              </MenuItem>
-            </FormControl>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">KW</InputLabel>
+            <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
+              {weekOfYear}
+            </MenuItem>
+          </FormControl>
 
-            <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
-            <SelectItem
-              setElement={setRetreatType}
-              element={retreatType}
-              menuItems={meditationBoardProps.menuItems}
-            />
-          </div>
+          <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
+          <SelectItem
+            setElement={handleRetreatType}
+            element={retreatType}
+            menuItems={meditationBoardProps.menuItems}
+          />
         </div>
+
         {mode === 'edit' && (
           <div>
-            <MeditationInputField
+            <MeditationInputForm
               deleteMeditationAction={deleteMeditationAction}
               meditation={meditationData}
-              handleMeditationForm={handleMeditationForm}
+              onSubmit={handleMeditationForm}
+              weekOfYear={weekOfYear}
+              retreatType={retreatType as RetreatType}
             />
           </div>
         )}
         {mode === 'create' && (
-          <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Meditation Item hinzufügen !!!
-          </Button>
+          <div style={{ marginLeft: '20rem' }}>
+            {' '}
+            <Typography color={'red'}>
+              {t(
+                'Sie haben diese Woche noch kein ' +
+                  translateType() +
+                  ' Item gebucht'
+              )}
+            </Typography>{' '}
+            <Button
+              style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              startIcon={<AddIcon />}
+              variant="outlined"
+              color={'primary'}
+              aria-labelledby={
+                'Neues ' + translateType() + ' Item hinzufügen !!!'
+              }
+              aria-label={t(
+                ' Neues ' + translateType() + ' Item hinzufügen !!!'
+              )}
+              onClick={() => setMode('edit')}
+            >
+              Neues {translateType()} Item hinzufügen !!!
+            </Button>
+          </div>
         )}
         {mode === 'delete' && openDialog && (
           <DeleteDialog

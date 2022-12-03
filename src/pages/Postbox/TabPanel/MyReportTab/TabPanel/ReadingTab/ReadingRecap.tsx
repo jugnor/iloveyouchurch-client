@@ -9,7 +9,7 @@ import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import { FastingType } from '../../../../../../models/Fasting/Fasting';
+import { FastingType } from '../../../../../../models/Fasting';
 import {
   Reading,
   meditationColumns,

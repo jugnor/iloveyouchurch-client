@@ -13,7 +13,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import FreeBreakfastIcon from '@mui/icons-material/FreeBreakfast';
 import { FastingBoard } from './FastingTabPanel/FastingBoard';
 import { DisciplineAction } from '../../../../../app/discipline/DisciplineAction';
-import { FastingType } from '../../../../../models/Fasting/Fasting';
+import { FastingType } from '../../../../../models/Fasting';
 import { RetreatType } from '../../../../../models/Meditation';
 import { PrayerType } from '../../../../../models/Prayer';
 import { ReadingType } from '../../../../../models/Reading';

@@ -14,7 +14,7 @@ import {
   fastingColumns,
   fastingRows,
   FastingType
-} from '../../../../../../models/Fasting/Fasting';
+} from '../../../../../../models/Fasting';
 
 interface FastingRecapProps {
   postboxId: string;

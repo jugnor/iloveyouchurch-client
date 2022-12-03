@@ -1,9 +1,3 @@
-import {
-  Reading,
-  ReadingType,
-  UpsertReadingRequest,
-  UpsertReadingRequestSchema
-} from '../../../../../../models/Reading';
 import { useJoi } from '../../../../../../hooks/useJoi';
 import { Controller, Resolver, useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
@@ -24,28 +18,33 @@ import * as React from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
 
-interface ReadingInputFormProps {
-  reading?: Reading;
+import {
+  Meditation,
+  RetreatType,
+  UpsertMeditationRequest,
+  UpsertMeditationRequestSchema
+} from '../../../../../../models/Meditation';
+
+interface MeditationInputFormProps {
+  meditation?: Meditation;
   weekOfYear: number;
-  readingType: ReadingType;
-  loading: boolean;
-  onSubmit: (data: UpsertReadingRequest) => void;
-  deleteReadingAction: () => void;
+  retreatType: RetreatType;
+  onSubmit: (data: UpsertMeditationRequest) => void;
+  deleteMeditationAction: () => void;
 }
 
-export type FormControls = UpsertReadingRequest;
+export type FormControls = UpsertMeditationRequest;
 
-export function ReadingInputForm({
-  reading,
+export function MeditationInputForm({
+  meditation,
   weekOfYear,
-  readingType,
-  loading,
+  retreatType,
   onSubmit,
-  deleteReadingAction
-}: ReadingInputFormProps) {
+  deleteMeditationAction
+}: MeditationInputFormProps) {
   const { validationMessages } = useJoi();
   const { t } = useTranslation();
-  const { translateType } = useDisciplineType(readingType as ReadingType);
+  const { translateType } = useDisciplineType(retreatType as RetreatType);
 
   const {
     control,
@@ -54,22 +53,18 @@ export function ReadingInputForm({
     watch
   } = useForm<FormControls>({
     defaultValues: {
-      title: readingType === ReadingType.BIBLE ? 'Bible' : reading?.title,
-      timeInMinute: reading?.timeInMinute,
-      totalCap: reading?.totalCap,
-      theEnd: reading?.theEnd,
-      referenceEnd: reading?.referenceEnd,
-      theme: reading?.theme,
-      readingType: readingType,
+      retreatType: retreatType,
+      timeInMinute: meditation?.timeInMinute,
+      total: meditation?.total,
+      theme: meditation?.theme,
+      verse: meditation?.verse,
       weekOfYear: weekOfYear
     },
 
     resolver: joiResolver(
-      UpsertReadingRequestSchema.messages(validationMessages)
+      UpsertMeditationRequestSchema.messages(validationMessages)
     ) as Resolver<FormControls, object>
   });
-
-  const type = watch('readingType');
 
   return (
     <>
@@ -87,28 +82,28 @@ export function ReadingInputForm({
           <Stack spacing={'xl'}>
             <div style={{ display: 'flex' }}>
               <FormControl
-                id="totalCap"
-                aria-label={t('Totale gelesene Kapiteln')}
-                aria-errormessage={errors.totalCap?.message}
+                id="total"
+                aria-label={t('Anzahl stiller zeite')}
+                aria-errormessage={'errors.totalCap?.message'}
               >
                 <Controller
-                  name="totalCap"
+                  name="total"
                   control={control}
                   render={({ field }) => {
                     return (
                       <Stack>
                         <TextField
-                          id="totalCap"
+                          id="total"
                           name={field.name}
-                          defaultValue={reading?.totalCap}
+                          defaultValue={meditation?.total}
                           type={'number'}
                           onBlur={field.onBlur}
-                          error={errors.totalCap?.message !== undefined}
+                          error={errors.total?.message !== undefined}
                           onChange={field.onChange}
                           required={true}
-                          label={t('Totale gelesene Kapiteln')}
+                          label={t('Anzahl stiller zeite')}
                         ></TextField>
-                        {errors.totalCap?.message && errors.totalCap?.message}
+                        {errors.total?.message && errors.total?.message}
                       </Stack>
                     );
                   }}
@@ -129,12 +124,12 @@ export function ReadingInputForm({
                         <TextField
                           onBlur={field.onBlur}
                           error={errors.timeInMinute?.message !== undefined}
-                          defaultValue={reading?.timeInMinute}
+                          defaultValue={meditation?.timeInMinute}
                           onChange={field.onChange}
                           id="timeInMinute"
                           type={'number'}
-                          name={field.name}
                           required={true}
+                          name={field.name}
                           label={t('Gebrauchte Zeit')}
                         ></TextField>
                         {errors.timeInMinute?.message &&
@@ -158,7 +153,7 @@ export function ReadingInputForm({
                     return (
                       <TextField
                         multiline
-                        defaultValue={reading?.theme}
+                        defaultValue={meditation?.theme}
                         onBlur={field.onBlur}
                         onChange={field.onChange}
                         id="theme"
@@ -170,105 +165,35 @@ export function ReadingInputForm({
                 ></Controller>
               </FormControl>
               <FormControl
-                id="referenceEnd"
+                id="verse"
                 aria-label={t('Referenz')}
-                aria-errormessage={errors.referenceEnd?.message}
+                aria-errormessage={errors.verse?.message}
               >
                 <Controller
-                  name="referenceEnd"
+                  name="verse"
                   control={control}
                   render={({ field }) => {
                     return (
                       <TextField
                         multiline
-                        defaultValue={reading?.referenceEnd}
+                        defaultValue={meditation?.verse}
                         onBlur={field.onBlur}
                         onChange={field.onChange}
-                        id="referenceEnd"
+                        id="verse"
                         name={field.name}
-                        label={t('Referenz')}
+                        label={t('Verse')}
                       ></TextField>
                     );
                   }}
                 ></Controller>
               </FormControl>
             </div>
-            <div style={{ marginTop: '1em', display: 'flex' }}>
-              <FormControl
-                id="title"
-                aria-label={t('Titel')}
-                aria-errormessage={errors.theme?.message}
-              >
-                <Controller
-                  name="title"
-                  control={control}
-                  render={({ field }) => {
-                    return (
-                      <Stack>
-                        <TextField
-                          multiline
-                          defaultValue={
-                            readingType === ReadingType.BIBLE
-                              ? 'Bible'
-                              : reading?.title
-                          }
-                          onBlur={field.onBlur}
-                          error={errors.title?.message !== undefined}
-                          required={true}
-                          onChange={field.onChange}
-                          id="title"
-                          name={field.name}
-                          disabled={readingType !== ReadingType.C_BOOK}
-                          label={t('Titel')}
-                        ></TextField>
-                        {errors.title?.message && errors.title?.message}
-                      </Stack>
-                    );
-                  }}
-                ></Controller>
-              </FormControl>
-              <FormControl id="theEnd" aria-label={t('Ende ?')}>
-                <Controller
-                  name="theEnd"
-                  control={control}
-                  render={({ field }) => {
-                    return (
-                      <Stack style={{ marginLeft: '10em', display: 'flex' }}>
-                        <FormLabel id="demo-radio-buttons-group-label">
-                          Ende des Buches ?
-                        </FormLabel>
-                        <RadioGroup
-                          aria-labelledby="demo-radio-buttons-group-label"
-                          defaultValue={reading?.theEnd}
-                          onBlur={field.onBlur}
-                          name="radio-buttons-group"
-                          onChange={field.onChange}
-                        >
-                          <FormControlLabel
-                            name={field.name}
-                            value={true}
-                            control={<Radio />}
-                            label="Ja"
-                          />
-                          <FormControlLabel
-                            name={field.name}
-                            value={false}
-                            control={<Radio />}
-                            label="Nein"
-                          />
-                        </RadioGroup>
-                      </Stack>
-                    );
-                  }}
-                ></Controller>
-              </FormControl>
-            </div>
-            {reading && (
+            {meditation && (
               <div style={{ marginTop: '1em', display: 'flex' }}>
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={reading.createdAt}
+                  value={meditation.createdAt}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>
@@ -279,9 +204,9 @@ export function ReadingInputForm({
                   color={'error'}
                   variant="outlined"
                   size="small"
-                  disabled={reading === undefined}
+                  disabled={meditation === undefined}
                   startIcon={<DeleteIcon />}
-                  onClick={deleteReadingAction}
+                  onClick={deleteMeditationAction}
                 >
                   {translateType()} Item löschen
                 </Button>

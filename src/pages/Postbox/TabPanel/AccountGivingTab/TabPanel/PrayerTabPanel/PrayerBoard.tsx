@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
@@ -20,10 +20,13 @@ import { AlertColor } from '@mui/material/Alert';
 import {
   Prayer,
   PrayerType,
-  UpsertPrayerRequest,
-  UpsertPrayerRequestSchema
+  UpsertPrayerRequest
 } from '../../../../../../models/Prayer';
-import { PrayerInputField } from './PrayerInputField';
+
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { PrayerInputForm } from './PrayerInputForm';
+import AddIcon from '@mui/icons-material/Add';
+import { useTranslation } from 'react-i18next';
 
 export interface PrayerBoardProps {
   postboxId: string;
@@ -38,7 +41,9 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
     prayerBoardProps.userId,
     prayerBoardProps.path
   );
+
   const date = new Date(now());
+  const { t } = useTranslation();
 
   const woy: number = getWeekNumber(startOfISOWeek(date));
 
@@ -49,65 +54,45 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
   const [prayerType, setPrayerType] = useState<SelectElement>(PrayerType.ALONE);
-  const [prayer, setPrayer] = useState<Prayer>();
 
-  const { data: prayerData } = useSWR<Prayer>(
+  const { translateType } = useDisciplineType(prayerType as PrayerType);
+
+  const {
+    data: prayerData,
+    mutate: mutatePrayer,
+    isValidating: isValidatingPrayer
+  } = useSWR<Prayer>(
     `/postboxes/${prayerBoardProps.postboxId}/prayers?` +
       `prayerType=${prayerType}&weekOfYear=${weekOfYear}`
   );
-  const handlePrayerForm = (prayerForm: Map<string, any>) => {
-    const upsertPrayerRequest = {
-      timeInMinute: prayerForm.get('timeInMinute'),
-      theme: prayerForm.get('theme'),
-      prayerNight:
-        prayerType === PrayerType.GROUP
-          ? prayerForm.get('prayerNight')
-          : undefined,
-      prayerType: prayerType,
-      weekOfYear: weekOfYear
-    } as UpsertPrayerRequest;
-
-    const error = UpsertPrayerRequestSchema.validate(upsertPrayerRequest).error;
-    if (error) {
-      setMode('create');
-      setSeverity('error');
-      if (prayer === undefined) {
-        setAlert('Das neue Prayer Item konnte leider nicht hinzugefügt werden');
-      } else {
+  const handlePrayerForm = useCallback(
+    async (data: UpsertPrayerRequest) => {
+      await createDiscipline(data).then((r) => {
+        mutatePrayer(prayerData, true);
+        setSeverity('success');
         setAlert(
-          'Das Prayer Item von Kalenderwoche ' +
-            weekOfYear +
-            ' konnte leider nicht geändert werden'
+          'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
         );
+      });
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('');
+        setSeverity('error');
       }
-    }
-    createDiscipline(upsertPrayerRequest).then((r) => {
-      setMode('edit');
-      setSeverity('success');
-      if (prayer === undefined) {
-        setAlert('Das neue Prayer Item wurde erfolgreich hinzugefügt');
-      } else {
-        setAlert(
-          'Das Prayer Item von Kalenderwoche ' +
-            weekOfYear +
-            ' wurde erfolgreich geändert'
-        );
-      }
-    });
-    if (alertMessage !== '') {
-      setAlert(alertMessage);
-      setMode('');
-      setSeverity('error');
-    }
-    setOpenAlert(true);
-  };
+      setOpenAlert(true);
+    },
+    [createDiscipline]
+  );
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      if (prayer !== undefined) {
-        deleteDiscipline(prayer?.id).then((r) => {
-          setMode('edit');
+      if (prayerData !== undefined) {
+        deleteDiscipline(prayerData?.id).then((r) => {
+          mutatePrayer(undefined, true);
+          setMode('create');
           setOpenAlert(true);
-          setAlert('Das Prayer Item wurde erfolgreich gelöscht');
+          setAlert(
+            'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
+          );
           setSeverity('success');
           setOpenDialog(false);
         });
@@ -115,33 +100,46 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
         setMode('edit');
         setOpenDialog(false);
       }
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('create');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
+    } else {
+      setMode('edit');
     }
+  };
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
+  const handlePrayerType = (element: SelectElement) => {
+    setMode('create');
+    setPrayerType(element);
   };
   const deletePrayerAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
   useEffect(() => {
-    if (mode === '') {
-      if (prayerData !== undefined && prayerData !== null) {
-        setMode('edit');
-      } else {
-        setMode('create');
-      }
-      setPrayer(prayerData);
+    switch (mode) {
+      case 'create':
+        if (prayerData !== undefined) {
+          setMode('edit');
+        }
+        break;
     }
-  }, [mode, prayerData]);
+  }, [mode, prayerData, weekOfYear]);
   return (
     <Container>
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto' }}
+        style={{ overflowY: 'auto', display: 'block' }}
       >
         <div style={{ display: 'flex' }}>
-          <div
-            style={{ marginLeft: 400, display: 'flex', flexDirection: 'row' }}
-          >
+
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">KW</InputLabel>
               <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
@@ -149,28 +147,50 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
               </MenuItem>
             </FormControl>
 
-            <CalenderWeekRenderer setWeekOfYear={setWeekOfYear} />
+            <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
             <SelectItem
-              setElement={setPrayerType}
+              setElement={handlePrayerType}
               element={prayerType}
               menuItems={prayerBoardProps.menuItems}
             />
           </div>
-        </div>
         {mode === 'edit' && (
           <div>
-            <PrayerInputField
+            <PrayerInputForm
               deletePrayerAction={deletePrayerAction}
               prayerType={prayerType as PrayerType}
               prayer={prayerData}
-              handlePrayerForm={handlePrayerForm}
+              weekOfYear={weekOfYear}
+              onSubmit={handlePrayerForm}
             />
           </div>
         )}
         {mode === 'create' && (
-          <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Prayer Item hinzufügen !!!
-          </Button>
+          <div style={{ marginLeft: '20rem' }}>
+            {' '}
+            <Typography color={'red'}>
+              {t(
+                'Sie haben diese Woche noch kein ' +
+                  translateType() +
+                  ' Item gebucht'
+              )}
+            </Typography>{' '}
+            <Button
+              style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              startIcon={<AddIcon />}
+              variant="outlined"
+              color={'primary'}
+              aria-labelledby={
+                'Neues ' + translateType() + ' Item hinzufügen !!!'
+              }
+              aria-label={t(
+                ' Neues ' + translateType() + ' Item hinzufügen !!!'
+              )}
+              onClick={() => setMode('edit')}
+            >
+              Neues {translateType()} Item hinzufügen !!!
+            </Button>
+          </div>
         )}
         {mode === 'delete' && openDialog && (
           <DeleteDialog

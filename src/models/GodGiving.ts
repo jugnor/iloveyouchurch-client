@@ -1,4 +1,4 @@
-import Joi, { any, Schema } from 'joi';
+import Joi, { any, Schema, when } from 'joi';
 import { Except } from 'type-fest';
 import { ResultsObject } from './ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';
@@ -61,24 +61,24 @@ export const UpsertGodGivingRequestSchema: Schema = Joi.object({
   godGivingType: Joi.string()
     .valid(...Object.values(GodGivingType))
     .required(),
-  amount: Joi.alternatives().conditional('godGivingType', {
+  amount: Joi.when('godGivingType', {
     is: GodGivingType.MONEY,
     then: Joi.number().positive().required(),
-    otherwise: undefined
+    otherwise: Joi.forbidden()
   }),
-  total: Joi.alternatives().conditional('godGivingType', {
+  total: Joi.when('godGivingType', {
     is: GodGivingType.MONEY,
-    then: undefined,
+    then: Joi.forbidden(),
     otherwise: Joi.number().positive().required()
   }),
-  timeInMinute: Joi.alternatives().conditional('godGivingType', {
+  timeInMinute: Joi.when('godGivingType', {
     is: GodGivingType.MONEY,
-    then: undefined,
+    then: Joi.forbidden(),
     otherwise: Joi.number().positive().required()
   }),
-  description: Joi.alternatives().conditional('godGivingType', {
+  description: when('godGivingType', {
     is: GodGivingType.CHORE,
-    then: Joi.string().optional().empty(undefined),
+    then: Joi.string().optional(),
     otherwise: Joi.string().required()
   }),
   weekOfYear: Joi.number().positive().required()

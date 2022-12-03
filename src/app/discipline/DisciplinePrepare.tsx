@@ -41,7 +41,7 @@ import { ReadingType } from '../../models/Reading';
 import { PrayerType } from '../../models/Prayer';
 import { RetreatType } from '../../models/Meditation';
 import { GospelType } from '../../models/Gospel';
-import { FastingType } from '../../models/Fasting/Fasting';
+import { FastingType } from '../../models/Fasting';
 import { GodGivingType } from '../../models/GodGiving';
 
 export const disciplineRowsRendererByWeek = (

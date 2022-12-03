@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
@@ -22,11 +22,13 @@ import {
   Gospel,
   GospelType,
   isGospelValidationOk,
-  UpsertGospelRequest,
-  UpsertGospelRequestSchema
-} from '../../../../../../models/Gospel';
+  UpsertGospelRequest} from '../../../../../../models/Gospel';
 import { GospelInputField } from './GospelInputField';
 import AddIcon from '@mui/icons-material/Add';
+import {useTranslation} from "react-i18next";
+import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
+import {ReadingType, UpsertReadingRequest} from "../../../../../../models/Reading";
+import {GospelInputForm} from "./GospelInputForm";
 
 export interface GospelBoardBoardProps {
   postboxId: string;
@@ -44,6 +46,7 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
   const date = new Date(now());
 
   const woy: number = getWeekNumber(startOfISOWeek(date));
+  const { t } = useTranslation();
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
@@ -54,108 +57,36 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
   const [gospelType, setGospelType] = useState<SelectElement>(
     GospelType.GOSPEL
   );
+  const { translateType } = useDisciplineType(gospelType as GospelType);
 
   const { data: gospelData, mutate: mutateGospel } = useSWR<Gospel>(
     `/postboxes/${gospelBoardBoardProps.postboxId}/gospels?` +
       `gospelType=${gospelType}&weekOfYear=${weekOfYear}`
   );
 
-  const translateType = () => {
-    switch (gospelType) {
-      case GospelType.GOSPEL:
-        return 'Evangelisation';
-      case GospelType.SUPPORT:
-        return 'Support';
-      case GospelType.CONTACT:
-        return 'Kontakt';
-    }
-  };
 
-  const handleWeekOfYear = (weekOfYear: number) => {
-    setMode('create');
-    setWeekOfYear(weekOfYear);
-  };
-  const handleGodGivingType = (element: SelectElement) => {
+  const handleGospelType = (element: SelectElement) => {
     setMode('create');
     setGospelType(element);
   };
-  const handleGospelForm = (gospelForm: Map<string, any>) => {
-    let upsertGospelRequest0;
-    switch (gospelType) {
-      case GospelType.GOSPEL:
-        upsertGospelRequest0 = {
-          timeInMinute: gospelForm.get('timeInMinute'),
-          total: gospelForm.get('total'),
-          goal: gospelForm.get('goal'),
-          gospelType: gospelType,
-          weekOfYear: weekOfYear
-        } as UpsertGospelRequest;
-        break;
-      case GospelType.SUPPORT:
-        upsertGospelRequest0 = {
-          total: gospelForm.get('total'),
-          gospelSupport: {
-            title: gospelForm.get('title'),
-            supportType: gospelForm.get('supportType')
-          },
-          gospelType: gospelType,
-          weekOfYear: weekOfYear
-        } as UpsertGospelRequest;
-        break;
-      case GospelType.CONTACT:
-        upsertGospelRequest0 = {
-          gospelContact: {
-            name: gospelForm.get('name'),
-            email: gospelForm.get('email'),
-            telephone: gospelForm.get('telephone'),
-            city: gospelForm.get('city')
-          },
-          gospelType: gospelType,
-          weekOfYear: weekOfYear
-        } as UpsertGospelRequest;
-        break;
-    }
-    const upsertGospelRequest = upsertGospelRequest0 as UpsertGospelRequest;
-    console.log('jet', isGospelValidationOk(upsertGospelRequest));
-    if (!isGospelValidationOk(upsertGospelRequest)) {
-      setMode('create');
-      setSeverity('error');
-      if (gospelData === undefined) {
-        setAlert(
-          'Das neue ' +
-            translateType() +
-            ' Item konnte leider nicht hinzugefügt werden'
-        );
-      } else {
-        setAlert(
-          'Das ' +
-            translateType() +
-            ' Item von Kalenderwoche ' +
-            weekOfYear +
-            ' konnte leider nicht geändert werden'
-        );
-      }
-    } else {
-      createDiscipline(upsertGospelRequest).then((r) => {
+  const handleGospelForm = useCallback(
+    async (data: UpsertGospelRequest) => {
+      await createDiscipline(data).then((r) => {
         mutateGospel(gospelData, true);
         setSeverity('success');
-
         setAlert(
-          'Das ' +
-            translateType() +
-            ' Item von Kalenderwoche ' +
-            weekOfYear +
-            ' wurde erfolgreich geändert'
+          'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
         );
       });
       if (alertMessage !== '') {
         setAlert(alertMessage);
-        setMode('create');
+        setMode('');
         setSeverity('error');
       }
-    }
-    setOpenAlert(true);
-  };
+      setOpenAlert(true);
+    },
+    [createDiscipline]
+  );
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
       if (gospelData !== undefined) {
@@ -170,23 +101,30 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
           setOpenDialog(false);
         });
       } else {
+        setMode('edit');
         setOpenDialog(false);
       }
       if (alertMessage !== '') {
         setAlert(alertMessage);
-        setSeverity('error');
         setMode('create');
+        setSeverity('error');
       }
       setOpenAlert(true);
-      setMode('create');
+    } else {
+      setMode('edit');
     }
   };
   const deleteGospelAction = () => {
     setMode('delete');
     setOpenDialog(true);
   };
+
+  const handleWeekOfYear = (weekOfYear: number) => {
+    setMode('create');
+    setWeekOfYear(weekOfYear);
+  };
+
   useEffect(() => {
-    console.log('Mode', mode);
     switch (mode) {
       case 'create':
         if (gospelData !== undefined) {
@@ -212,7 +150,7 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
 
           <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
           <SelectItem
-            setElement={handleGodGivingType}
+            setElement={handleGospelType}
             element={gospelType}
             menuItems={gospelBoardBoardProps.menuItems}
           />
@@ -220,11 +158,12 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
 
         {mode === 'edit' && (
           <div>
-            <GospelInputField
+            <GospelInputForm
               deleteGospelAction={deleteGospelAction}
               gospelType={gospelType as GospelType}
               gospel={gospelData}
-              handleGospelForm={handleGospelForm}
+              weekOfYear={weekOfYear}
+              onSubmit={handleGospelForm}
             />
           </div>
         )}
@@ -232,13 +171,23 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
           <div style={{ marginLeft: '20rem' }}>
             {' '}
             <Typography color={'red'}>
-              Sie haben diese Woche noch kein {translateType()} Item gebucht
+              {t(
+                'Sie haben diese Woche noch kein ' +
+                translateType() +
+                ' Item gebucht'
+              )}
             </Typography>{' '}
             <Button
               style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              startIcon={<AddIcon />}
               variant="outlined"
               color={'primary'}
-              startIcon={<AddIcon />}
+              aria-labelledby={
+                'Neues ' + translateType() + ' Item hinzufügen !!!'
+              }
+              aria-label={t(
+                ' Neues ' + translateType() + ' Item hinzufügen !!!'
+              )}
               onClick={() => setMode('edit')}
             >
               Neues {translateType()} Item hinzufügen !!!

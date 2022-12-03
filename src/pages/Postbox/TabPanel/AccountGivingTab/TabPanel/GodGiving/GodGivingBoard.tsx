@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR, { useSWRConfig } from 'swr';
@@ -22,10 +22,11 @@ import AddIcon from '@mui/icons-material/Add';
 import {
   GodGiving,
   GodGivingType,
-  isGodGivingValidationOk,
   UpsertGodGivingRequest
 } from '../../../../../../models/GodGiving';
-import { GodGivingInputField } from './GodGivingInputField';
+import {useTranslation} from "react-i18next";
+import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
+import {GodGivingInputForm} from "./GodGivingInputForm";
 
 export interface GodGivingBoardBoardProps {
   postboxId: string;
@@ -46,6 +47,7 @@ export function GodGivingBoard(
   const date = new Date(now());
 
   const woy: number = getWeekNumber(startOfISOWeek(date));
+  const { t } = useTranslation();
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
@@ -56,8 +58,9 @@ export function GodGivingBoard(
   const [godGivingType, setGodGivingType] = useState<SelectElement>(
     GodGivingType.MONEY
   );
+  const { translateType } = useDisciplineType(godGivingType as GodGivingType);
 
-  const { data: godGivingData, mutate: mutateGodGiving } = useSWR<GodGiving>(
+  const { data: godGivingData, mutate: mutateGodGiving,isValidating:isValidatingGodGiving } = useSWR<GodGiving>(
     `/postboxes/${godGivingBoardBoardProps.postboxId}/god-givings?` +
       `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
   );
@@ -72,16 +75,7 @@ export function GodGivingBoard(
     }
   }, [mode, godGivingData, weekOfYear]);
 
-  const translateType = () => {
-    switch (godGivingType) {
-      case GodGivingType.MONEY:
-        return 'Spende';
-      case GodGivingType.THANKS:
-        return 'Danksagung';
-      case GodGivingType.CHORE:
-        return 'Probe';
-    }
-  };
+
   const handleGodGivingType = (element: SelectElement) => {
     setMode('create');
     setGodGivingType(element);
@@ -91,58 +85,31 @@ export function GodGivingBoard(
     setMode('create');
     setWeekOfYear(weekOfYear);
   };
-  const handleGodGivingForm = (godGivingForm: Map<string, any>) => {
-    const upsertGodGivingRequest = {
-      timeInMinute: godGivingForm.get('timeInMinute'),
-      amount: godGivingForm.get('amount'),
-      total: godGivingForm.get('total'),
-      description: godGivingForm.get('description'),
-      godGivingType: godGivingType,
-      weekOfYear: weekOfYear
-    } as UpsertGodGivingRequest;
-
-    const isValidationOk = isGodGivingValidationOk(upsertGodGivingRequest);
-
-    if (!isValidationOk) {
-      setSeverity('error');
-      if (godGivingData === undefined) {
-        setAlert(
-          'Das neue ' +
-            translateType() +
-            ' Item konnte leider nicht hinzugefügt werden'
-        );
-      } else {
-        setAlert(
-          'Das ' +
-            translateType() +
-            ' Item von Kalenderwoche ' +
-            weekOfYear +
-            ' konnte leider nicht geändert werden'
-        );
-      }
-    } else {
-      createDiscipline(upsertGodGivingRequest).then((r) => {
+  const handleGodGivingForm = useCallback(
+    async (data: UpsertGodGivingRequest) => {
+      await createDiscipline(data).then((r) => {
         mutateGodGiving(godGivingData, true);
         setSeverity('success');
         setAlert(
-          'Das neue ' + translateType() + ' Item wurde erfolgreich hinzugefügt'
+          'Das ' + translateType() + ' Item wurde erfolgreich gespeichert'
         );
       });
-    }
-
-    if (alertMessage !== '') {
-      setAlert(alertMessage);
-      setMode('create');
-      setSeverity('error');
-    }
-    setOpenAlert(true);
-  };
+      if (alertMessage !== '') {
+        setAlert(alertMessage);
+        setMode('');
+        setSeverity('error');
+      }
+      setOpenAlert(true);
+    },
+    [createDiscipline]
+  );
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
       if (godGivingData !== undefined) {
-        deleteDiscipline(godGivingData.id).then((r) => {
+        deleteDiscipline(godGivingData?.id).then((r) => {
           mutateGodGiving(undefined, true);
           setMode('create');
+          setOpenAlert(true);
           setAlert(
             'Das ' + translateType() + ' Item wurde erfolgreich gelöscht'
           );
@@ -150,7 +117,7 @@ export function GodGivingBoard(
           setOpenDialog(false);
         });
       } else {
-        setMode('create');
+        setMode('edit');
         setOpenDialog(false);
       }
       if (alertMessage !== '') {
@@ -192,11 +159,12 @@ export function GodGivingBoard(
         </div>
         {mode === 'edit' && (
           <div>
-            <GodGivingInputField
+            <GodGivingInputForm
               deleteGodGivingAction={deleteGodGivingAction}
               godGivingType={godGivingType as GodGivingType}
               godGiving={godGivingData}
-              handleGodGivingForm={handleGodGivingForm}
+              weekOfYear={weekOfYear}
+              onSubmit={handleGodGivingForm}
             />
           </div>
         )}
@@ -204,17 +172,27 @@ export function GodGivingBoard(
           <div style={{ marginLeft: '20rem' }}>
             {' '}
             <Typography color={'red'}>
-              Sie haben diese Woche noch kein {translateType()} Item gebucht
+              {t(
+                'Sie haben diese Woche noch kein ' +
+                translateType() +
+                ' Item gebucht'
+              )}
             </Typography>{' '}
             <Button
               style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              startIcon={<AddIcon />}
               variant="outlined"
               color={'primary'}
-              startIcon={<AddIcon />}
+              aria-labelledby={
+                'Neues ' + translateType() + ' Item hinzufügen !!!'
+              }
+              aria-label={t(
+                ' Neues ' + translateType() + ' Item hinzufügen !!!'
+              )}
               onClick={() => setMode('edit')}
             >
               Neues {translateType()} Item hinzufügen !!!
-            </Button>{' '}
+            </Button>
           </div>
         )}
         {mode === 'delete' && openDialog && (
