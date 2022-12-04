@@ -1,0 +1,85 @@
+.diagram {
+  background-color: rgba(255, 255, 255, 0.8);
+  height: 50vh;
+  width: 70vh;
+  border: 1px solid blue;
+  border-radius: 10%;
+  overflow: hidden;
+  position: absolute;
+  left: 105vh;
+  top: 25vh;
+}
+.gospel {
+  background-color: rgba(255, 255, 255, 0);
+  height: 60vh;
+  width: 80vh;
+  border: 2px solid darkgoldenrod;
+  border-radius: 10%;
+
+  position: absolute;
+  left: 23vh;
+  bottom: 30vh;
+}
+
+.myReport {
+  background-color: rgba(255, 255, 255, 0.9);
+  height: 100vh;
+  width: 100vh;
+  border: 2px solid darkgoldenrod;
+  border-radius: 10%;
+
+  position: absolute;
+  left: 23vh;
+  bottom: 10vh;
+}
+
+.censor {
+  background-color: rgba(255, 255, 255, 0.9);
+  height: 100vh;
+  width: 150vh;
+  border: 2px solid darkgoldenrod;
+  border-radius: 10%;
+
+  position: absolute;
+  left: 23vh;
+  bottom: -10vh;
+}
+.program {
+  background-color: rgba(255, 255, 255, 0.7);
+  height: 75vh;
+  width: 130vh;
+  position: absolute;
+  left: 35vh;
+  top: 15vh;
+}
+.test {
+  background-color: rgba(255, 255, 255, 0);
+  height: 90vh;
+  width: 150vh;
+  position: absolute;
+  left: 20vh;
+  top: 15vh;
+}
+
+.home {
+  background-color: rgba(255, 255, 255, 0);
+  height: 120vh;
+  width: 130vh;
+
+  border: 0px solid darkgoldenrod;
+
+  position: absolute;
+  left: 20vh;
+  bottom: 10vh;
+}
+
+.postbox {
+  background-color: rgba(255, 255, 255, 0.4);
+  height: 75vh;
+  width: 70vh;
+  border: 2px solid darkgoldenrod;
+  border-radius: 1%;
+  position: absolute;
+  left: 70vh;
+  top: 17vh;
+}
