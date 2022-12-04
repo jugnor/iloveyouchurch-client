@@ -74,9 +74,9 @@ export const UpsertGodGivingRequestSchema: Schema = Joi.object({
   timeInMinute: Joi.when('godGivingType', {
     is: GodGivingType.MONEY,
     then: Joi.forbidden(),
-    otherwise: Joi.number().positive().required()
+    otherwise: Joi.number().min(0).required()
   }),
-  description: when('godGivingType', {
+  description: Joi.when('godGivingType', {
     is: GodGivingType.CHORE,
     then: Joi.string().optional(),
     otherwise: Joi.string().required()

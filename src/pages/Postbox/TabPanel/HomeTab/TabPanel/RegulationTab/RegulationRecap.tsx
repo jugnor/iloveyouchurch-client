@@ -10,6 +10,11 @@ import {
   setRegulationRows
 } from '../../../../../../models/Regulation';
 import { ResultsObject } from '../../../../../../models/ResultsObject';
+import { SelectElement, SelectItem } from '../../../../../../app/SelectItem';
+import { ActivityType } from '../../../../../../models/ActivityType';
+import { RetreatType } from '../../../../../../models/Meditation';
+import { useTranslation } from 'react-i18next';
+import { RegulationRecapInputForm } from './RegulationRecapInputForm';
 
 interface RegulationRecapProps {
   postboxId: string;
@@ -17,10 +22,13 @@ interface RegulationRecapProps {
 
 export function RegulationRecap(regulationRecapProps: RegulationRecapProps) {
   const [page, setPage] = React.useState(0);
-
+  const [disciplineType, setDisciplineType] = useState<SelectElement>(
+    RetreatType.MEDITATION
+  );
   const onChangePage = (newPage: number) => {
     setPage(newPage);
   };
+  const { t } = useTranslation();
 
   const columns = setRegulationColumns();
 
@@ -40,16 +48,18 @@ export function RegulationRecap(regulationRecapProps: RegulationRecapProps) {
           className={'program'}
           style={{ overflowY: 'auto' }}
         >
-          <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={result.page}
-              pageSize={result.size}
-              total={result.total}
-              onChangePage={onChangePage}
-            />
-          </Suspense>
+          {result.total === 0 ? (
+            <div style={{ display: 'flex' ,backgroundColor: '#F0F8FF'}}>
+              {' '}
+              <Typography color={'red'}>
+                <h2>{t('Es liegt momentan keine Charte vor')}</h2>
+              </Typography>{' '}
+            </div>
+          ) : (
+            <Suspense fallback={null}>
+              <RegulationRecapInputForm regulation={result.items?.at(0)} />
+            </Suspense>
+          )}
         </Typography>
       </Container>
     </>

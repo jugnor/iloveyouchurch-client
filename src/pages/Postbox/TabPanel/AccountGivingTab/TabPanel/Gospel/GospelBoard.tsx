@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
@@ -21,14 +21,12 @@ import { AlertColor } from '@mui/material/Alert';
 import {
   Gospel,
   GospelType,
-  isGospelValidationOk,
-  UpsertGospelRequest} from '../../../../../../models/Gospel';
-import { GospelInputField } from './GospelInputField';
+  UpsertGospelRequest
+} from '../../../../../../models/Gospel';
 import AddIcon from '@mui/icons-material/Add';
-import {useTranslation} from "react-i18next";
-import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
-import {ReadingType, UpsertReadingRequest} from "../../../../../../models/Reading";
-import {GospelInputForm} from "./GospelInputForm";
+import { useTranslation } from 'react-i18next';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { GospelInputForm } from './GospelInputForm';
 
 export interface GospelBoardBoardProps {
   postboxId: string;
@@ -63,7 +61,6 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
     `/postboxes/${gospelBoardBoardProps.postboxId}/gospels?` +
       `gospelType=${gospelType}&weekOfYear=${weekOfYear}`
   );
-
 
   const handleGospelType = (element: SelectElement) => {
     setMode('create');
@@ -138,7 +135,7 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' }}
+        style={{ overflowY: 'auto', display: 'block',backgroundColor: '#F0F8FF' }}
       >
         <div style={{ display: 'flex' }}>
           <FormControl>
@@ -168,13 +165,13 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <div style={{ marginLeft: '20rem' }}>
+          <div style={{ marginLeft: '20rem' , marginTop: '5em'}}>
             {' '}
             <Typography color={'red'}>
               {t(
                 'Sie haben diese Woche noch kein ' +
-                translateType() +
-                ' Item gebucht'
+                  translateType() +
+                  ' Item gebucht'
               )}
             </Typography>{' '}
             <Button

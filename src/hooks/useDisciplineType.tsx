@@ -4,6 +4,7 @@ import { DisciplineType } from '../models/Discipline';
 import { FastingType } from '../models/Fasting';
 import { RetreatType } from '../models/Meditation';
 import { GospelType } from '../models/Gospel';
+import { PrayerType } from '../models/Prayer';
 
 export function useDisciplineType(disciplineType: DisciplineType) {
   const translateType = () => {
@@ -32,6 +33,10 @@ export function useDisciplineType(disciplineType: DisciplineType) {
         return 'Kontakt';
       case GospelType.GOSPEL:
         return 'Evangelisation';
+      case PrayerType.GROUP:
+        return 'Gebet in Gruppe';
+      case PrayerType.ALONE:
+        return 'Gebet allein';
     }
   };
 

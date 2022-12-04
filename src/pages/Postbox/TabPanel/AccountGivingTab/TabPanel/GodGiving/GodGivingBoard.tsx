@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR, { useSWRConfig } from 'swr';
@@ -24,9 +24,9 @@ import {
   GodGivingType,
   UpsertGodGivingRequest
 } from '../../../../../../models/GodGiving';
-import {useTranslation} from "react-i18next";
-import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
-import {GodGivingInputForm} from "./GodGivingInputForm";
+import { useTranslation } from 'react-i18next';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { GodGivingInputForm } from './GodGivingInputForm';
 
 export interface GodGivingBoardBoardProps {
   postboxId: string;
@@ -60,7 +60,11 @@ export function GodGivingBoard(
   );
   const { translateType } = useDisciplineType(godGivingType as GodGivingType);
 
-  const { data: godGivingData, mutate: mutateGodGiving,isValidating:isValidatingGodGiving } = useSWR<GodGiving>(
+  const {
+    data: godGivingData,
+    mutate: mutateGodGiving,
+    isValidating: isValidatingGodGiving
+  } = useSWR<GodGiving>(
     `/postboxes/${godGivingBoardBoardProps.postboxId}/god-givings?` +
       `godGivingType=${godGivingType}&weekOfYear=${weekOfYear}`
   );
@@ -74,7 +78,6 @@ export function GodGivingBoard(
         break;
     }
   }, [mode, godGivingData, weekOfYear]);
-
 
   const handleGodGivingType = (element: SelectElement) => {
     setMode('create');
@@ -139,7 +142,7 @@ export function GodGivingBoard(
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' }}
+        style={{ overflowY: 'auto', display: 'block' ,backgroundColor: '#F0F8FF'}}
       >
         <div>
           <div style={{ display: 'flex' }}>
@@ -169,13 +172,13 @@ export function GodGivingBoard(
           </div>
         )}
         {mode === 'create' && (
-          <div style={{ marginLeft: '20rem' }}>
+          <div style={{ marginLeft: '20rem', marginTop: '5em' }}>
             {' '}
             <Typography color={'red'}>
               {t(
                 'Sie haben diese Woche noch kein ' +
-                translateType() +
-                ' Item gebucht'
+                  translateType() +
+                  ' Item gebucht'
               )}
             </Typography>{' '}
             <Button

@@ -1,16 +1,16 @@
-import {useJoi} from '../../../../../../hooks/useJoi';
-import {Controller, Resolver, useForm} from 'react-hook-form';
-import {joiResolver} from '@hookform/resolvers/joi';
-import {Stack} from '@mui/material';
+import { useJoi } from '../../../../../../hooks/useJoi';
+import { Controller, Resolver, useForm } from 'react-hook-form';
+import { joiResolver } from '@hookform/resolvers/joi';
+import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import * as React from 'react';
 import SaveIcon from '@mui/icons-material/Save';
-import {useDisciplineType} from '../../../../../../hooks/useDisciplineType';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
 import {
   GodGiving,
   GodGivingType,
@@ -42,8 +42,7 @@ export function GodGivingInputForm({
   const {
     control,
     formState: { errors },
-    handleSubmit,
-    watch
+    handleSubmit
   } = useForm<FormControls>({
     defaultValues: {
       godGivingType: godGivingType,
@@ -73,10 +72,10 @@ export function GodGivingInputForm({
         >
           <Stack spacing={'xl'}>
             {godGivingType !== GodGivingType.MONEY && (
-              <div style={{ display: 'flex' }}>
+              <div style={{ marginTop: '1em', display: 'flex' }}>
                 <FormControl
                   id="total"
-                  aria-label={t('Anzahle')}
+                  aria-label={t('Anzahl')}
                   aria-errormessage={errors.total?.message}
                 >
                   <Controller
@@ -94,7 +93,7 @@ export function GodGivingInputForm({
                             error={errors.total?.message !== undefined}
                             onChange={field.onChange}
                             required={true}
-                            label={t('Totale gelesene Kapiteln')}
+                            label={t('Anzahl')}
                           ></TextField>
                           {errors.total?.message && errors.total?.message}
                         </Stack>
@@ -135,10 +134,10 @@ export function GodGivingInputForm({
               </div>
             )}
             {godGivingType === GodGivingType.MONEY && (
-              <div style={{ display: 'flex' }}>
+              <div style={{ marginTop: '1em', display: 'flex' }}>
                 <FormControl
                   id="amount"
-                  aria-label={t('Spende')}
+                  aria-label={t('Betrag')}
                   aria-errormessage={errors.total?.message}
                 >
                   <Controller
@@ -156,7 +155,7 @@ export function GodGivingInputForm({
                             error={errors.total?.message !== undefined}
                             onChange={field.onChange}
                             required={true}
-                            label={t('Spende')}
+                            label={t('Betrag')}
                           ></TextField>
                           {errors.total?.message && errors.total?.message}
                         </Stack>
@@ -179,21 +178,21 @@ export function GodGivingInputForm({
                   render={({ field }) => {
                     return (
                       <Stack>
-
-                      <TextField
-                        multiline
-                        defaultValue={godGiving?.description}
-                        onBlur={field.onBlur}
-                        error={errors.description?.message !== undefined}
-                        required={godGivingType!==GodGivingType.CHORE}
-                        onChange={field.onChange}
-                        id="description"
-                        name={field.name}
-                        label={t('Beschreibung')}
-                      ></TextField>
-                    {errors.description?.message && errors.description?.message}
+                        <TextField
+                          multiline
+                          defaultValue={godGiving?.description}
+                          onBlur={field.onBlur}
+                          error={errors.description?.message !== undefined}
+                          required={godGivingType !== GodGivingType.CHORE}
+                          onChange={field.onChange}
+                          id="description"
+                          name={field.name}
+                          label={t('Beschreibung')}
+                        ></TextField>
+                        {errors.description?.message &&
+                          errors.description?.message}
                       </Stack>
-                  );
+                    );
                   }}
                 ></Controller>
               </FormControl>

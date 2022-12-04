@@ -29,6 +29,8 @@ import {
   UpsertReadingRequest
 } from '../../../../../../models/Reading';
 import { FastingInputForm } from './FastingInputForm';
+import AddIcon from '@mui/icons-material/Add';
+import { useTranslation } from 'react-i18next';
 
 export interface FastingBoardProps {
   postboxId: string;
@@ -49,7 +51,7 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
-  const [mode, setMode] = useState('');
+  const [mode, setMode] = useState('create');
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
@@ -58,7 +60,7 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
   );
   const { translateType } = useDisciplineType(fastingType as FastingType);
 
-  const [fasting, setFasting] = useState<Fasting>();
+  const { t } = useTranslation();
 
   const {
     data: fastingData,
@@ -139,23 +141,23 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' }}
+        style={{ overflowY: 'auto', display: 'block' ,backgroundColor: '#F0F8FF' }}
       >
         <div style={{ display: 'flex' }}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">KW</InputLabel>
-              <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
-                {weekOfYear}
-              </MenuItem>
-            </FormControl>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">KW</InputLabel>
+            <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
+              {weekOfYear}
+            </MenuItem>
+          </FormControl>
 
-            <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
-            <SelectItem
-              setElement={handleFastingType}
-              element={fastingType}
-              menuItems={fastingBoardProps.menuItems}
-            />
-          </div>
+          <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
+          <SelectItem
+            setElement={handleFastingType}
+            element={fastingType}
+            menuItems={fastingBoardProps.menuItems}
+          />
+        </div>
 
         {mode === 'edit' && (
           <div>
@@ -169,9 +171,31 @@ export function FastingBoard(fastingBoardProps: FastingBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <Button variant="outlined" onClick={() => setMode('edit')}>
-            Neues Fasting Item hinzufügen !!!
-          </Button>
+          <div style={{ marginLeft: '20rem', marginTop: '5em'}}>
+            {' '}
+            <Typography color={'red'}>
+              {t(
+                'Sie haben diese Woche noch kein ' +
+                  translateType() +
+                  ' Item gebucht'
+              )}
+            </Typography>{' '}
+            <Button
+              style={{ marginTop: '1em', marginLeft: '2rem', display: 'flex' }}
+              startIcon={<AddIcon />}
+              variant="outlined"
+              color={'primary'}
+              aria-labelledby={
+                'Neues ' + translateType() + ' Item hinzufügen !!!'
+              }
+              aria-label={t(
+                ' Neues ' + translateType() + ' Item hinzufügen !!!'
+              )}
+              onClick={() => setMode('edit')}
+            >
+              Neues {translateType()} Item hinzufügen !!!
+            </Button>
+          </div>
         )}
         {mode === 'delete' && openDialog && (
           <DeleteDialog

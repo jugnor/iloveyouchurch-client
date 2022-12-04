@@ -20,14 +20,8 @@ import { AlertColor } from '@mui/material/Alert';
 import {
   Meditation,
   RetreatType,
-  UpsertMeditationRequest,
-  UpsertMeditationRequestSchema
+  UpsertMeditationRequest
 } from '../../../../../../models/Meditation';
-import { MeditationInputField } from '../Meditation/MeditationInputField';
-import {
-  ReadingType,
-  UpsertReadingRequest
-} from '../../../../../../models/Reading';
 import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
 import { MeditationInputForm } from './MeditationInputForm';
 import AddIcon from '@mui/icons-material/Add';
@@ -52,7 +46,7 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
-  const [mode, setMode] = useState('');
+  const [mode, setMode] = useState('create');
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
@@ -142,7 +136,7 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' }}
+        style={{ overflowY: 'auto', display: 'block',backgroundColor: '#F0F8FF' }}
       >
         <div style={{ display: 'flex' }}>
           <FormControl>
@@ -172,7 +166,7 @@ export function MeditationBoard(meditationBoardProps: MeditationBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <div style={{ marginLeft: '20rem' }}>
+          <div style={{ marginLeft: '20rem' , marginTop: '5em'}}>
             {' '}
             <Typography color={'red'}>
               {t(

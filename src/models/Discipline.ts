@@ -3,7 +3,7 @@ import { GodGiving, GodGivingType, UpsertGodGivingRequest } from './GodGiving';
 import { Prayer, PrayerType, UpsertPrayerRequest } from './Prayer';
 import { Meditation, RetreatType, UpsertMeditationRequest } from './Meditation';
 import { Gospel, GospelType, UpsertGospelRequest } from './Gospel';
-import { Fasting, UpsertFastingRequest } from './Fasting';
+import { FastingType, Fasting, UpsertFastingRequest } from './Fasting';
 
 export type Discipline = Reading &
   GodGiving &

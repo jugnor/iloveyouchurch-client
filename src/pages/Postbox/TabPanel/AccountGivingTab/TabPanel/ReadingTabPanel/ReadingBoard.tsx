@@ -140,7 +140,7 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' }}
+        style={{ overflowY: 'auto', display: 'block' ,backgroundColor: '#F0F8FF'}}
       >
         <div>
           <div style={{ display: 'flex' }}>
@@ -172,7 +172,7 @@ export function ReadingBoard(readingBoardProps: ReadingBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <div style={{ marginLeft: '20rem' }}>
+          <div style={{ marginLeft: '20rem' , marginTop: '5em'}}>
             {' '}
             <Typography color={'red'}>
               {t(

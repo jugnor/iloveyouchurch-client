@@ -80,7 +80,7 @@ export function MeditationInputForm({
           overflow="scroll"
         >
           <Stack spacing={'xl'}>
-            <div style={{ display: 'flex' }}>
+            <div style={{ marginTop: '1em', display: 'flex' }}>
               <FormControl
                 id="total"
                 aria-label={t('Anzahl stiller zeite')}

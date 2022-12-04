@@ -122,10 +122,10 @@ export const UpsertGospelRequestSchema: Schema = Joi.object({
     otherwise: Joi.forbidden()
   }),
   total: Joi.when('gospelType', {
-      is: GospelType.CONTACT,
-      then: Joi.forbidden(),
-      otherwise: Joi.number().positive().required()
-    }),
+    is: GospelType.CONTACT,
+    then: Joi.forbidden(),
+    otherwise: Joi.number().positive().required()
+  }),
   goal: Joi.string().optional(),
 
   gospelContact: Joi.when('gospelType', {
@@ -134,14 +134,13 @@ export const UpsertGospelRequestSchema: Schema = Joi.object({
       name: Joi.string().required(),
       email: Joi.string()
         .email({ tlds: { allow: false } })
-        .optional()
-        .allow(''),
+        .optional(),
       telephone: Joi.string().optional(),
       city: Joi.string().optional()
     }).required(),
     otherwise: Joi.forbidden()
   }),
-  gospelSupport: Joi.alternatives().conditional('gospelType', {
+  gospelSupport: Joi.when('gospelType', {
     is: GospelType.SUPPORT,
     then: Joi.object({
       title: Joi.string().required(),

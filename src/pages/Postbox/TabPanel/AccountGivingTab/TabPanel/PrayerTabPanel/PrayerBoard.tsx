@@ -49,7 +49,7 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
 
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
-  const [mode, setMode] = useState('');
+  const [mode, setMode] = useState('create');
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [weekOfYear, setWeekOfYear] = React.useState<number>(woy);
@@ -136,24 +136,23 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' }}
+        style={{ overflowY: 'auto', display: 'block' ,backgroundColor: '#F0F8FF'}}
       >
         <div style={{ display: 'flex' }}>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">KW</InputLabel>
+            <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
+              {weekOfYear}
+            </MenuItem>
+          </FormControl>
 
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">KW</InputLabel>
-              <MenuItem style={{ backgroundColor: '#1976d2', color: 'white' }}>
-                {weekOfYear}
-              </MenuItem>
-            </FormControl>
-
-            <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
-            <SelectItem
-              setElement={handlePrayerType}
-              element={prayerType}
-              menuItems={prayerBoardProps.menuItems}
-            />
-          </div>
+          <CalenderWeekRenderer setWeekOfYear={handleWeekOfYear} />
+          <SelectItem
+            setElement={handlePrayerType}
+            element={prayerType}
+            menuItems={prayerBoardProps.menuItems}
+          />
+        </div>
         {mode === 'edit' && (
           <div>
             <PrayerInputForm
@@ -166,7 +165,7 @@ export function PrayerBoard(prayerBoardProps: PrayerBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <div style={{ marginLeft: '20rem' }}>
+          <div style={{ marginLeft: '20rem' , marginTop: '5em'}}>
             {' '}
             <Typography color={'red'}>
               {t(
