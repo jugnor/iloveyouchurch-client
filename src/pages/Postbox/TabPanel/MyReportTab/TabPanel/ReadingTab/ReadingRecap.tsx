@@ -7,14 +7,14 @@ import useSWR from 'swr';
 
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
-
-import { FastingType } from '../../../../../../models/Fasting';
-import {
-  Reading,
-  meditationColumns,
-  readingRows
-} from '../../../../../../models/Reading';
+import { Reading, ReadingType } from '../../../../../../models/Reading';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { useTranslation } from 'react-i18next';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { ReadingTableBody } from './ReadingTableBody';
+import { ReadingTableHeader } from './ReadingTableHeader';
 
 interface ReadingRecapProps {
   postboxId: string;
@@ -30,10 +30,17 @@ export function ReadingRecap({
   menuItems
 }: ReadingRecapProps) {
   const [page, setPage] = React.useState(0);
-  const [readingType, setReadingType] = useState<string>(FastingType.PARTIAL);
+  const [readingType, setReadingType] = useState<string>(ReadingType.BIBLE);
 
-  const onChangePage = (newPage: number) => {
-    setPage(newPage);
+  const { translateType } = useDisciplineType(readingType as ReadingType);
+
+  const { t } = useTranslation();
+
+  const onChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setPage(page);
   };
 
   const { data: results } = useSWR<ResultsObject<Reading>>(
@@ -41,11 +48,7 @@ export function ReadingRecap({
       `&type=${readingType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-  const columns = meditationColumns(readingType);
-
-  const rows = readingRows(results);
-
-  return results && columns && rows ? (
+  return results ? (
     <>
       {' '}
       <Container>
@@ -54,27 +57,41 @@ export function ReadingRecap({
           className={'program'}
           style={{ overflowY: 'auto' }}
         >
-          {menuItems.length > 0 ? (
-            <div>
-              <SelectItem
-                setElement={setReadingType}
-                element={readingType}
-                menuItems={menuItems}
-              />
-            </div>
-          ) : (
-            ''
-          )}
+          <div style={{ display: 'flex' }}>
+            <SelectItem
+              setElement={setReadingType}
+              element={readingType}
+              menuItems={menuItems}
+            />
+          </div>
 
           <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={results.page}
-              pageSize={results.size}
-              total={results.total}
-              onChangePage={onChangePage}
-            />
+            <TableContainer component={Paper}>
+              <Table>
+                <ReadingTableHeader />
+                <ReadingTableBody readings={results.items} />
+
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                  {results.total > 0 && (
+                    <CustomTablePagination
+                      total={results.total}
+                      size={results.size}
+                      page={results.page}
+                      handleChangePage={onChangePage}
+                    />
+                  )}
+                </TableFooter>
+              </Table>
+              {results.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>
+                    {t(
+                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                    )}{' '}
+                  </h2>
+                </Typography>
+              )}
+            </TableContainer>
           </Suspense>
         </Typography>
       </Container>

@@ -15,6 +15,7 @@ import { ActivityType } from '../../../../../../models/ActivityType';
 import { RetreatType } from '../../../../../../models/Meditation';
 import { useTranslation } from 'react-i18next';
 import { RegulationRecapInputForm } from './RegulationRecapInputForm';
+import { Stack } from '@mui/material';
 
 interface RegulationRecapProps {
   postboxId: string;
@@ -49,16 +50,28 @@ export function RegulationRecap(regulationRecapProps: RegulationRecapProps) {
           style={{ overflowY: 'auto' }}
         >
           {result.total === 0 ? (
-            <div style={{ display: 'flex' ,backgroundColor: '#F0F8FF'}}>
+            <div style={{ display: 'flex', backgroundColor: '#F0F8FF' }}>
               {' '}
               <Typography color={'red'}>
-                <h2>{t('Es liegt momentan keine Charte vor')}</h2>
+                <h2>{t('Es liegt momentan keine Charta vor')}</h2>
               </Typography>{' '}
             </div>
           ) : (
-            <Suspense fallback={null}>
-              <RegulationRecapInputForm regulation={result.items?.at(0)} />
-            </Suspense>
+            <div>
+              <Stack style={{ display: 'flex', backgroundColor: '#F0F8FF' }}>
+                {' '}
+                <Typography color={'red'}>
+                  <h2>
+                    {t(
+                      'Für jede Disziplin sind die unterstehenden Zahlen pro Woche zu erreichen'
+                    )}
+                  </h2>
+                </Typography>{' '}
+              </Stack>
+              <Suspense fallback={null}>
+                <RegulationRecapInputForm regulation={result.items?.at(0)} />
+              </Suspense>
+            </div>
           )}
         </Typography>
       </Container>

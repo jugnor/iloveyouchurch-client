@@ -7,15 +7,18 @@ import useSWR from 'swr';
 
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import { FastingType } from '../../../../../../models/Fasting';
 import {
   Prayer,
-  prayerColumns,
-  prayerRows,
   PrayerType
 } from '../../../../../../models/Prayer';
+import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
+import {useTranslation} from "react-i18next";
+import {Paper, TableContainer, TableFooter} from "@mui/material";
+import {Table} from "@material-ui/core";
+import {CustomTablePagination} from "../../../../../../shared/TablePagination";
+import {PrayerTableHeader} from "./PrayerTableHeader";
+import {PrayerTableBody} from "./PrayerTableBody";
 
 interface PrayerRecapRecapProps {
   postboxId: string;
@@ -33,8 +36,15 @@ export function PrayerRecap({
   const [page, setPage] = React.useState(0);
   const [prayerType, setPrayerType] = useState<string>(PrayerType.ALONE);
 
-  const onChangePage = (newPage: number) => {
-    setPage(newPage);
+  const { translateType } = useDisciplineType(prayerType as PrayerType);
+
+  const { t } = useTranslation();
+
+  const onChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setPage(page);
   };
 
   const { data: results } = useSWR<ResultsObject<Prayer>>(
@@ -42,11 +52,7 @@ export function PrayerRecap({
       `&type=${prayerType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-  const columns = prayerColumns(prayerType);
-
-  const rows = prayerRows(results);
-
-  return results && columns && rows ? (
+  return results ? (
     <>
       {' '}
       <Container>
@@ -55,27 +61,41 @@ export function PrayerRecap({
           className={'program'}
           style={{ overflowY: 'auto' }}
         >
-          {menuItems.length > 0 ? (
-            <div>
-              <SelectItem
+          <div style={{ display: 'flex' }}>
+
+          <SelectItem
                 setElement={setPrayerType}
                 element={prayerType}
                 menuItems={menuItems}
               />
             </div>
-          ) : (
-            ''
-          )}
 
           <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={results.page}
-              pageSize={results.size}
-              total={results.total}
-              onChangePage={onChangePage}
-            />
+            <TableContainer component={Paper}>
+              <Table>
+                <PrayerTableHeader prayerType={prayerType  as PrayerType}/>
+                <PrayerTableBody prayers={results.items} />
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                  {results.total > 0 && (
+                    <CustomTablePagination
+                      total={results.total}
+                      size={results.size}
+                      page={results.page}
+                      handleChangePage={onChangePage}
+                    />
+                  )}
+                </TableFooter>
+              </Table>
+              {results.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>
+                    {t(
+                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                    )}{' '}
+                  </h2>
+                </Typography>
+              )}
+            </TableContainer>
           </Suspense>
         </Typography>
       </Container>

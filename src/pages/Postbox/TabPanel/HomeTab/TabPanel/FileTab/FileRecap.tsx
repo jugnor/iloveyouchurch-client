@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import useSWR from 'swr';
-import { GridRenderCellParams } from '@mui/x-data-grid/models/params/gridCellParams';
-import { AlertColor } from '@mui/material/Alert';
 
-import {
-  fileColumns,
-  FileModel,
-  fileRows
-} from '../../../../../../models/File';
+import { FileModel } from '../../../../../../models/File';
 import { ResultsObject } from '../../../../../../models/ResultsObject';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
+import { useTranslation } from 'react-i18next';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { FileTableHeader } from './FileTableHeader';
+import { FileTableBody } from './FileTableBody';
 
 interface FileRecapProps {
   postboxId: string;
@@ -21,16 +20,18 @@ interface FileRecapProps {
 export function FileRecap(fileRecapProps: FileRecapProps) {
   const [page, setPage] = React.useState(0);
 
-  const onChangePage = (newPage: number) => {
-    setPage(newPage);
+  const onChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setPage(page);
   };
-  const columns = fileColumns();
+  const { t } = useTranslation();
 
   const { data: results } = useSWR<ResultsObject<FileModel>>(
     `/postboxes/${fileRecapProps.postboxId}/file-meta-data-results?` +
       `page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
-  const rows = fileRows(results);
   return results ? (
     <>
       {' '}
@@ -38,17 +39,30 @@ export function FileRecap(fileRecapProps: FileRecapProps) {
         <Typography
           component="div"
           className={'program'}
-          style={{ overflowY: 'auto' }}
+          style={{ overflowY: 'auto', display: 'block' }}
         >
           <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={results.page}
-              pageSize={results.size}
-              total={results.total}
-              onChangePage={onChangePage}
-            />
+            <TableContainer component={Paper}>
+              <Table>
+                <FileTableHeader withAction={false} />
+                {results.total === 0 && (
+                  <Typography color={'error'}>
+                    <h2>{t('Es Liegt momentan kein Datei Item vor')} </h2>
+                  </Typography>
+                )}
+                <FileTableBody withAction={false} files={results.items} />
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                  {results.total > 0 && (
+                    <CustomTablePagination
+                      total={results.total}
+                      size={results.size}
+                      page={results.page}
+                      handleChangePage={onChangePage}
+                    />
+                  )}
+                </TableFooter>
+              </Table>
+            </TableContainer>
           </Suspense>
         </Typography>
       </Container>

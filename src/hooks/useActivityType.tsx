@@ -11,6 +11,8 @@ export function useActivityType(activityType: ActivityType) {
         return 'Straffe';
       case ActivityType.EVENT:
         return 'Event';
+      default:
+        return 'Program';
     }
   };
 

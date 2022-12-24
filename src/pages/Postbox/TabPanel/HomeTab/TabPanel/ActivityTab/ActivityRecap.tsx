@@ -5,20 +5,13 @@ import Container from '@material-ui/core/Container';
 
 import useSWR from 'swr';
 import { ResultsObject } from '../../../../../../models/ResultsObject';
-import {
-  Activity,
-  setActivityColumns,
-  setActivityRows
-} from '../../../../../../models/Activity';
+import { Activity } from '../../../../../../models/Activity';
 import { SelectItem } from '../../../../../../app/SelectItem';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
 import { ActivityType } from '../../../../../../models/ActivityType';
 import { Table } from '@material-ui/core';
 import { Paper, TableContainer, TableFooter } from '@mui/material';
 import { ActivityTableHeader } from './ActivityTableHeader';
 import { ActivityTableBody } from './ActivityTableBody';
-import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
-import { PrayerType } from '../../../../../../models/Prayer';
 import { useActivityType } from '../../../../../../hooks/useActivityType';
 import { useTranslation } from 'react-i18next';
 import { CustomTablePagination } from '../../../../../../shared/TablePagination';
@@ -47,11 +40,7 @@ export function ActivityRecap({ postboxId }: ActivityRecapProps) {
       `&type=${activityType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-  const columns = setActivityColumns(activityType);
-
-  const rows = setActivityRows(activityResult);
-
-  return activityResult && columns && rows ? (
+  return activityResult ? (
     <>
       {' '}
       <Container>

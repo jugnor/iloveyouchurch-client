@@ -135,7 +135,11 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block',backgroundColor: '#F0F8FF' }}
+        style={{
+          overflowY: 'auto',
+          display: 'block',
+          backgroundColor: '#F0F8FF'
+        }}
       >
         <div style={{ display: 'flex' }}>
           <FormControl>
@@ -165,7 +169,7 @@ export function GospelBoard(gospelBoardBoardProps: GospelBoardBoardProps) {
           </div>
         )}
         {mode === 'create' && (
-          <div style={{ marginLeft: '20rem' , marginTop: '5em'}}>
+          <div style={{ marginLeft: '20rem', marginTop: '5em' }}>
             {' '}
             <Typography color={'red'}>
               {t(

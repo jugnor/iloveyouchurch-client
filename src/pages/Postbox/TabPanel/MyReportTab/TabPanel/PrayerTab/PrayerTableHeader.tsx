@@ -5,36 +5,33 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { ActivityType } from '../../../../../../models/ActivityType';
+import { PrayerType } from '../../../../../../models/Prayer';
 
-export interface ActivityTableHeaderProps {
-  withAction: boolean;
-  activityType: ActivityType;
+export interface PrayerTableHeaderProps {
+  prayerType: PrayerType;
 }
 
-export function ActivityTableHeader({
-  withAction,
-  activityType
-}: ActivityTableHeaderProps) {
+export function PrayerTableHeader({ prayerType }: PrayerTableHeaderProps) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: '#324ab2',
       color: theme.palette.common.white
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: 14
+      fontSize: 15
     }
   }));
 
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell align="left">Beschreibung</StyledTableCell>
-        {activityType === ActivityType.PROGRAM && (
-          <StyledTableCell align="left">Tag</StyledTableCell>
+        <StyledTableCell align="left">Zeit(Min)</StyledTableCell>
+        <StyledTableCell align="left">Thema</StyledTableCell>
+        {prayerType === PrayerType.GROUP && (
+          <StyledTableCell align="left">Gebetsnacht</StyledTableCell>
         )}
+        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
         <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
-        <StyledTableCell align="right">Action</StyledTableCell>
       </TableRow>
     </TableHead>
   );

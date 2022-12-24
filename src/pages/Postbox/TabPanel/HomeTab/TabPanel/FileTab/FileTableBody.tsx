@@ -1,24 +1,20 @@
-import { ActivityType } from '../../../../../../models/ActivityType';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { styled } from '@mui/material/styles';
 import {
-  Stack,
   TableBody,
   TableCell,
   tableCellClasses,
   TableRow
 } from '@mui/material';
-import { Activity } from '../../../../../../models/Activity';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
-export interface ActivityTableBodyProps {
+import { FileModel } from '../../../../../../models/File';
+export interface FileTableBodyProps {
   withAction: boolean;
-  activities: Activity[];
+  files: FileModel[];
 }
 
-export function ActivityTableBody({
-  withAction,
-  activities
-}: ActivityTableBodyProps) {
+export function FileTableBody({ withAction, files }: FileTableBodyProps) {
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -41,19 +37,18 @@ export function ActivityTableBody({
 
   return (
     <TableBody>
-      {activities.map((activity) => (
-        <StyledTableRow key={activity.id}>
-          <StyledTableCell align="left">{activity.description}</StyledTableCell>
-          {activity.activityType === ActivityType.PROGRAM && (
-            <StyledTableCell align="left">
-              {activity.activityOrder}
-            </StyledTableCell>
-          )}
-          <StyledTableCell align="left">{activity.createdAt}</StyledTableCell>
+      {files.map((fileModel) => (
+        <StyledTableRow key={fileModel.id}>
+          <StyledTableCell align="left">{fileModel.filename}</StyledTableCell>
+          <StyledTableCell align="left">
+            {fileModel.description}
+          </StyledTableCell>
+          <StyledTableCell align="left">{fileModel.size}</StyledTableCell>
+          <StyledTableCell align="left">{fileModel.createdAt}</StyledTableCell>
           <StyledTableCell align="right">
             {
               <>
-                <BorderColorIcon aria-disabled={!withAction} />{' '}
+                <VisibilityIcon /> <DownloadIcon />{' '}
                 <DeleteIcon aria-disabled={!withAction} />{' '}
               </>
             }

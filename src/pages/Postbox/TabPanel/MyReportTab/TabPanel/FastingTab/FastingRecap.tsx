@@ -7,14 +7,15 @@ import useSWR from 'swr';
 
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import {
-  Fasting,
-  fastingColumns,
-  fastingRows,
-  FastingType
-} from '../../../../../../models/Fasting';
+import { Fasting, FastingType } from '../../../../../../models/Fasting';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { FastingTableHeader } from './FastingTableHeader';
+import { FastingTableBody } from './FastingTableBody';
+import { useTranslation } from 'react-i18next';
 
 interface FastingRecapProps {
   postboxId: string;
@@ -32,8 +33,15 @@ export function FastingRecap({
   const [page, setPage] = React.useState(0);
   const [fastingType, setFastingType] = useState<string>(FastingType.PARTIAL);
 
-  const onChangePage = (newPage: number) => {
-    setPage(newPage);
+  const { translateType } = useDisciplineType(fastingType as FastingType);
+
+  const { t } = useTranslation();
+
+  const onChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setPage(page);
   };
 
   const { data: results } = useSWR<ResultsObject<Fasting>>(
@@ -41,40 +49,49 @@ export function FastingRecap({
       `&type=${fastingType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-  const columns = fastingColumns();
-
-  const rows = fastingRows(results);
-
-  return results && columns && rows ? (
+  return results ? (
     <>
       {' '}
       <Container>
         <Typography
           component="div"
           className={'program'}
-          style={{ overflowY: 'auto' }}
+          style={{ overflowY: 'auto', display: 'block' }}
         >
-          {menuItems.length > 0 ? (
-            <div>
-              <SelectItem
-                setElement={setFastingType}
-                element={fastingType}
-                menuItems={menuItems}
-              />
-            </div>
-          ) : (
-            ''
-          )}
+          <div style={{ display: 'flex' }}>
+            <SelectItem
+              setElement={setFastingType}
+              element={fastingType}
+              menuItems={menuItems}
+            />
+          </div>
 
           <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={results.page}
-              pageSize={results.size}
-              total={results.total}
-              onChangePage={onChangePage}
-            />
+            <TableContainer component={Paper}>
+              <Table>
+                <FastingTableHeader />
+                <FastingTableBody withAction={false} fastings={results.items} />
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                  {results.total > 0 && (
+                    <CustomTablePagination
+                      total={results.total}
+                      size={results.size}
+                      page={results.page}
+                      handleChangePage={onChangePage}
+                    />
+                  )}
+                </TableFooter>
+              </Table>
+              {results.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>
+                    {t(
+                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                    )}{' '}
+                  </h2>
+                </Typography>
+              )}
+            </TableContainer>
           </Suspense>
         </Typography>
       </Container>

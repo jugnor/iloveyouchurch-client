@@ -7,14 +7,15 @@ import useSWR from 'swr';
 
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import {
-  GodGiving,
-  godGivingColumns,
-  godGivingRows,
-  GodGivingType
-} from '../../../../../../models/GodGiving';
+import { GodGiving, GodGivingType } from '../../../../../../models/GodGiving';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { useTranslation } from 'react-i18next';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { GodGivingTableHeader } from './GodGivingTableHeader';
+import { GodGivingTableBody } from './GodGivingTableBody';
 
 interface GodGivingRecapProps {
   postboxId: string;
@@ -34,8 +35,14 @@ export function GodGivingRecap({
     GodGivingType.MONEY
   );
 
-  const onChangePage = (newPage: number) => {
-    setPage(newPage);
+  const { translateType } = useDisciplineType(godGivingType as GodGivingType);
+
+  const { t } = useTranslation();
+  const onChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setPage(page);
   };
 
   const { data: results } = useSWR<ResultsObject<GodGiving>>(
@@ -43,40 +50,54 @@ export function GodGivingRecap({
       `&type=${godGivingType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-  const columns = godGivingColumns(godGivingType);
-
-  const rows = godGivingRows(results);
-
-  return results && columns && rows ? (
+  return results ? (
     <>
       {' '}
       <Container>
         <Typography
           component="div"
           className={'program'}
-          style={{ overflowY: 'auto' }}
+          style={{ overflowY: 'auto', display: 'block' }}
         >
-          {menuItems.length > 0 ? (
-            <div>
-              <SelectItem
-                setElement={setGodGivingType}
-                element={godGivingType}
-                menuItems={menuItems}
-              />
-            </div>
-          ) : (
-            ''
-          )}
+          <div style={{ display: 'flex' }}>
+            <SelectItem
+              setElement={setGodGivingType}
+              element={godGivingType}
+              menuItems={menuItems}
+            />
+          </div>
 
           <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={results.page}
-              pageSize={results.size}
-              total={results.total}
-              onChangePage={onChangePage}
-            />
+            <TableContainer component={Paper}>
+              <Table>
+                <GodGivingTableHeader
+                  godGivingType={godGivingType as GodGivingType}
+                />
+                <GodGivingTableBody
+                  withAction={false}
+                  godGivings={results.items}
+                />
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                  {results.total > 0 && (
+                    <CustomTablePagination
+                      total={results.total}
+                      size={results.size}
+                      page={results.page}
+                      handleChangePage={onChangePage}
+                    />
+                  )}
+                </TableFooter>
+              </Table>
+              {results.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>
+                    {t(
+                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                    )}{' '}
+                  </h2>
+                </Typography>
+              )}
+            </TableContainer>
           </Suspense>
         </Typography>
       </Container>

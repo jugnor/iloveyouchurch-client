@@ -7,14 +7,15 @@ import useSWR from 'swr';
 
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
-import { DataGridRows } from '../../../../../../app/DataGridRows';
 
-import {
-  Gospel,
-  gospelColumns,
-  gospelRows,
-  GospelType
-} from '../../../../../../models/Gospel';
+import { Gospel, GospelType } from '../../../../../../models/Gospel';
+import { useTranslation } from 'react-i18next';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { GospelTableBody } from './GospelTableBody';
+import { GospelTableHeader } from './GospelTableHeader';
 
 interface GospelRecapProps {
   postboxId: string;
@@ -31,9 +32,15 @@ export function GospelRecap({
 }: GospelRecapProps) {
   const [page, setPage] = React.useState(0);
   const [gospelType, setGospelType] = useState<string>(GospelType.GOSPEL);
+  const { translateType } = useDisciplineType(gospelType as GospelType);
 
-  const onChangePage = (newPage: number) => {
-    setPage(newPage);
+  const { t } = useTranslation();
+
+  const onChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setPage(page);
   };
 
   const { data: results } = useSWR<ResultsObject<Gospel>>(
@@ -41,11 +48,7 @@ export function GospelRecap({
       `&type=${gospelType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-  const columns = gospelColumns(gospelType);
-
-  const rows = gospelRows(results);
-
-  return results && columns && rows ? (
+  return results ? (
     <>
       {' '}
       <Container>
@@ -54,27 +57,40 @@ export function GospelRecap({
           className={'program'}
           style={{ overflowY: 'auto' }}
         >
-          {menuItems.length > 0 ? (
-            <div>
-              <SelectItem
-                setElement={setGospelType}
-                element={gospelType}
-                menuItems={menuItems}
-              />
-            </div>
-          ) : (
-            ''
-          )}
+          <div style={{ display: 'flex' }}>
+            <SelectItem
+              setElement={setGospelType}
+              element={gospelType}
+              menuItems={[GospelType.GOSPEL + '|Evangelisation']}
+            />
+          </div>
 
           <Suspense fallback={null}>
-            <DataGridRows
-              gridRowsProp={rows}
-              gridColumns={columns}
-              page={results.page}
-              pageSize={results.size}
-              total={results.total}
-              onChangePage={onChangePage}
-            />
+            <TableContainer component={Paper}>
+              <Table>
+                <GospelTableHeader gospelType={gospelType as GospelType} />
+                <GospelTableBody withAction={false} gospels={results.items} />
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                  {results.total > 0 && (
+                    <CustomTablePagination
+                      total={results.total}
+                      size={results.size}
+                      page={results.page}
+                      handleChangePage={onChangePage}
+                    />
+                  )}
+                </TableFooter>
+              </Table>
+              {results.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>
+                    {t(
+                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                    )}{' '}
+                  </h2>
+                </Typography>
+              )}
+            </TableContainer>
           </Suspense>
         </Typography>
       </Container>

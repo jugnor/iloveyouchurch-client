@@ -5,17 +5,12 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { ActivityType } from '../../../../../../models/ActivityType';
 
-export interface ActivityTableHeaderProps {
+export interface FileTableHeaderProps {
   withAction: boolean;
-  activityType: ActivityType;
 }
 
-export function ActivityTableHeader({
-  withAction,
-  activityType
-}: ActivityTableHeaderProps) {
+export function FileTableHeader({ withAction }: FileTableHeaderProps) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: '#324ab2',
@@ -29,10 +24,9 @@ export function ActivityTableHeader({
   return (
     <TableHead>
       <TableRow>
+        <StyledTableCell align="left">Dateiname</StyledTableCell>
         <StyledTableCell align="left">Beschreibung</StyledTableCell>
-        {activityType === ActivityType.PROGRAM && (
-          <StyledTableCell align="left">Tag</StyledTableCell>
-        )}
+        <StyledTableCell align="left">Länge</StyledTableCell>
         <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
         <StyledTableCell align="right">Action</StyledTableCell>
       </TableRow>

@@ -24,7 +24,7 @@ export function RegulationRecapInputForm({
       noValidate
       autoComplete="off"
       overflow="scroll"
-      style={{backgroundColor: '#F0F8FF'}}
+      style={{ backgroundColor: '#F0F8FF' }}
     >
       <Stack spacing={'xl'}>
         <div style={{ marginTop: '1em', display: 'flex' }}>

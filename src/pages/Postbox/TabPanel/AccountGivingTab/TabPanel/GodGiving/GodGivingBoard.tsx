@@ -142,7 +142,11 @@ export function GodGivingBoard(
       <Typography
         component="div"
         className={'program'}
-        style={{ overflowY: 'auto', display: 'block' ,backgroundColor: '#F0F8FF'}}
+        style={{
+          overflowY: 'auto',
+          display: 'block',
+          backgroundColor: '#F0F8FF'
+        }}
       >
         <div>
           <div style={{ display: 'flex' }}>
