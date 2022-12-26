@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 
 import { Reading } from '../../../../../../models/Reading';
-import {Prayer, PrayerType} from "../../../../../../models/Prayer";
+import { Prayer, PrayerType } from '../../../../../../models/Prayer';
 export interface PrayerTableBodyProps {
   prayers: Prayer[];
 }

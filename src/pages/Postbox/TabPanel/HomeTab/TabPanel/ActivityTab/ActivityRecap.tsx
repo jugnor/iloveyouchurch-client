@@ -70,17 +70,6 @@ export function ActivityRecap({ postboxId }: ActivityRecapProps) {
                   activityType={activityType as ActivityType}
                   withAction={false}
                 />
-                {activityResult.total === 0 && (
-                  <Typography color={'error'}>
-                    <h2>
-                      {t(
-                        'Es Liegt momentan kein ' +
-                          translateType() +
-                          ' Item vor'
-                      )}{' '}
-                    </h2>
-                  </Typography>
-                )}
                 <ActivityTableBody
                   withAction={false}
                   activities={activityResult.items}
@@ -96,6 +85,15 @@ export function ActivityRecap({ postboxId }: ActivityRecapProps) {
                   )}
                 </TableFooter>
               </Table>
+              {activityResult.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>
+                    {t(
+                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                    )}{' '}
+                  </h2>
+                </Typography>
+              )}
             </TableContainer>
           </Suspense>
         </Typography>

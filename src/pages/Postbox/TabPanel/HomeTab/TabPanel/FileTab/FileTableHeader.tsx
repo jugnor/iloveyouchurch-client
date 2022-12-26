@@ -24,11 +24,14 @@ export function FileTableHeader({ withAction }: FileTableHeaderProps) {
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell align="left">Dateiname</StyledTableCell>
-        <StyledTableCell align="left">Beschreibung</StyledTableCell>
-        <StyledTableCell align="left">Länge</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
-        <StyledTableCell align="right">Action</StyledTableCell>
+        <StyledTableCell align="left" width="25%">
+          Dateiname
+        </StyledTableCell>
+        <StyledTableCell align="left" width="50%">
+          Beschreibung
+        </StyledTableCell>
+        <StyledTableCell align="right">Länge</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

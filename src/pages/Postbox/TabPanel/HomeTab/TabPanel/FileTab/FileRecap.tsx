@@ -45,11 +45,7 @@ export function FileRecap(fileRecapProps: FileRecapProps) {
             <TableContainer component={Paper}>
               <Table>
                 <FileTableHeader withAction={false} />
-                {results.total === 0 && (
-                  <Typography color={'error'}>
-                    <h2>{t('Es Liegt momentan kein Datei Item vor')} </h2>
-                  </Typography>
-                )}
+
                 <FileTableBody withAction={false} files={results.items} />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {results.total > 0 && (
@@ -62,6 +58,11 @@ export function FileRecap(fileRecapProps: FileRecapProps) {
                   )}
                 </TableFooter>
               </Table>
+              {results.total === 0 && (
+                <Typography color={'error'}>
+                  <h2>{t('Es Liegt momentan kein Datei Item vor')} </h2>
+                </Typography>
+              )}
             </TableContainer>
           </Suspense>
         </Typography>

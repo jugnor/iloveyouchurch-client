@@ -6,7 +6,7 @@ import {
   TableRow
 } from '@mui/material';
 
-import {Meditation} from "../../../../../../models/Meditation";
+import { Meditation } from '../../../../../../models/Meditation';
 export interface MeditationTableBodyProps {
   meditations: Meditation[];
 }
@@ -37,10 +37,14 @@ export function MeditationTableBody({ meditations }: MeditationTableBodyProps) {
       {meditations.map((meditation) => (
         <StyledTableRow key={meditation.id}>
           <StyledTableCell align="left">{meditation.total}</StyledTableCell>
-          <StyledTableCell align="left">{meditation.timeInMinute}</StyledTableCell>
+          <StyledTableCell align="left">
+            {meditation.timeInMinute}
+          </StyledTableCell>
           <StyledTableCell align="left">{meditation.theme}</StyledTableCell>
           <StyledTableCell align="left">{meditation.verse}</StyledTableCell>
-          <StyledTableCell align="left">{meditation.weekOfYear}</StyledTableCell>
+          <StyledTableCell align="left">
+            {meditation.weekOfYear}
+          </StyledTableCell>
           <StyledTableCell align="left">{meditation.createdAt}</StyledTableCell>
         </StyledTableRow>
       ))}

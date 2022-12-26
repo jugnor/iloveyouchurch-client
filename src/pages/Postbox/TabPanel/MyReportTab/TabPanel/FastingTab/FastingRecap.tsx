@@ -70,7 +70,7 @@ export function FastingRecap({
             <TableContainer component={Paper}>
               <Table>
                 <FastingTableHeader />
-                <FastingTableBody withAction={false} fastings={results.items} />
+                <FastingTableBody fastings={results.items} />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {results.total > 0 && (
                     <CustomTablePagination

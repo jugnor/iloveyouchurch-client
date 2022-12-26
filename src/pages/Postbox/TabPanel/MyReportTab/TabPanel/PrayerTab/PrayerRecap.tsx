@@ -8,17 +8,14 @@ import useSWR from 'swr';
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 
-import {
-  Prayer,
-  PrayerType
-} from '../../../../../../models/Prayer';
-import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
-import {useTranslation} from "react-i18next";
-import {Paper, TableContainer, TableFooter} from "@mui/material";
-import {Table} from "@material-ui/core";
-import {CustomTablePagination} from "../../../../../../shared/TablePagination";
-import {PrayerTableHeader} from "./PrayerTableHeader";
-import {PrayerTableBody} from "./PrayerTableBody";
+import { Prayer, PrayerType } from '../../../../../../models/Prayer';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { useTranslation } from 'react-i18next';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { PrayerTableHeader } from './PrayerTableHeader';
+import { PrayerTableBody } from './PrayerTableBody';
 
 interface PrayerRecapRecapProps {
   postboxId: string;
@@ -62,18 +59,17 @@ export function PrayerRecap({
           style={{ overflowY: 'auto' }}
         >
           <div style={{ display: 'flex' }}>
-
-          <SelectItem
-                setElement={setPrayerType}
-                element={prayerType}
-                menuItems={menuItems}
-              />
-            </div>
+            <SelectItem
+              setElement={setPrayerType}
+              element={prayerType}
+              menuItems={menuItems}
+            />
+          </div>
 
           <Suspense fallback={null}>
             <TableContainer component={Paper}>
               <Table>
-                <PrayerTableHeader prayerType={prayerType  as PrayerType}/>
+                <PrayerTableHeader prayerType={prayerType as PrayerType} />
                 <PrayerTableBody prayers={results.items} />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {results.total > 0 && (

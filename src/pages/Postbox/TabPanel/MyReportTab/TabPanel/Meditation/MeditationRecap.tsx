@@ -8,17 +8,14 @@ import useSWR from 'swr';
 import { ResultsObject } from '../../../../../../models/ResultsObject';
 import { SelectItem } from '../../../../../../app/SelectItem';
 
-import {
-  Meditation,
-  RetreatType
-} from '../../../../../../models/Meditation';
-import {useDisciplineType} from "../../../../../../hooks/useDisciplineType";
-import {useTranslation} from "react-i18next";
-import {Paper, TableContainer, TableFooter} from "@mui/material";
-import {Table} from "@material-ui/core";
-import {CustomTablePagination} from "../../../../../../shared/TablePagination";
-import {MeditationTableHeader} from "./MeditationTableHeader";
-import {MeditationTableBody} from "./MeditationTableBody";
+import { Meditation, RetreatType } from '../../../../../../models/Meditation';
+import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import { useTranslation } from 'react-i18next';
+import { Paper, TableContainer, TableFooter } from '@mui/material';
+import { Table } from '@material-ui/core';
+import { CustomTablePagination } from '../../../../../../shared/TablePagination';
+import { MeditationTableHeader } from './MeditationTableHeader';
+import { MeditationTableBody } from './MeditationTableBody';
 
 interface MeditationRecapProps {
   postboxId: string;
@@ -53,7 +50,6 @@ export function MeditationRecap({
       `&type=${meditationType}&page=${page}&size=10&sortBy=CREATED_AT&order=DESC`
   );
 
-
   return results ? (
     <>
       {' '}
@@ -64,13 +60,12 @@ export function MeditationRecap({
           style={{ overflowY: 'auto' }}
         >
           <div style={{ display: 'flex' }}>
-
-          <SelectItem
-                setElement={setMeditationType}
-                element={meditationType}
-                menuItems={menuItems}
-              />
-            </div>
+            <SelectItem
+              setElement={setMeditationType}
+              element={meditationType}
+              menuItems={menuItems}
+            />
+          </div>
 
           <Suspense fallback={null}>
             <TableContainer component={Paper}>

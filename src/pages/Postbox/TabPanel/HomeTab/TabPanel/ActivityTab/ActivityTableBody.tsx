@@ -43,13 +43,13 @@ export function ActivityTableBody({
     <TableBody>
       {activities.map((activity) => (
         <StyledTableRow key={activity.id}>
-          <StyledTableCell align="left">{activity.description}</StyledTableCell>
+          <StyledTableCell align="left" width="90%">
+            {activity.description}
+          </StyledTableCell>
           {activity.activityType === ActivityType.PROGRAM && (
-            <StyledTableCell align="left">
-              {activity.activityOrder}
-            </StyledTableCell>
+            <StyledTableCell>{activity.activityOrder}</StyledTableCell>
           )}
-          <StyledTableCell align="left">{activity.createdAt}</StyledTableCell>
+          <StyledTableCell align="right">{activity.createdAt}</StyledTableCell>
           <StyledTableCell align="right">
             {
               <>

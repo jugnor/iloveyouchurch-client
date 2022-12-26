@@ -5,18 +5,24 @@ import {
   tableCellClasses,
   TableRow
 } from '@mui/material';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { Fasting } from '../../../../../../models/Fasting';
+import * as React from 'react';
+import {TextDialog} from "../../../../../../shared/TextDialog";
 export interface FastingTableBodyProps {
-  withAction: boolean;
   fastings: Fasting[];
 }
 
 export function FastingTableBody({
-  withAction,
   fastings
 }: FastingTableBodyProps) {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [text, setText] = React.useState('');
+
+  const handleText = (openDialog: boolean, text: string) => {
+    setOpenDialog(openDialog);
+    setText(text);
+  };
+
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -38,15 +44,30 @@ export function FastingTableBody({
   }));
 
   return (
-    <TableBody>
-      {fastings.map((fasting) => (
-        <StyledTableRow key={fasting.id}>
-          <StyledTableCell align="left">{fasting.goal}</StyledTableCell>
-          <StyledTableCell align="left">{fasting.days}</StyledTableCell>
-          <StyledTableCell align="left">{fasting.weekOfYear}</StyledTableCell>
-          <StyledTableCell align="left">{fasting.createdAt}</StyledTableCell>
-        </StyledTableRow>
-      ))}
-    </TableBody>
+    <>
+      {openDialog ? (
+        <TextDialog handleText={handleText} openDialog={openDialog} textDialog={text}/>
+      ) : (
+        <TableBody>
+          {fastings.map((fasting) => (
+            <StyledTableRow key={fasting.id}>
+              <StyledTableCell align="left">{fasting.days}</StyledTableCell>
+              <StyledTableCell
+                align="left"
+                onClick={() => handleText(true, fasting.goal)}
+              >
+                Details...
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {fasting.weekOfYear}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {fasting.createdAt}
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      )}
+    </>
   );
 }

@@ -39,12 +39,14 @@ export function FileTableBody({ withAction, files }: FileTableBodyProps) {
     <TableBody>
       {files.map((fileModel) => (
         <StyledTableRow key={fileModel.id}>
-          <StyledTableCell align="left">{fileModel.filename}</StyledTableCell>
-          <StyledTableCell align="left">
+          <StyledTableCell align="left" width="25%">
+            {fileModel.filename}
+          </StyledTableCell>
+          <StyledTableCell align="left" width="50%">
             {fileModel.description}
           </StyledTableCell>
-          <StyledTableCell align="left">{fileModel.size}</StyledTableCell>
-          <StyledTableCell align="left">{fileModel.createdAt}</StyledTableCell>
+          <StyledTableCell align="right">{fileModel.size}</StyledTableCell>
+          <StyledTableCell align="right">{fileModel.createdAt}</StyledTableCell>
           <StyledTableCell align="right">
             {
               <>

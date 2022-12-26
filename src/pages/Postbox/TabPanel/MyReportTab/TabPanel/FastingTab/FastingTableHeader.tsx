@@ -22,10 +22,10 @@ export function FastingTableHeader({}: FastingTableHeaderProps) {
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell align="left">Ziele</StyledTableCell>
         <StyledTableCell align="left">Totale Tage</StyledTableCell>
-        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
+        <StyledTableCell align="left">Ziele</StyledTableCell>
+        <StyledTableCell align="right">Kalenderwoche</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

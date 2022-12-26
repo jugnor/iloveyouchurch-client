@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import {
+  Stack,
   TableCell,
   tableCellClasses,
   TableHead,
@@ -29,12 +30,13 @@ export function ActivityTableHeader({
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell align="left">Beschreibung</StyledTableCell>
+        <StyledTableCell align="left" width="90%">
+          Beschreibung
+        </StyledTableCell>
         {activityType === ActivityType.PROGRAM && (
-          <StyledTableCell align="left">Tag</StyledTableCell>
+          <StyledTableCell>Tag</StyledTableCell>
         )}
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
-        <StyledTableCell align="right">Action</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );
