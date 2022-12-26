@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles';
+import _moment from 'moment';
 import {
   TableBody,
   TableCell,
@@ -8,6 +9,7 @@ import {
 import { Fasting } from '../../../../../../models/Fasting';
 import * as React from 'react';
 import {TextDialog} from "../../../../../../shared/TextDialog";
+import Button from "@mui/material/Button";
 export interface FastingTableBodyProps {
   fastings: Fasting[];
 }
@@ -56,13 +58,16 @@ export function FastingTableBody({
                 align="left"
                 onClick={() => handleText(true, fasting.goal)}
               >
-                Details...
+                <button style={{cursor:'pointer'}}>Details...</button>
               </StyledTableCell>
               <StyledTableCell align="right">
                 {fasting.weekOfYear}
               </StyledTableCell>
               <StyledTableCell align="right">
-                {fasting.createdAt}
+                {_moment
+                .utc(fasting.createdAt)
+                .local()
+                .format('DD.MM.YYYY, HH:mm')}
               </StyledTableCell>
             </StyledTableRow>
           ))}

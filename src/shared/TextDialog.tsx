@@ -4,7 +4,7 @@ import DialogContent from '@mui/material/DialogContent';
 import * as React from 'react';
 import { TransitionProps } from '@mui/material/transitions';
 import Slide from '@mui/material/Slide';
-import {Stack} from "@mui/material";
+import {Box, Stack} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import {useTranslation} from "react-i18next";
 
@@ -33,8 +33,18 @@ export function TextDialog({
   return (
     <>
       {openDialog && (
-        <div>
+        <Box
+          component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 5, width: '500%' }
+          }}
+          noValidate
+          autoComplete="off"
+          overflow="scroll"
+        >
           <Dialog
+            maxWidth={'md'}
+            fullWidth
             open={openDialog}
             TransitionComponent={Transition}
             keepMounted
@@ -42,19 +52,16 @@ export function TextDialog({
             aria-describedby="alert-dialog-slide-description"
           >
             <DialogTitle>Information</DialogTitle>
-            <DialogContent>
+            <DialogContent >
                     <Stack>
-                      <TextField
-                        multiline
-                        disabled={true}
+                      <textarea
                         id="name"
                         value={textDialog}
-                        label={t('Details')}
-                      ></TextField>
+                      ></textarea>
                     </Stack>
             </DialogContent>
           </Dialog>
-        </div>
+          </Box>
       )}
     </>
   );

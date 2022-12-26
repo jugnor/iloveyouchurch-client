@@ -36,6 +36,7 @@
     "joi": "^17.4.2",
     "joi-filelist": "^1.0.0",
     "keycloak-js": "^17.0.0",
+    "moment": "^2.29.4",
     "prettier": "^2.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

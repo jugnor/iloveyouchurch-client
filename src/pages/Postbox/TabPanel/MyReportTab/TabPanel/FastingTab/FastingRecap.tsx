@@ -71,7 +71,7 @@ export function FastingRecap({
               <Table>
                 <FastingTableHeader />
                 <FastingTableBody fastings={results.items} />
-                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
+                <TableFooter >
                   {results.total > 0 && (
                     <CustomTablePagination
                       total={results.total}
