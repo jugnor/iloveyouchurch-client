@@ -125,18 +125,16 @@ export function ActivityAction({ postboxId, menuItems }: ActivityActionProps) {
       } else {
         let upsertActivity = upsertActivityFormData(params, disciplineType);
         if (validateActivity(upsertActivity)) {
-          updateActivity(
-            aId,
-            upsertActivity as UpsertActivityRequest,
-            true
-          ).then((r) => {
-            setMethode('');
-            params.api.setRowMode(params.row.id, 'view');
-            params.api.updateRows([{ ...params.row, isNew: false }]);
-            setOpenAlert(true);
-            setMessageAlert('Das Item wurde erfolgreich geändert');
-            setSeverity('success');
-          });
+          updateActivity(aId, upsertActivity as UpsertActivityRequest).then(
+            (r) => {
+              setMethode('');
+              params.api.setRowMode(params.row.id, 'view');
+              params.api.updateRows([{ ...params.row, isNew: false }]);
+              setOpenAlert(true);
+              setMessageAlert('Das Item wurde erfolgreich geändert');
+              setSeverity('success');
+            }
+          );
         } else {
           setOpenAlert(true);
           setMethode('');

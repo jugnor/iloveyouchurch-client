@@ -21,6 +21,6 @@ export interface Account {
   startWeek: string;
   endWeek: string;
   week: string;
-  weekOfYear:number
+  weekOfYear: number;
   createdAt?: string;
 }

@@ -11,11 +11,11 @@ import { Account } from '../../../../../../models/Account';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-export interface ReportNoteTableBodyProps {
+export interface ResultNoteTableBodyProps {
   notes: Account[];
 }
 
-export function ReportNoteTableBody({ notes }: ReportNoteTableBodyProps) {
+export function ResultTableBody({ notes }: ResultNoteTableBodyProps) {
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -45,9 +45,7 @@ export function ReportNoteTableBody({ notes }: ReportNoteTableBodyProps) {
       case true:
         return <CheckCircleIcon color="success"></CheckCircleIcon>;
       case false:
-        return (
-          <CancelIcon color="error"></CancelIcon>
-        );
+        return <CancelIcon color="error"></CancelIcon>;
     }
   }
 
@@ -55,9 +53,7 @@ export function ReportNoteTableBody({ notes }: ReportNoteTableBodyProps) {
     <TableBody>
       {notes.map((note) => (
         <StyledTableRow key={note.id}>
-          <StyledTableCell align="center">
-            {note.weekOfYear}
-          </StyledTableCell>
+          <StyledTableCell align="center">{note.name}</StyledTableCell>
           <StyledTableCell align="center">
             {getStatusIcon(note.prayerAlone)}
           </StyledTableCell>
@@ -103,8 +99,8 @@ export function ReportNoteTableBody({ notes }: ReportNoteTableBodyProps) {
           <StyledTableCell align="center">
             {getStatusIcon(note.partialFasting)}
           </StyledTableCell>
-          <StyledTableCell align="center" width='50%'>
-            {_moment.utc(note.createdAt).local().format('DD.MM.YYYY, HH:mm')}
+          <StyledTableCell align="center" width="50%">
+            {_moment.utc(note.createdAt).local().format('DD.MM.YYYY')}
           </StyledTableCell>
         </StyledTableRow>
       ))}

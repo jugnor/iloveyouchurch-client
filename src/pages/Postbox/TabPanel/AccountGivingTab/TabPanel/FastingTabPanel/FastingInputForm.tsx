@@ -1,9 +1,3 @@
-import {
-  Prayer,
-  PrayerType,
-  UpsertPrayerRequest,
-  UpsertPrayerRequestSchema
-} from '../../../../../../models/Prayer';
 import { useJoi } from '../../../../../../hooks/useJoi';
 import { useTranslation } from 'react-i18next';
 import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
@@ -23,7 +17,6 @@ import {
   UpsertFastingRequest,
   UpsertFastingRequestSchema
 } from '../../../../../../models/Fasting';
-import Joi from 'joi';
 import _moment from 'moment';
 
 interface FastingInputFormProps {
@@ -50,8 +43,7 @@ export function FastingInputForm({
   const {
     control,
     formState: { errors },
-    handleSubmit,
-    watch
+    handleSubmit
   } = useForm<FormControls>({
     defaultValues: {
       fastingType: fastingType,

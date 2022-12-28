@@ -24,10 +24,6 @@ import { useDiscipline } from '../../../../../../hooks/useDiscipline';
 import { AlertMessage } from '../../../../../../app/ArletMessageRenderer';
 import { AlertColor } from '@mui/material/Alert';
 import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
-import {
-  ReadingType,
-  UpsertReadingRequest
-} from '../../../../../../models/Reading';
 import { FastingInputForm } from './FastingInputForm';
 import AddIcon from '@mui/icons-material/Add';
 import { useTranslation } from 'react-i18next';

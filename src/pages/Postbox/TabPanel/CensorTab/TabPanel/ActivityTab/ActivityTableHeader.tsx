@@ -5,15 +5,10 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { ActivityType } from '../../../../../../models/ActivityType';
 
-export interface ActivityTableHeaderProps {
-  activityType: ActivityType;
-}
+export interface ActivityTableHeaderProps {}
 
-export function ActivityTableHeader({
-  activityType
-}: ActivityTableHeaderProps) {
+export function ActivityTableHeader({}: ActivityTableHeaderProps) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: '#324ab2',
@@ -27,12 +22,9 @@ export function ActivityTableHeader({
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell align="left" width="90%">
+        <StyledTableCell align="left" width="95%">
           Beschreibung
         </StyledTableCell>
-        {activityType === ActivityType.PROGRAM && (
-          <StyledTableCell>Tag</StyledTableCell>
-        )}
         <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>

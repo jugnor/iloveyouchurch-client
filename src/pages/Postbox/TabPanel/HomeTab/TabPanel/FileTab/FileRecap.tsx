@@ -46,7 +46,7 @@ export function FileRecap(fileRecapProps: FileRecapProps) {
               <Table>
                 <FileTableHeader withAction={false} />
 
-                <FileTableBody withAction={false} files={results.items} />
+                <FileTableBody files={results.items} />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {results.total > 0 && (
                     <CustomTablePagination

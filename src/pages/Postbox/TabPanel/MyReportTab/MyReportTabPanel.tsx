@@ -24,7 +24,7 @@ import { ReadingRecap } from './TabPanel/ReadingTab/ReadingRecap';
 import { MeditationRecap } from './TabPanel/Meditation/MeditationRecap';
 import { FastingRecap } from './TabPanel/FastingTab/FastingRecap';
 import { PrayerRecap } from './TabPanel/PrayerTab/PrayerRecap';
-import { ReportNoteRecap } from './TabPanel/ReportNoteTab/ReportNoteRecap';
+import { PersoResultRecap } from './TabPanel/ReportNoteTab/PersoResultRecap';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -194,7 +194,7 @@ export default function MyReportTabPanel({
             />
           </TabPanel>
           <TabPanel value={value} index={6}>
-            <ReportNoteRecap postboxId={postboxId} userId={userId} />
+            <PersoResultRecap postboxId={postboxId} userId={userId} />
           </TabPanel>
         </AppBar>
       </div>

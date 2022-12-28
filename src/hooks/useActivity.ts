@@ -5,6 +5,7 @@ import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
 import useSWR, { mutate, SWRResponse } from 'swr';
 import { ActivityType } from '../models/ActivityType';
+import { ILCError } from '../utils/ErrorCode';
 
 export function useActivity(postboxId: string) {
   const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
@@ -12,17 +13,7 @@ export function useActivity(postboxId: string) {
 
   const [loading, setLoading] = useState(false);
 
-  /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
-    const {
-      data,
-      error
-    } = useSWR<Activity>(`/postboxes/${postboxId}?type=${type}&order=${order}`, fetcher);
-    return data;
-  }
-
-  const activitiesByType = ( type: ActivityType): SWRResponse<ResultsObject<Activity>, Error> => {
-    return useSWR<ResultsObject<Activity>>(`/postboxes/${postboxId}/activity-results?type=${type}`);
-  }*/
+  const [alertMessage, setAlertMessage] = useState('');
 
   const createActivity = useCallback(
     async (data: UpsertActivityRequest, silent?: boolean) => {
@@ -34,25 +25,20 @@ export function useActivity(postboxId: string) {
           data
         );
 
-        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
-        if (!silent) {
-          alert('success: Fall erfolgreich erstellt.');
-        }
         setLoading(false);
 
         return newActivityResponse.data;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
       }
     },
-    [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, postboxId, t]
   );
 
   const deleteActivity = useCallback(
@@ -60,19 +46,18 @@ export function useActivity(postboxId: string) {
       setLoading(true);
 
       try {
-        await makeRequest(
+        const updatedCase =  await makeRequest(
           `/postboxes/${postboxId}/activities/${activityId}?type=${activityType}`,
           'DELETE'
         );
 
-        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
         setLoading(false);
+        return updatedCase
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
@@ -82,13 +67,8 @@ export function useActivity(postboxId: string) {
   );
 
   const updateActivity = useCallback(
-    async (
-      activityId: string,
-      data: UpsertActivityRequest,
-      silent?: boolean
-    ) => {
+    async (activityId: string, data: UpsertActivityRequest) => {
       setLoading(true);
-      console.log('id: ' + activityId);
       try {
         const updatedCase = await makeRequest<Activity>(
           `/postboxes/${postboxId}/activities/${activityId}`,
@@ -96,29 +76,20 @@ export function useActivity(postboxId: string) {
           data
         );
 
-        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/activities.*$`));
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
-
-        await mutate(`/postboxes/${postboxId}/activities/${activityId}`);
-
-        if (!silent) {
-          alert('success: Änderungen gespeichert.');
-        }
-
         setLoading(false);
 
         return updatedCase;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [makeRequest, postboxId, t]
   );
   const getActivities = useCallback(
     async (activityType: ActivityType, week?: string) => {
@@ -150,5 +121,11 @@ export function useActivity(postboxId: string) {
     [alert, makeRequest, postboxId, t]
   );
 
-  return { createActivity, updateActivity, deleteActivity };
+  return {
+    createActivity,
+    updateActivity,
+    deleteActivity,
+    alertMessage,
+    loading
+  };
 }

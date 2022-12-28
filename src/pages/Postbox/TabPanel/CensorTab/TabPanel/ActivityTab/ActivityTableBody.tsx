@@ -1,4 +1,3 @@
-import { ActivityType } from '../../../../../../models/ActivityType';
 import { styled } from '@mui/material/styles';
 import {
   TableBody,
@@ -7,13 +6,19 @@ import {
   TableRow
 } from '@mui/material';
 import { Activity } from '../../../../../../models/Activity';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteIcon from '@mui/icons-material/Delete';
 import _moment from 'moment';
+import * as React from 'react';
+import Button from '@mui/material/Button';
 export interface ActivityTableBodyProps {
   activities: Activity[];
+  handleAction: (activityId: string, mode: string) => void;
 }
 
 export function ActivityTableBody({
-  activities
+  activities,
+  handleAction
 }: ActivityTableBodyProps) {
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -42,16 +47,31 @@ export function ActivityTableBody({
           <StyledTableCell align="left" width="90%">
             {activity.description}
           </StyledTableCell>
-          {activity.activityType === ActivityType.PROGRAM && (
-            <StyledTableCell>{activity.activityOrder}</StyledTableCell>
-          )}
           <StyledTableCell align="right">
-            {_moment
-              .utc(activity.createdAt)
-              .local()
-              .format('DD.MM.YYYY, HH:mm')}
+            {_moment.utc(activity.createdAt).local().format('DD.MM.YYYY')}
           </StyledTableCell>
           <StyledTableCell align="right">
+            {
+              <div style={{ display: 'flex' }}>
+                <Button
+                  size="small"
+                  type={'submit'}
+                  color="primary"
+                  onClick={() => handleAction(activity.id, 'update')}
+                  variant="outlined"
+                  startIcon={<BorderColorIcon />}
+                />
+                <Button
+                  style={{ marginLeft: '1em' }}
+                  size="small"
+                  type={'submit'}
+                  color="primary"
+                  onClick={() => handleAction(activity.id, 'delete')}
+                  variant="outlined"
+                  startIcon={<DeleteIcon />}
+                />
+              </div>
+            }
           </StyledTableCell>
         </StyledTableRow>
       ))}

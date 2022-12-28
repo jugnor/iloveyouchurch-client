@@ -68,10 +68,8 @@ export function ActivityRecap({ postboxId }: ActivityRecapProps) {
               <Table>
                 <ActivityTableHeader
                   activityType={activityType as ActivityType}
-                  withAction={false}
                 />
                 <ActivityTableBody
-                  withAction={false}
                   activities={activityResult.items}
                 />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
@@ -89,7 +87,7 @@ export function ActivityRecap({ postboxId }: ActivityRecapProps) {
                 <Typography color={'error'}>
                   <h2>
                     {t(
-                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                      'Es liegt momentan kein ' + translateType() + ' Item vor'
                     )}{' '}
                   </h2>
                 </Typography>

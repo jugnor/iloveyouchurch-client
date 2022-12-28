@@ -6,9 +6,9 @@ import {
   TableRow
 } from '@mui/material';
 
-export interface ReportNoteTableHeaderProps {}
+export interface ResultTableHeaderProps {}
 
-export function ReportNoteTableHeader({}: ReportNoteTableHeaderProps) {
+export function ResultTableHeader({}: ResultTableHeaderProps) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: '#324ab2',
@@ -22,7 +22,7 @@ export function ReportNoteTableHeader({}: ReportNoteTableHeaderProps) {
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell align="right">KW</StyledTableCell>
+        <StyledTableCell align="right">Geschwestername</StyledTableCell>
         <StyledTableCell align="right">Gebet.A</StyledTableCell>
         <StyledTableCell align="right">Gebet.G</StyledTableCell>
         <StyledTableCell align="right">Gebet.N</StyledTableCell>

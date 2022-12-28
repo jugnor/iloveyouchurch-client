@@ -21,10 +21,10 @@ export const UpsertActivityRequestSchema: Schema = Joi.object({
     .valid(...Object.values(ActivityType))
     .required(),
   description: Joi.string().required(),
-  activityOrder: Joi.alternatives().conditional('godGivingType', {
+  activityOrder: Joi.when('godGivingType', {
     is: ActivityType.PROGRAM,
     then: Joi.string().required(),
-    otherwise: Joi.string().optional().allow('', null)
+    otherwise: Joi.forbidden()
   })
 });
 

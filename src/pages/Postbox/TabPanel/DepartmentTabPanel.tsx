@@ -11,15 +11,14 @@ import GavelIcon from '@material-ui/icons/Gavel';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { HomeTabPanel } from './HomeTab/TabPanel/HomeTabPanel';
-import { DisciplineHandlingTabPanel } from '../../../app/discipline/DisciplineTabPanel';
 import MyReportTabPanel from './MyReportTab/MyReportTabPanel';
-import { CensorTabPanel } from '../../../app/account/CensorTabPanel';
 import AdminTabPanel from '../../../app/activity/AdminTabPanel';
 import { useUserProperties } from '../../../hooks/useUserProperties';
 import useSWR from 'swr';
 import { UserPostboxModel } from '../../../models/UserPostboxModel';
 import { UserRole } from '../../../models/UserModel';
 import { AccountGivingTabPanel } from './AccountGivingTab/TabPanel/AccountGivingTabPanel';
+import { CensorTabPanel } from './CensorTab/TabPanel/CensorTabPanel';
 
 interface TabPanelProps {
   children?: React.ReactNode;

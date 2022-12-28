@@ -7,17 +7,15 @@ import {
   TableRow
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { FileModel } from '../../../../../../models/File';
 import _moment from 'moment';
 import * as React from 'react';
 import { TextDialog } from '../../../../../../shared/TextDialog';
 export interface FileTableBodyProps {
-  withAction: boolean;
   files: FileModel[];
 }
 
-export function FileTableBody({ withAction, files }: FileTableBodyProps) {
+export function FileTableBody({ files }: FileTableBodyProps) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [text, setText] = React.useState('');
 
@@ -81,7 +79,6 @@ export function FileTableBody({ withAction, files }: FileTableBodyProps) {
                 {
                   <>
                     <VisibilityIcon /> <DownloadIcon />{' '}
-                    <DeleteIcon aria-disabled={!withAction} />{' '}
                   </>
                 }
               </StyledTableCell>

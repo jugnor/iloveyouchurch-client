@@ -16,15 +16,15 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { CustomTablePagination } from '../../../../../../shared/TablePagination';
 import { useTranslation } from 'react-i18next';
-import { ReportNoteTableHeader } from './ReportNoteTableHeader';
-import {ReportNoteTableBody} from "./ReportNoteTableBody";
+import { PersoResultTableHeader } from './PersoResultTableHeader';
+import { PersoResultTableBody } from './PersoResultTableBody';
 
 interface ReportNoteProps {
   postboxId: string;
   userId: string;
 }
 
-export function ReportNoteRecap({ postboxId, userId }: ReportNoteProps) {
+export function PersoResultRecap({ postboxId, userId }: ReportNoteProps) {
   const { t } = useTranslation();
 
   const onChangePage = (
@@ -70,9 +70,9 @@ export function ReportNoteRecap({ postboxId, userId }: ReportNoteProps) {
             </div>
             <TableContainer component={Paper}>
               <Table>
-                <ReportNoteTableHeader />
-                <ReportNoteTableBody notes={notes.items}/>
-                <TableFooter>
+                <PersoResultTableHeader />
+                <PersoResultTableBody notes={notes.items} />
+                <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {notes.total > 0 && (
                     <CustomTablePagination
                       total={notes.total}

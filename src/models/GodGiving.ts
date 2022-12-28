@@ -3,7 +3,6 @@ import { Except } from 'type-fest';
 import { ResultsObject } from './ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';
 import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
-import { MatchMutate } from '../swr';
 
 export enum GodGivingType {
   CHORE = 'CHORE',
