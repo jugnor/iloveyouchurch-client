@@ -17,6 +17,7 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import * as React from 'react';
+import _moment from 'moment';
 
 interface PrayerInputFormProps {
   prayer?: Prayer;
@@ -161,7 +162,10 @@ export function PrayerInputForm({
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={prayer.createdAt}
+                  value={_moment
+                    .utc(prayer.createdAt)
+                    .local()
+                    .format('DD.MM.YYYY, HH:mm')}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>

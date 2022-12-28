@@ -24,6 +24,7 @@ import {
   UpsertMeditationRequest,
   UpsertMeditationRequestSchema
 } from '../../../../../../models/Meditation';
+import _moment from 'moment';
 
 interface MeditationInputFormProps {
   meditation?: Meditation;
@@ -193,7 +194,10 @@ export function MeditationInputForm({
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={meditation.createdAt}
+                  value={_moment
+                    .utc(meditation.createdAt)
+                    .local()
+                    .format('DD.MM.YYYY, HH:mm')}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>

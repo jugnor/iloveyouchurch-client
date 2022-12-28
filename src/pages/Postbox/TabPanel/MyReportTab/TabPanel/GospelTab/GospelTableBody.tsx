@@ -5,15 +5,22 @@ import {
   tableCellClasses,
   TableRow
 } from '@mui/material';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { Gospel, GospelType } from '../../../../../../models/Gospel';
+import * as React from 'react';
+import { TextDialog } from '../../../../../../shared/TextDialog';
+import _moment from 'moment/moment';
 export interface GospelTableBodyProps {
-  withAction: boolean;
   gospels: Gospel[];
 }
 
-export function GospelTableBody({ withAction, gospels }: GospelTableBodyProps) {
+export function GospelTableBody({ gospels }: GospelTableBodyProps) {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [text, setText] = React.useState('');
+
+  const handleText = (openDialog: boolean, text: string) => {
+    setOpenDialog(openDialog);
+    setText(text);
+  };
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -35,49 +42,119 @@ export function GospelTableBody({ withAction, gospels }: GospelTableBodyProps) {
   }));
 
   return (
-    <TableBody>
-      {gospels.map((gospel) => (
-        <StyledTableRow key={gospel.id}>
-          {gospel.gospelType === GospelType.GOSPEL && (
-            <>
-              <StyledTableCell align="left">{gospel.goal}</StyledTableCell>
-              <StyledTableCell align="left">{gospel.total}</StyledTableCell>
-              <StyledTableCell align="left">
-                {gospel.timeInMinute}
+    <>
+      {openDialog ? (
+        <TextDialog
+          handleText={handleText}
+          openDialog={openDialog}
+          textDialog={text}
+        />
+      ) : (
+        <TableBody>
+          {gospels.map((gospel) => (
+            <StyledTableRow key={gospel.id}>
+              {gospel.gospelType === GospelType.GOSPEL && (
+                <>
+                  <StyledTableCell
+                    align="left"
+                    onClick={() => handleText(true, gospel.goal)}
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {gospel.total}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {gospel.timeInMinute}
+                  </StyledTableCell>
+                </>
+              )}
+              {gospel.gospelType === GospelType.CONTACT && (
+                <>
+                  <StyledTableCell
+                    align="left"
+                    onClick={() => handleText(true, gospel.gospelContact.name)}
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                  <StyledTableCell
+                    align="right"
+                    onClick={() => handleText(true, gospel.gospelContact.email)}
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                  <StyledTableCell
+                    align="right"
+                    onClick={() => handleText(true, gospel.gospelContact.city)}
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                  <StyledTableCell
+                    align="right"
+                    onClick={() =>
+                      handleText(true, gospel.gospelContact.telephone)
+                    }
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                </>
+              )}
+              {gospel.gospelType === GospelType.SUPPORT && (
+                <>
+                  <StyledTableCell
+                    align="left"
+                    onClick={() => handleText(true, gospel.gospelSupport.title)}
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                  <StyledTableCell
+                    align="right"
+                    onClick={() =>
+                      handleText(true, gospel.gospelSupport.supportType)
+                    }
+                  >
+                    {' '}
+                    <button style={{ cursor: 'pointer', color: 'blue' }}>
+                      Details...
+                    </button>
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {gospel.total}
+                  </StyledTableCell>
+                </>
+              )}
+              <StyledTableCell align="right">
+                {gospel.weekOfYear}
               </StyledTableCell>
-            </>
-          )}
-          {gospel.gospelType === GospelType.CONTACT && (
-            <>
-              <StyledTableCell align="left">
-                {gospel.gospelContact.name}
+              <StyledTableCell align="right">
+                {' '}
+                {_moment
+                  .utc(gospel.createdAt)
+                  .local()
+                  .format('DD.MM.YYYY, HH:mm')}
               </StyledTableCell>
-              <StyledTableCell align="left">
-                {gospel.gospelContact.email}
-              </StyledTableCell>
-              <StyledTableCell align="left">
-                {gospel.gospelContact.city}
-              </StyledTableCell>
-              <StyledTableCell align="left">
-                {gospel.gospelContact.telephone}
-              </StyledTableCell>
-            </>
-          )}
-          {gospel.gospelType === GospelType.SUPPORT && (
-            <>
-              <StyledTableCell align="left">
-                {gospel.gospelSupport.title}
-              </StyledTableCell>
-              <StyledTableCell align="left">
-                {gospel.gospelSupport.supportType}
-              </StyledTableCell>
-              <StyledTableCell align="left">{gospel.total}</StyledTableCell>
-            </>
-          )}
-          <StyledTableCell align="left">{gospel.weekOfYear}</StyledTableCell>
-          <StyledTableCell align="left">{gospel.createdAt}</StyledTableCell>
-        </StyledTableRow>
-      ))}
-    </TableBody>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      )}
+    </>
   );
 }

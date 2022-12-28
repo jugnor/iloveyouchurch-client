@@ -19,12 +19,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
 import { GodGivingRecap } from './TabPanel/GodGivingTab/GodGivingRecap';
-import { CensorDataGridRenderer } from '../../../../app/account/CensorDataGridRenderer';
 import { GospelRecap } from './TabPanel/GospelTab/GospelRecap';
 import { ReadingRecap } from './TabPanel/ReadingTab/ReadingRecap';
 import { MeditationRecap } from './TabPanel/Meditation/MeditationRecap';
 import { FastingRecap } from './TabPanel/FastingTab/FastingRecap';
 import { PrayerRecap } from './TabPanel/PrayerTab/PrayerRecap';
+import { ReportNoteRecap } from './TabPanel/ReportNoteTab/ReportNoteRecap';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -194,12 +194,7 @@ export default function MyReportTabPanel({
             />
           </TabPanel>
           <TabPanel value={value} index={6}>
-            <CensorDataGridRenderer
-              postboxId={postboxId}
-              userId={userId}
-              tab={'MyReport'}
-              menuItems={[]}
-            />
+            <ReportNoteRecap postboxId={postboxId} userId={userId} />
           </TabPanel>
         </AppBar>
       </div>

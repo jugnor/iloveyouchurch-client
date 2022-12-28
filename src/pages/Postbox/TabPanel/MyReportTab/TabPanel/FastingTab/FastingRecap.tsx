@@ -71,7 +71,7 @@ export function FastingRecap({
               <Table>
                 <FastingTableHeader />
                 <FastingTableBody fastings={results.items} />
-                <TableFooter >
+                <TableFooter>
                   {results.total > 0 && (
                     <CustomTablePagination
                       total={results.total}
@@ -86,7 +86,7 @@ export function FastingRecap({
                 <Typography color={'error'}>
                   <h2>
                     {t(
-                      'Es Liegt momentan kein ' + translateType() + ' Item vor'
+                      'Es liegt momentan kein ' + translateType() + ' Item vor'
                     )}{' '}
                   </h2>
                 </Typography>

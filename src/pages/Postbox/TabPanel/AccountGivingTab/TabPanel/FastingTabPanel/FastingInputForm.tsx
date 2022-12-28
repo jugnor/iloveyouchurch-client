@@ -24,6 +24,7 @@ import {
   UpsertFastingRequestSchema
 } from '../../../../../../models/Fasting';
 import Joi from 'joi';
+import _moment from 'moment';
 
 interface FastingInputFormProps {
   fasting?: Fasting;
@@ -135,7 +136,10 @@ export function FastingInputForm({
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={fasting.createdAt}
+                  value={_moment
+                    .utc(fasting.createdAt)
+                    .local()
+                    .format('DD.MM.YYYY, HH:mm')}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>

@@ -17,6 +17,7 @@ import {
   UpsertGodGivingRequest,
   UpsertGodGivingRequestSchema
 } from '../../../../../../models/GodGiving';
+import _moment from 'moment';
 
 interface GodGivingInputFormProps {
   godGiving?: GodGiving;
@@ -202,7 +203,10 @@ export function GodGivingInputForm({
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={godGiving.createdAt}
+                  value={_moment
+                    .utc(godGiving.createdAt)
+                    .local()
+                    .format('DD.MM.YYYY, HH:mm')}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>

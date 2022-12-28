@@ -73,10 +73,7 @@ export function GodGivingRecap({
                 <GodGivingTableHeader
                   godGivingType={godGivingType as GodGivingType}
                 />
-                <GodGivingTableBody
-                  withAction={false}
-                  godGivings={results.items}
-                />
+                <GodGivingTableBody godGivings={results.items} />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {results.total > 0 && (
                     <CustomTablePagination

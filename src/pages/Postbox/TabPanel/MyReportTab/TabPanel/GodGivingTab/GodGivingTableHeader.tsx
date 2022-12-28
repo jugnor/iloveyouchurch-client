@@ -34,14 +34,14 @@ export function GodGivingTableHeader({
           godGivingType === GodGivingType.CHORE) && (
           <>
             <StyledTableCell align="left">Total</StyledTableCell>
-            <StyledTableCell align="left">Zeit(Min)</StyledTableCell>
+            <StyledTableCell align="right">Zeit(Min)</StyledTableCell>
           </>
         )}
         {godGivingType === GodGivingType.MONEY && (
           <StyledTableCell align="left">Betrag</StyledTableCell>
         )}
-        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
+        <StyledTableCell align="right">Kalenderwoche</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

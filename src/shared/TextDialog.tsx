@@ -4,14 +4,14 @@ import DialogContent from '@mui/material/DialogContent';
 import * as React from 'react';
 import { TransitionProps } from '@mui/material/transitions';
 import Slide from '@mui/material/Slide';
-import {Box, Stack} from "@mui/material";
-import TextField from "@mui/material/TextField";
-import {useTranslation} from "react-i18next";
+import { Box, Stack } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import { useTranslation } from 'react-i18next';
 
 interface TextDialogProps {
   openDialog: boolean;
-  textDialog:string;
-  handleText: (openDialog: boolean,text:string) => void;
+  textDialog: string;
+  handleText: (openDialog: boolean, text: string) => void;
 }
 
 export function TextDialog({
@@ -19,7 +19,6 @@ export function TextDialog({
   textDialog,
   handleText
 }: TextDialogProps) {
-
   const { t } = useTranslation();
   const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -48,20 +47,17 @@ export function TextDialog({
             open={openDialog}
             TransitionComponent={Transition}
             keepMounted
-            onClose={() => handleText(false,"")}
+            onClose={() => handleText(false, '')}
             aria-describedby="alert-dialog-slide-description"
           >
             <DialogTitle>Information</DialogTitle>
-            <DialogContent >
-                    <Stack>
-                      <textarea
-                        id="name"
-                        value={textDialog}
-                      ></textarea>
-                    </Stack>
+            <DialogContent>
+              <Stack>
+                <textarea id="name" value={textDialog}></textarea>
+              </Stack>
             </DialogContent>
           </Dialog>
-          </Box>
+        </Box>
       )}
     </>
   );

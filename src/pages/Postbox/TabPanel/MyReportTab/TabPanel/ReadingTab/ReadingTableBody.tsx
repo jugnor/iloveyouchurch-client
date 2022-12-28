@@ -7,11 +7,21 @@ import {
 } from '@mui/material';
 
 import { Reading } from '../../../../../../models/Reading';
+import _moment from 'moment/moment';
+import * as React from 'react';
+import { TextDialog } from '../../../../../../shared/TextDialog';
 export interface ReadingTableBodyProps {
   readings: Reading[];
 }
 
 export function ReadingTableBody({ readings }: ReadingTableBodyProps) {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [text, setText] = React.useState('');
+
+  const handleText = (openDialog: boolean, text: string) => {
+    setOpenDialog(openDialog);
+    setText(text);
+  };
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -33,19 +43,46 @@ export function ReadingTableBody({ readings }: ReadingTableBodyProps) {
   }));
 
   return (
-    <TableBody>
-      {readings.map((reading) => (
-        <StyledTableRow key={reading.id}>
-          <StyledTableCell align="left">{reading.title}</StyledTableCell>
-          <StyledTableCell align="left">{reading.totalCap}</StyledTableCell>
-          <StyledTableCell align="left">{reading.timeInMinute}</StyledTableCell>
-          <StyledTableCell align="left">{reading.theme}</StyledTableCell>
-          <StyledTableCell align="left">{reading.referenceEnd}</StyledTableCell>
-          <StyledTableCell align="left">{reading.theEnd}</StyledTableCell>
-          <StyledTableCell align="left">{reading.weekOfYear}</StyledTableCell>
-          <StyledTableCell align="left">{reading.createdAt}</StyledTableCell>
-        </StyledTableRow>
-      ))}
-    </TableBody>
+    <>
+      {openDialog ? (
+        <TextDialog
+          handleText={handleText}
+          openDialog={openDialog}
+          textDialog={text}
+        />
+      ) : (
+        <TableBody>
+          {readings.map((reading) => (
+            <StyledTableRow key={reading.id}>
+              <StyledTableCell align="left">{reading.title}</StyledTableCell>
+              <StyledTableCell align="right">
+                {reading.totalCap}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {reading.timeInMinute}
+              </StyledTableCell>
+              <StyledTableCell
+                align="right"
+                onClick={() => handleText(true, reading.theme)}
+              >
+                {' '}
+                <button style={{ cursor: 'pointer', color: 'blue' }}>
+                  Details...
+                </button>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {reading.weekOfYear}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {_moment
+                  .utc(reading.createdAt)
+                  .local()
+                  .format('DD.MM.YYYY, HH:mm')}
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      )}
+    </>
   );
 }

@@ -23,11 +23,11 @@ export function MeditationTableHeader({}: MeditationTableHeaderProps) {
     <TableHead>
       <TableRow>
         <StyledTableCell align="left">Total</StyledTableCell>
-        <StyledTableCell align="left">Zeit(Min)</StyledTableCell>
-        <StyledTableCell align="left">Thema</StyledTableCell>
-        <StyledTableCell align="left">Verse</StyledTableCell>
-        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
+        <StyledTableCell align="right">Zeit(Min)</StyledTableCell>
+        <StyledTableCell align="right">Thema</StyledTableCell>
+        <StyledTableCell align="right">Verse</StyledTableCell>
+        <StyledTableCell align="right">Kalenderwoche</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

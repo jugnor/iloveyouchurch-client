@@ -23,6 +23,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import * as React from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { useDisciplineType } from '../../../../../../hooks/useDisciplineType';
+import _moment from 'moment';
 
 interface ReadingInputFormProps {
   reading?: Reading;
@@ -268,7 +269,10 @@ export function ReadingInputForm({
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={reading.createdAt}
+                  value={_moment
+                    .utc(reading.createdAt)
+                    .local()
+                    .format('DD.MM.YYYY, HH:mm')}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>

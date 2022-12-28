@@ -10,6 +10,7 @@ import {
 import { Activity } from '../../../../../../models/Activity';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
+import _moment from 'moment';
 export interface ActivityTableBodyProps {
   withAction: boolean;
   activities: Activity[];
@@ -49,7 +50,12 @@ export function ActivityTableBody({
           {activity.activityType === ActivityType.PROGRAM && (
             <StyledTableCell>{activity.activityOrder}</StyledTableCell>
           )}
-          <StyledTableCell align="right">{activity.createdAt}</StyledTableCell>
+          <StyledTableCell align="right">
+            {_moment
+              .utc(activity.createdAt)
+              .local()
+              .format('DD.MM.YYYY, HH:mm')}
+          </StyledTableCell>
           <StyledTableCell align="right">
             {
               <>

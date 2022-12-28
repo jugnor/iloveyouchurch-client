@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
+import _moment from 'moment/moment';
 
 export interface RegulationRecapInputFormProps {
   regulation?: Regulation;
@@ -146,7 +147,10 @@ export function RegulationRecapInputForm({
           <TextField
             id="createdAt"
             disabled={true}
-            value={regulation.createdAt}
+            value={_moment
+              .utc(regulation.createdAt)
+              .local()
+              .format('DD.MM.YYYY, HH:mm')}
             label={t('Datum der Erstellung')}
           ></TextField>
         </div>

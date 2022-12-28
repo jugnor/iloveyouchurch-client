@@ -7,11 +7,21 @@ import {
 } from '@mui/material';
 
 import { Meditation } from '../../../../../../models/Meditation';
+import * as React from 'react';
+import { TextDialog } from '../../../../../../shared/TextDialog';
+import _moment from 'moment';
 export interface MeditationTableBodyProps {
   meditations: Meditation[];
 }
 
 export function MeditationTableBody({ meditations }: MeditationTableBodyProps) {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [text, setText] = React.useState('');
+
+  const handleText = (openDialog: boolean, text: string) => {
+    setOpenDialog(openDialog);
+    setText(text);
+  };
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -33,21 +43,53 @@ export function MeditationTableBody({ meditations }: MeditationTableBodyProps) {
   }));
 
   return (
-    <TableBody>
-      {meditations.map((meditation) => (
-        <StyledTableRow key={meditation.id}>
-          <StyledTableCell align="left">{meditation.total}</StyledTableCell>
-          <StyledTableCell align="left">
-            {meditation.timeInMinute}
-          </StyledTableCell>
-          <StyledTableCell align="left">{meditation.theme}</StyledTableCell>
-          <StyledTableCell align="left">{meditation.verse}</StyledTableCell>
-          <StyledTableCell align="left">
-            {meditation.weekOfYear}
-          </StyledTableCell>
-          <StyledTableCell align="left">{meditation.createdAt}</StyledTableCell>
-        </StyledTableRow>
-      ))}
-    </TableBody>
+    <>
+      {openDialog ? (
+        <TextDialog
+          handleText={handleText}
+          openDialog={openDialog}
+          textDialog={text}
+        />
+      ) : (
+        <TableBody>
+          {meditations.map((meditation) => (
+            <StyledTableRow key={meditation.id}>
+              <StyledTableCell align="left">{meditation.total}</StyledTableCell>
+              <StyledTableCell align="right">
+                {meditation.timeInMinute}
+              </StyledTableCell>
+              <StyledTableCell
+                align="right"
+                onClick={() => handleText(true, meditation.theme)}
+              >
+                {' '}
+                <button style={{ cursor: 'pointer', color: 'blue' }}>
+                  Details...
+                </button>
+              </StyledTableCell>
+              <StyledTableCell
+                align="right"
+                onClick={() => handleText(true, meditation.verse)}
+              >
+                {' '}
+                <button style={{ cursor: 'pointer', color: 'blue' }}>
+                  Details...
+                </button>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {meditation.weekOfYear}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {' '}
+                {_moment
+                  .utc(meditation.createdAt)
+                  .local()
+                  .format('DD.MM.YYYY, HH:mm')}
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      )}
+    </>
   );
 }

@@ -26,6 +26,7 @@ import {
   UpsertGospelRequest,
   UpsertGospelRequestSchema
 } from '../../../../../../models/Gospel';
+import _moment from 'moment';
 
 interface GospelInputFormProps {
   gospel?: Gospel;
@@ -352,7 +353,10 @@ export function GospelInputForm({
                 <TextField
                   id="createdAt"
                   disabled={true}
-                  value={gospel.createdAt}
+                  value={_moment
+                    .utc(gospel.createdAt)
+                    .local()
+                    .format('DD.MM.YYYY, HH:mm')}
                   label={'Datum der Erstellung'}
                 ></TextField>
               </div>

@@ -23,13 +23,11 @@ export function ReadingTableHeader({}: ReadingTableHeaderProps) {
     <TableHead>
       <TableRow>
         <StyledTableCell align="left">Titel</StyledTableCell>
-        <StyledTableCell align="left">Totale Kapitel</StyledTableCell>
-        <StyledTableCell align="left">Zeit(Min)</StyledTableCell>
-        <StyledTableCell align="left">Thema</StyledTableCell>
-        <StyledTableCell align="left">Referenz</StyledTableCell>
-        <StyledTableCell align="left">Ende ?</StyledTableCell>
-        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
+        <StyledTableCell align="right">Totale Kapitel</StyledTableCell>
+        <StyledTableCell align="right">Zeit(Min)</StyledTableCell>
+        <StyledTableCell align="right">Thema</StyledTableCell>
+        <StyledTableCell align="right">Kalenderwoche</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

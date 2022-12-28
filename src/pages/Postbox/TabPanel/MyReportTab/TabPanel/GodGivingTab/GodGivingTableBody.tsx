@@ -1,24 +1,26 @@
 import { styled } from '@mui/material/styles';
 import {
-  Stack,
   TableBody,
   TableCell,
   tableCellClasses,
   TableRow
 } from '@mui/material';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Fasting } from '../../../../../../models/Fasting';
 import { GodGiving, GodGivingType } from '../../../../../../models/GodGiving';
+import * as React from 'react';
+import { TextDialog } from '../../../../../../shared/TextDialog';
+import _moment from 'moment/moment';
 export interface GodGivingTableBodyProps {
-  withAction: boolean;
   godGivings: GodGiving[];
 }
 
-export function GodGivingTableBody({
-  withAction,
-  godGivings
-}: GodGivingTableBodyProps) {
+export function GodGivingTableBody({ godGivings }: GodGivingTableBodyProps) {
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [text, setText] = React.useState('');
+
+  const handleText = (openDialog: boolean, text: string) => {
+    setOpenDialog(openDialog);
+    setText(text);
+  };
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover
@@ -40,26 +42,55 @@ export function GodGivingTableBody({
   }));
 
   return (
-    <TableBody>
-      {godGivings.map((godging) => (
-        <StyledTableRow key={godging.id}>
-          <StyledTableCell align="left">{godging.description}</StyledTableCell>
-          {(godging.godGivingType === GodGivingType.THANKS ||
-            godging.godGivingType === GodGivingType.CHORE) && (
-            <>
-              <StyledTableCell align="left">{godging.total}</StyledTableCell>
-              <StyledTableCell align="left">
-                {godging.timeInMinute}
+    <>
+      {openDialog ? (
+        <TextDialog
+          handleText={handleText}
+          openDialog={openDialog}
+          textDialog={text}
+        />
+      ) : (
+        <TableBody>
+          {godGivings.map((godGiving) => (
+            <StyledTableRow key={godGiving.id}>
+              <StyledTableCell
+                align="left"
+                onClick={() => handleText(true, godGiving.description)}
+              >
+                {' '}
+                <button style={{ cursor: 'pointer', color: 'blue' }}>
+                  Details...
+                </button>
               </StyledTableCell>
-            </>
-          )}
-          {godging.godGivingType === GodGivingType.MONEY && (
-            <StyledTableCell align="left">{godging.amount}</StyledTableCell>
-          )}
-          <StyledTableCell align="left">{godging.weekOfYear}</StyledTableCell>
-          <StyledTableCell align="left">{godging.createdAt}</StyledTableCell>
-        </StyledTableRow>
-      ))}
-    </TableBody>
+              {(godGiving.godGivingType === GodGivingType.THANKS ||
+                godGiving.godGivingType === GodGivingType.CHORE) && (
+                <>
+                  <StyledTableCell align="left">
+                    {godGiving.total}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {godGiving.timeInMinute}
+                  </StyledTableCell>
+                </>
+              )}
+              {godGiving.godGivingType === GodGivingType.MONEY && (
+                <StyledTableCell align="left">
+                  {godGiving.amount}
+                </StyledTableCell>
+              )}
+              <StyledTableCell align="right">
+                {godGiving.weekOfYear}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {_moment
+                  .utc(godGiving.createdAt)
+                  .local()
+                  .format('DD.MM.YYYY, HH:mm')}
+              </StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      )}
+    </>
   );
 }

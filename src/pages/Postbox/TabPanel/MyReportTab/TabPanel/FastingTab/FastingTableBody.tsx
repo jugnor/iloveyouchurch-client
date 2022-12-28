@@ -8,15 +8,12 @@ import {
 } from '@mui/material';
 import { Fasting } from '../../../../../../models/Fasting';
 import * as React from 'react';
-import {TextDialog} from "../../../../../../shared/TextDialog";
-import Button from "@mui/material/Button";
+import { TextDialog } from '../../../../../../shared/TextDialog';
 export interface FastingTableBodyProps {
   fastings: Fasting[];
 }
 
-export function FastingTableBody({
-  fastings
-}: FastingTableBodyProps) {
+export function FastingTableBody({ fastings }: FastingTableBodyProps) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [text, setText] = React.useState('');
 
@@ -48,7 +45,11 @@ export function FastingTableBody({
   return (
     <>
       {openDialog ? (
-        <TextDialog handleText={handleText} openDialog={openDialog} textDialog={text}/>
+        <TextDialog
+          handleText={handleText}
+          openDialog={openDialog}
+          textDialog={text}
+        />
       ) : (
         <TableBody>
           {fastings.map((fasting) => (
@@ -58,16 +59,18 @@ export function FastingTableBody({
                 align="left"
                 onClick={() => handleText(true, fasting.goal)}
               >
-                <button style={{cursor:'pointer'}}>Details...</button>
+                <button style={{ cursor: 'pointer', color: 'blue' }}>
+                  Details...
+                </button>
               </StyledTableCell>
               <StyledTableCell align="right">
                 {fasting.weekOfYear}
               </StyledTableCell>
               <StyledTableCell align="right">
                 {_moment
-                .utc(fasting.createdAt)
-                .local()
-                .format('DD.MM.YYYY, HH:mm')}
+                  .utc(fasting.createdAt)
+                  .local()
+                  .format('DD.MM.YYYY, HH:mm')}
               </StyledTableCell>
             </StyledTableRow>
           ))}

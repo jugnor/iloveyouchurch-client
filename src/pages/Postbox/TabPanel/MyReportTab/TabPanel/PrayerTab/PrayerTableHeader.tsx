@@ -26,12 +26,12 @@ export function PrayerTableHeader({ prayerType }: PrayerTableHeaderProps) {
     <TableHead>
       <TableRow>
         <StyledTableCell align="left">Zeit(Min)</StyledTableCell>
-        <StyledTableCell align="left">Thema</StyledTableCell>
+        <StyledTableCell align="right">Thema</StyledTableCell>
         {prayerType === PrayerType.GROUP && (
-          <StyledTableCell align="left">Gebetsnacht</StyledTableCell>
+          <StyledTableCell align="right">Gebetsnacht</StyledTableCell>
         )}
-        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
+        <StyledTableCell align="right">Kalenderwoche</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

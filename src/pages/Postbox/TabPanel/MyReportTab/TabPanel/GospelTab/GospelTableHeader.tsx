@@ -28,26 +28,27 @@ export function GospelTableHeader({ gospelType }: GospelTableHeaderProps) {
         {gospelType === GospelType.GOSPEL && (
           <>
             <StyledTableCell align="left">Ziele</StyledTableCell>
-            <StyledTableCell align="left">Total</StyledTableCell>
-            <StyledTableCell align="left">Zeit(Min)</StyledTableCell>
+            <StyledTableCell align="right">Total</StyledTableCell>
+            <StyledTableCell align="right">Zeit(Min)</StyledTableCell>
           </>
         )}
         {gospelType === GospelType.CONTACT && (
           <>
             <StyledTableCell align="left">Name</StyledTableCell>
-            <StyledTableCell align="left">Email</StyledTableCell>
-            <StyledTableCell align="left">Stadt</StyledTableCell>
-            <StyledTableCell align="left">Telephone</StyledTableCell>
+            <StyledTableCell align="right">Email</StyledTableCell>
+            <StyledTableCell align="right">Stadt</StyledTableCell>
+            <StyledTableCell align="right">Telephone</StyledTableCell>
           </>
         )}
         {gospelType === GospelType.SUPPORT && (
           <>
             <StyledTableCell align="left">Titel</StyledTableCell>
-            <StyledTableCell align="left">SupportType</StyledTableCell>
+            <StyledTableCell align="right">SupportType</StyledTableCell>
+            <StyledTableCell align="right">Total</StyledTableCell>
           </>
         )}
-        <StyledTableCell align="left">Kalenderwoche</StyledTableCell>
-        <StyledTableCell align="left">Erstellungsdatum</StyledTableCell>
+        <StyledTableCell align="right">Kalenderwoche</StyledTableCell>
+        <StyledTableCell align="right">Erstellungsdatum</StyledTableCell>
       </TableRow>
     </TableHead>
   );

@@ -61,7 +61,7 @@ export function GospelRecap({
             <SelectItem
               setElement={setGospelType}
               element={gospelType}
-              menuItems={[GospelType.GOSPEL + '|Evangelisation']}
+              menuItems={menuItems}
             />
           </div>
 
@@ -69,7 +69,7 @@ export function GospelRecap({
             <TableContainer component={Paper}>
               <Table>
                 <GospelTableHeader gospelType={gospelType as GospelType} />
-                <GospelTableBody withAction={false} gospels={results.items} />
+                <GospelTableBody gospels={results.items} />
                 <TableFooter style={{ backgroundColor: '#F0F8FF' }}>
                   {results.total > 0 && (
                     <CustomTablePagination
