@@ -31,21 +31,21 @@ export type UpsertRegulationRequest = Except<
 >;
 
 export const UpsertRegulationRequestSchema: Schema = Joi.object({
-  prayerAlone: Joi.number().min(0).required(),
-  prayerInGroup: Joi.number().min(0).required(),
-  prayerNight: Joi.number().min(0).required(),
-  bibleReading: Joi.number().min(0).required(),
-  clReading: Joi.number().min(0).required(),
-  thanksGiving: Joi.number().min(0).required(),
-  godGiving: Joi.number().min(0).required(),
-  partialFasting: Joi.number().min(0).required(),
-  completeFasting: Joi.number().min(0).required(),
-  retreat: Joi.number().min(0).required(),
-  choreRepeat: Joi.number().min(0).required(),
-  meditation: Joi.number().min(0).required(),
-  gospel: Joi.number().min(0).required(),
-  gospelContact: Joi.number().min(0).required(),
-  gospelSupport: Joi.number().min(0).required()
+  prayerAlone: Joi.number().min(1),
+  prayerInGroup: Joi.number().min(1),
+  prayerNight: Joi.number().min(1),
+  bibleReading: Joi.number().min(1),
+  clReading: Joi.number().min(1),
+  thanksGiving: Joi.number().min(1),
+  godGiving: Joi.number().min(1),
+  partialFasting: Joi.number().min(1),
+  completeFasting: Joi.number().min(1),
+  retreat: Joi.number().min(0),
+  choreRepeat: Joi.number().min(1),
+  meditation: Joi.number().min(1),
+  gospel: Joi.number().min(1),
+  gospelContact: Joi.number().min(1),
+  gospelSupport: Joi.number().min(1)
 });
 
 export function instanceOfRegulation(object?: any): object is Regulation {

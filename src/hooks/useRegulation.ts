@@ -1,118 +1,85 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
-import useSWR, { mutate, SWRResponse } from 'swr';
 import { Regulation, UpsertRegulationRequest } from '../models/Regulation';
+import { ILCError } from '../utils/ErrorCode';
 
-export function useRegulation(postboxId: string) {
-  const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
+export function useRegulation(groupName: string) {
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const { makeRequest, makeRequestWithFullResponse } = useApi();
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
 
   const createRegulation = useCallback(
-    async (data: UpsertRegulationRequest, silent?: boolean) => {
+    async (data: UpsertRegulationRequest) => {
       setLoading(true);
       try {
         const newRegulationResponse =
           await makeRequestWithFullResponse<Regulation>(
-            `/postboxes/${postboxId}/regulations`,
+            `/api/groups/${groupName}/regulations`,
             'POST',
             data
           );
 
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/regulations.*$`)
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/regulation-results.*$`)
-        );
-        if (!silent) {
-          alert('success: Fall erfolgreich erstellt.');
-        }
         setLoading(false);
 
         return newRegulationResponse.data;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
       }
     },
-    [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, groupName, t]
   );
 
-  const deleteRegulation = useCallback(
-    async (regulationId: string) => {
-      setLoading(true);
+  const deleteRegulation = useCallback(async () => {
+    setLoading(true);
 
-      try {
-        await makeRequest(
-          `/postboxes/${postboxId}/activities/${regulationId}`,
-          'DELETE'
-        );
+    try {
+      await makeRequest(`/api/groups/${groupName}/regulations`, 'DELETE');
 
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/regulations.*$`)
-        );
+      setLoading(false);
+    } catch (e) {
+      const ilcError = e as ILCError;
+      setAlertMessage(
+        'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+      );
+      setLoading(false);
 
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/regulation-results.*$`)
-        );
-        setLoading(false);
-      } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
-      }
-    },
-    [alert, makeRequest, postboxId, t]
-  );
+      throw e;
+    }
+  }, [makeRequest, groupName, t]);
 
   const updateRegulation = useCallback(
-    async (
-      regulationId: string,
-      data: UpsertRegulationRequest,
-      silent?: boolean
-    ) => {
+    async (data: UpsertRegulationRequest) => {
       setLoading(true);
       try {
-        const updatedRegulation = await makeRequest<Regulation>(
-          `/postboxes/${postboxId}/regulations/${regulationId}`,
+        setLoading(false);
+        const result = await makeRequest<Regulation>(
+          `/api/groups/${groupName}/regulations`,
           'PUT',
           data
         );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/regulations.*$`)
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/regulation-results.*$`)
-        );
-
-        await mutate(`/postboxes/${postboxId}/regulations/${regulationId}`);
-
-        if (!silent) {
-          alert('success: Änderungen gespeichert.');
-        }
-
-        setLoading(false);
-
-        return updatedRegulation;
+        return result;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [makeRequest, groupName, t]
   );
 
-  return { createRegulation, updateRegulation, deleteRegulation };
+  return { createRegulation, updateRegulation, deleteRegulation, alertMessage };
 }

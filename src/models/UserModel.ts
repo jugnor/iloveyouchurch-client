@@ -7,6 +7,15 @@ export enum UserRole {
   MONITOR = 'MONITOR',
   PARTICIPANT = 'PARTICIPANT'
 }
+export enum ClientRole {
+  ADMIN = 'ADMIN',
+  JUNIOR = 'JUNIOR'
+}
+export enum GroupRole {
+  LEAD = 'Lead',
+  CENSOR = 'Censor',
+  PARTICIPANT = 'Participant'
+}
 
 export interface Credentials {
   value?: string;
@@ -31,12 +40,38 @@ export interface UserModel {
   createdTimestamp?: number;
 }
 
+export interface InviteUserByMailRequest {
+  email: string;
+}
+
 export type UpsertUserRequest = Except<UserModel, 'id' | 'createdTimestamp'>;
 
 export const CreateUserRequestSchema: Schema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   username: Joi.string().required(),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
+  enable: Joi.boolean().optional().allow(true),
+  emailVerified: Joi.boolean().optional().allow(true),
+  credentials: Joi.array()
+    .has(
+      Joi.object({
+        values: Joi.string().optional().allow(''),
+        temporary: Joi.string().optional().allow('')
+      })
+    )
+    .optional()
+    .allow(null),
+  clientRoles: Joi.object({
+    ilc_client: Joi.array()
+  })
+    .optional()
+    .allow(null)
+});
+
+export const UpsertUserRequestSchema: Schema = Joi.object({
   email: Joi.string()
     .email({ tlds: { allow: false } })
     .required(),

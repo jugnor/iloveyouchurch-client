@@ -1,14 +1,13 @@
 import React, { ReactElement } from 'react';
-import DepartmentPostbox from '../pages/Postbox/PostboxType/DepartmentPostbox';
-import { PostBoxes } from '../pages/Postbox/PostBoxes';
-import { PostboxModel } from '../models/PostboxModel';
+import { Groups } from '../pages/Group/Groups';
+import { GroupModel } from '../models/GroupModel';
 import { Navigate } from 'react-router-dom';
-import Postbox from '../pages/Postbox/Postbox';
+import GroupLayout from '../pages/Group/GroupLayout';
 
 export enum RouteKey {
   HOME,
-  POSTBOXES,
-  POSTBOX_ID
+  GROUPS,
+  GROUP_ID
 }
 
 export interface Route {
@@ -21,20 +20,20 @@ export const routes: {
   [key in RouteKey]: Route;
 } = {
   [RouteKey.HOME]: {
-    element: <Navigate to="/postboxes" />,
+    element: <Navigate to="/groups" />,
     path: '/'
   },
 
-  [RouteKey.POSTBOXES]: {
-    element: <PostBoxes />,
-    path: '/postboxes'
+  [RouteKey.GROUPS]: {
+    element: <Groups />,
+    path: '/groups'
   },
-  [RouteKey.POSTBOX_ID]: {
-    element: <Postbox />,
-    path: '/postboxes/:postboxId'
+  [RouteKey.GROUP_ID]: {
+    element: <GroupLayout />,
+    path: '/groups/:groupId'
   }
 };
 
-export function getPostboxPath(postbox: PostboxModel) {
-  return `/postboxes/${postbox.id}`;
+export function getGroupPath(group: GroupModel) {
+  return `/groups/${group.subgroupId}`;
 }

@@ -1,101 +1,56 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Activity, UpsertActivityRequest } from '../models/Activity';
-import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
-import useSWR, { mutate, SWRResponse } from 'swr';
-import { ActivityType } from '../models/ActivityType';
-import { ActivityOrder } from '../models/ActivityOrder';
-import { ResultsObject } from '../models/ResultsObject';
-import {
-  UpsertUserToPostboxRequest,
-  UpdateUserToPostboxRequest,
-  UserPostboxModel
-} from '../models/UserPostboxModel';
 
-export function useUserPostbox(postboxId: string) {
+import { ILCError } from '../utils/ErrorCode';
+import { UserModel } from '../models/UserModel';
+
+export function useUserPostbox(groupName: string) {
+  const [alertMessage, setAlertMessage] = useState('');
   const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
   const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
 
-  const addUserToPostbox = useCallback(
-    async (data: UpsertUserToPostboxRequest, silent?: boolean) => {
+  const insertUserInGroup = useCallback(
+    async (subGroupId: string, invitedEmail: string) => {
       setLoading(true);
       try {
-        const newUserResponse =
-          await makeRequestWithFullResponse<UserPostboxModel>(
-            `/postboxes/users/add`,
-            'POST',
-            data
-          );
-
-        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
-
-        if (!silent) {
-          alert('success: Fall erfolgreich erstellt.');
-        }
+        const newUserResponse = await makeRequestWithFullResponse<UserModel>(
+          `/groups/subGroups/${subGroupId}/users?invitedEmail=${invitedEmail}`,
+          'PUT'
+        );
         setLoading(false);
-
         return newUserResponse.data;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
       }
     },
-    [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [alert, makeRequest, makeRequestWithFullResponse, groupName, t]
   );
 
-  const updateUserToPostbox = useCallback(
-    async (data: UpsertUserToPostboxRequest, silent?: boolean) => {
-      setLoading(true);
-      try {
-        const newUserResponse =
-          await makeRequestWithFullResponse<UserPostboxModel>(
-            `/postboxes/users/roles`,
-            'PUT',
-            data
-          );
-
-        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
-
-        if (!silent) {
-          alert('success: Fall erfolgreich erstellt.');
-        }
-        setLoading(false);
-
-        return newUserResponse.data;
-      } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
-      }
-    },
-    [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
-  );
-
-  const removeUserFromPostbox = useCallback(
-    async (userId: string) => {
+  const removeUserFromGroup = useCallback(
+    async (subGroupId: string, userId: string) => {
       setLoading(true);
 
       try {
-        await makeRequest(`/postboxes/${postboxId}/users/${userId}`, 'DELETE');
-
-        await MatchMutate(new RegExp(`^/postboxes/${postboxId}/users.*$`));
-
+        await makeRequest(
+          `/groups/subGroups/${subGroupId}/users/${userId}`,
+          'DELETE'
+        );
         setLoading(false);
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [alert, makeRequest, groupName, t]
   );
 
-  return { addUserToPostbox, updateUserToPostbox, removeUserFromPostbox };
+  return { insertUserInGroup, removeUserFromGroup, alertMessage };
 }

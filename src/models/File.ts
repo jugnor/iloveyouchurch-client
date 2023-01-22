@@ -1,6 +1,6 @@
 import Joi, { Schema } from 'joi';
 import { Except } from 'type-fest';
-import { PostboxModel } from './PostboxModel';
+import { GroupModel } from './GroupModel';
 import { GridColumns, GridRowsProp } from '@mui/x-data-grid';
 import { ResultsObject } from './ResultsObject';
 import { randomId } from '@mui/x-data-grid-generator';

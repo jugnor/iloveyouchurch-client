@@ -2,27 +2,15 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApi } from './useApi';
 import { MatchMutate } from '../swr';
-import { Reading, UpsertReadingRequest } from '../models/Reading';
-import {
-  Discipline,
-  DisciplineType,
-  UpsertDisciplineRequest
-} from '../models/Discipline';
+import { Reading } from '../models/Reading';
+import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
 import { ILCError } from '../utils/ErrorCode';
 
-export function useDiscipline(postboxId: string, userId: string, path: string) {
+export function useDiscipline(groupName: string, userId: string, path: string) {
   const { makeRequest, makeRequestWithFullResponse } = useApi();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-
-  /** const activityByTypeAndOrder = (type: ActivityType, order: ActivityOrder): Activity | undefined => {
-    const {
-      data,
-      error
-    } = useSWR<Activity>(`/postboxes/${postboxId}?type=${type}&order=${order}`, fetcher);
-    return data;
-  }*/
 
   const createDiscipline = useCallback(
     async (data: UpsertDisciplineRequest) => {
@@ -30,13 +18,12 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
       try {
         const newUseDisciplineResponse =
           await makeRequestWithFullResponse<Reading>(
-            `/postboxes/${postboxId}/${path}s`,
+            `/api/groups/${groupName}/${path}s`,
             'POST',
             data
           );
-
-        return newUseDisciplineResponse.data;
         setLoading(false);
+        return newUseDisciplineResponse.data;
       } catch (e) {
         const ilcError = e as ILCError;
         setAlertMessage(
@@ -47,7 +34,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
         throw e;
       }
     },
-    [makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, groupName, t]
   );
 
   const deleteDiscipline = useCallback(
@@ -56,7 +43,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
 
       try {
         await makeRequest(
-          `/postboxes/${postboxId}/${path}s/${godGivingId}`,
+          `/api/groups/${groupName}/${path}s/${godGivingId}`,
           'DELETE'
         );
       } catch (e) {
@@ -67,7 +54,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
         throw e;
       }
     },
-    [makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, groupName, t]
   );
 
   const updateDiscipline = useCallback(
@@ -76,19 +63,9 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
 
       try {
         const updatedUseDiscipline = await makeRequest<Discipline>(
-          `/postboxes/${postboxId}/${path}s/${clrId}`,
+          `/api/groups/${groupName}/${path}s/${clrId}`,
           'PUT',
           data
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/users/${userId}/${path}s.*$`)
-        );
-
-        await MatchMutate(
-          new RegExp(
-            `^/postboxes/${postboxId}/users/${userId}/${path}-results.*$`
-          )
         );
 
         if (!silent) {
@@ -105,7 +82,7 @@ export function useDiscipline(postboxId: string, userId: string, path: string) {
         throw e;
       }
     },
-    [makeRequest, postboxId, t]
+    [makeRequest, groupName, t]
   );
 
   return {

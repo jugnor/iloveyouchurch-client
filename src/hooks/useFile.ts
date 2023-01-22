@@ -2,18 +2,16 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
-import { mutate } from 'swr';
-import { Reading, UpsertReadingRequest } from '../models/Reading';
-import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
-import {
-  CreateFileRequest,
-  FileModel,
-  UpdateFileRequest
-} from '../models/File';
 
-export function useFile(postboxId: string) {
+import { FileModel, UpdateFileRequest } from '../models/File';
+import { ILCError } from '../utils/ErrorCode';
+import FileSaver from 'file-saver';
+
+export function useFile(groupName: string) {
   const { makeRequest, makeRequestWithFullResponse } = useApi();
   const { t } = useTranslation();
+
+  const [alertMessage, setAlertMessage] = useState('');
 
   const [loading, setLoading] = useState(false);
 
@@ -25,32 +23,25 @@ export function useFile(postboxId: string) {
         formData.append('file', data);
 
         const newFileResponse = await makeRequestWithFullResponse<FileModel>(
-          `/postboxes/${postboxId}/files`,
+          `/api/groups/${groupName}/files`,
           'POST',
           formData
         );
 
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
-        );
-        if (!silent) {
-          alert('success: Fall erfolgreich erstellt.');
-        }
         setLoading(false);
 
         return newFileResponse.data;
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
       }
     },
-    [alert, makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, groupName, t]
   );
 
   const deleteFileMetaData = useCallback(
@@ -58,24 +49,20 @@ export function useFile(postboxId: string) {
       setLoading(true);
 
       try {
-        await makeRequest(`/postboxes/${postboxId}/files/${fileId}`, 'DELETE');
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/files-description.*$`)
-        );
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
-        );
+        await makeRequest(`/api/groups/${groupName}/files/${fileId}`, 'DELETE');
 
         setLoading(false);
       } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
+        const ilcError = e as ILCError;
+        setAlertMessage(
+          'Der Server returniert einen Fehler: ' + ilcError.httpStatus
+        );
         setLoading(false);
 
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [alert, makeRequest, groupName, t]
   );
 
   const updateFileMetaData = useCallback(
@@ -84,16 +71,9 @@ export function useFile(postboxId: string) {
 
       try {
         const updatedUseDiscipline = await makeRequest<FileModel>(
-          `/postboxes/${postboxId}/files/${fileId}`,
+          `/api/groups/${groupName}/files/${fileId}`,
           'PUT',
           data
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/files-description.*$`)
-        );
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/file-results.*$`)
         );
 
         if (!silent) {
@@ -110,8 +90,30 @@ export function useFile(postboxId: string) {
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [alert, makeRequest, groupName, t]
   );
 
-  return { uploadFile, deleteFileMetaData, updateFileMetaData, loading };
+  const downloadFile = useCallback(
+    async (fileId: string) => {
+      const blob = await makeRequest<Blob>(
+        `/api/groups/${groupName}/files/${fileId}/download`,
+        'GET',
+        undefined,
+        undefined,
+        'blob'
+      );
+
+      FileSaver.saveAs(blob);
+    },
+    [makeRequest, groupName]
+  );
+
+  return {
+    downloadFile,
+    uploadFile,
+    deleteFileMetaData,
+    updateFileMetaData,
+    loading,
+    alertMessage
+  };
 }

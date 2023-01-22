@@ -21,14 +21,14 @@ function App() {
             ></GuardedRoute>
             <Suspense fallback={null}>
               <GuardedRoute
-                element={routes[RouteKey.POSTBOXES].element}
-                path={routes[RouteKey.POSTBOXES].path}
+                element={routes[RouteKey.GROUPS].element}
+                path={routes[RouteKey.GROUPS].path}
               ></GuardedRoute>
             </Suspense>
             <Suspense fallback={null}>
               <GuardedRoute
-                element={routes[RouteKey.POSTBOX_ID].element}
-                path={routes[RouteKey.POSTBOX_ID].path}
+                element={routes[RouteKey.GROUP_ID].element}
+                path={routes[RouteKey.GROUP_ID].path}
               ></GuardedRoute>
             </Suspense>
           </Routes>

@@ -1,13 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, UpsertActivityRequest } from '../models/Activity';
-import { MatchMutate } from '../swr';
 import { useApi } from './useApi';
-import useSWR, { mutate, SWRResponse } from 'swr';
-import { ActivityType } from '../models/ActivityType';
+
 import { ILCError } from '../utils/ErrorCode';
 
-export function useActivity(postboxId: string) {
+export function useActivity(groupName: string) {
   const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
   const { t } = useTranslation();
 
@@ -20,7 +18,7 @@ export function useActivity(postboxId: string) {
       setLoading(true);
       try {
         const newActivityResponse = await makeRequestWithFullResponse<Activity>(
-          `/postboxes/${postboxId}/activities`,
+          `/api/groups/${groupName}/activities`,
           'POST',
           data
         );
@@ -38,7 +36,7 @@ export function useActivity(postboxId: string) {
         throw e;
       }
     },
-    [makeRequest, makeRequestWithFullResponse, postboxId, t]
+    [makeRequest, makeRequestWithFullResponse, groupName, t]
   );
 
   const deleteActivity = useCallback(
@@ -46,13 +44,13 @@ export function useActivity(postboxId: string) {
       setLoading(true);
 
       try {
-        const updatedCase =  await makeRequest(
-          `/postboxes/${postboxId}/activities/${activityId}?type=${activityType}`,
+        const updatedCase = await makeRequest(
+          `/api/groups/${groupName}/activities/${activityId}?type=${activityType}`,
           'DELETE'
         );
 
         setLoading(false);
-        return updatedCase
+        return updatedCase;
       } catch (e) {
         const ilcError = e as ILCError;
         setAlertMessage(
@@ -63,7 +61,7 @@ export function useActivity(postboxId: string) {
         throw e;
       }
     },
-    [alert, makeRequest, postboxId, t]
+    [alert, makeRequest, groupName, t]
   );
 
   const updateActivity = useCallback(
@@ -71,7 +69,7 @@ export function useActivity(postboxId: string) {
       setLoading(true);
       try {
         const updatedCase = await makeRequest<Activity>(
-          `/postboxes/${postboxId}/activities/${activityId}`,
+          `/api/groups/${groupName}/activities/${activityId}`,
           'PUT',
           data
         );
@@ -89,36 +87,7 @@ export function useActivity(postboxId: string) {
         throw e;
       }
     },
-    [makeRequest, postboxId, t]
-  );
-  const getActivities = useCallback(
-    async (activityType: ActivityType, week?: string) => {
-      setLoading(true);
-      try {
-        const activities = await makeRequest<Activity[]>(
-          `/postboxes/${postboxId}/activity-results?type=${activityType}&week=${week}`,
-          'GET'
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
-
-        await MatchMutate(
-          new RegExp(`^/postboxes/${postboxId}/activity-results.*$`)
-        );
-
-        alert('success: Activities aufgerufen.');
-        setLoading(false);
-        return activities;
-      } catch (e) {
-        alert('error: Da ist leider etwas schiefgelaufen.');
-        setLoading(false);
-
-        throw e;
-      }
-    },
-    [alert, makeRequest, postboxId, t]
+    [makeRequest, groupName, t]
   );
 
   return {
