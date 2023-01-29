@@ -10,7 +10,7 @@ import { getGroupPath } from '../../utils/router';
 export function Groups() {
   const [page, setPage] = React.useState(0);
   const { data } = useSWR<ResultsObject<GroupModel>>(
-    `/group-results?page=${page}&size=6`
+    `/api/group-results?page=${page}&size=6`
   );
 
   const handlePageChange = (newPage: number) => {
@@ -49,7 +49,7 @@ export function Groups() {
 
         {data.items.map((group) => (
           <div style={{ textAlign: 'center' }}>
-            <Link to={getGroupPath(group)}>
+            <Link   to={getGroupPath(group)}>
               <Box style={{ color: 'darkred' }} sx={{ p: 3, minWidth: 100 }}>
                 <Card variant="outlined">
                   <h3>{group.groupName}</h3>
@@ -80,6 +80,6 @@ export function Groups() {
       </Typography>
     </Suspense>
   ) : (
-    <>Es ist leider etwas schiefgelaufen</>
+    <>Es ist leider Hier etwas schiefgelaufen</>
   );
 }

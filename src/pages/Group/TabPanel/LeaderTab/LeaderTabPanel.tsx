@@ -112,7 +112,7 @@ export default function LeaderTabPanel({
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <UserRecap currentGroupName={groupName} menuItems={Array.of()} />
+            <UserRecap groupName={groupName} />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <RegulationBoard groupName={groupName} />

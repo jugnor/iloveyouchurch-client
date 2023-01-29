@@ -36,7 +36,7 @@
     "history": "^5.2.0",
     "joi": "^17.4.2",
     "joi-filelist": "^1.0.0",
-    "keycloak-js": "^17.0.0",
+    "keycloak-js": "^19.0.1",
     "moment": "^2.29.4",
     "prettier": "^2.5.1",
     "react": "^17.0.2",
@@ -71,8 +71,8 @@
     "test:covere": "react-scripts test --coverage --watchAll=false",
     "testcafe": "testcafe 'chrome:headless'",
     "testcafe:watch": "testcafe \"chrome '--window-size=1440,900'\" --live",
-    "docker:build": "docker build -t ycit-client .",
-    "docker:run": "docker run -p 3000:3000 ycit-client",
+    "docker:build": "docker build -t iloveyouchurchclient-client .",
+    "docker:run": "docker run -p 3000:3000 iloveyouchurchclient-client",
     "i18n:scan": "i18next 'src/**/*.{ts,tsx}'"
   },
   "eslintConfig": {

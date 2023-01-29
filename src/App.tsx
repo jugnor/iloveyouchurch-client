@@ -27,8 +27,8 @@ function App() {
             </Suspense>
             <Suspense fallback={null}>
               <GuardedRoute
-                element={routes[RouteKey.GROUP_ID].element}
-                path={routes[RouteKey.GROUP_ID].path}
+                element={routes[RouteKey.GROUP].element}
+                path={routes[RouteKey.GROUP].path}
               ></GuardedRoute>
             </Suspense>
           </Routes>

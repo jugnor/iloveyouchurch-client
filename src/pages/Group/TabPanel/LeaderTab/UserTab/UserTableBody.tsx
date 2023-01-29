@@ -46,9 +46,9 @@ export function UserTableBody({
       {users.map((user) => (
         <StyledTableRow key={user.id}>
           <StyledTableCell align="left">{user.username}</StyledTableCell>
-          <StyledTableCell align="right">{user.email}</StyledTableCell>
-          <StyledTableCell align="right">{user.firstName}</StyledTableCell>
-          <StyledTableCell align="right">{user.lastName}</StyledTableCell>
+          <StyledTableCell width={'40%'}  align="right">{user.email}</StyledTableCell>
+          <StyledTableCell width={'20%'} align="right">{user.firstName}</StyledTableCell>
+          <StyledTableCell width={'20%'} align="right">{user.lastName}</StyledTableCell>
           <StyledTableCell align="right">
             {
               <div style={{ display: 'flex' }}>

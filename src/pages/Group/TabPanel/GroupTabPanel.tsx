@@ -19,6 +19,7 @@ import { AccountGivingTabPanel } from './AccountGivingTab/TabPanel/AccountGiving
 import { CensorTabPanel } from './CensorTab/TabPanel/CensorTabPanel';
 import LeaderTabPanel from './LeaderTab/LeaderTabPanel';
 import { GroupModel } from '../../../models/GroupModel';
+import {useParams} from "react-router-dom";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,7 +68,7 @@ export default function GroupTabPanel() {
   const { currentGroupId, userId, isAdmin } = useUserProperties();
 
   const elementUrl = useMemo(() => {
-    return `/groups/${currentGroupId}`;
+    return `/api/groups/subGroups/${currentGroupId}`;
   }, [currentGroupId]);
 
   const { data: groupModel } = useSWR<GroupModel>(elementUrl, {
@@ -77,6 +78,8 @@ export default function GroupTabPanel() {
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  console.log("groupM",groupModel)
 
   return currentGroupId && userId && groupModel ? (
     <div className={classes.root} style={{ position: 'absolute' }}>
@@ -101,12 +104,12 @@ export default function GroupTabPanel() {
             icon={<MenuBookIcon />}
             {...a11yProps(2)}
           />
-          {(groupModel?.role === GroupRole.CENSOR.toString() ||
-            groupModel?.role === GroupRole.LEAD.toString() ||
+          {(groupModel?.groupRole === GroupRole.CENSOR.toString() ||
+            groupModel?.groupRole === GroupRole.LEAD.toString() ||
             isAdmin) && (
             <Tab label="Zensor" icon={<GavelIcon />} {...a11yProps(3)} />
           )}
-          {(groupModel?.role === GroupRole.LEAD.toString() || isAdmin) && (
+          {(groupModel?.groupRole === GroupRole.LEAD.toString() || isAdmin) && (
             <Tab
               label="Leiter"
               icon={<SupervisorAccountIcon />}
@@ -127,14 +130,14 @@ export default function GroupTabPanel() {
       <TabPanel value={value} index={2}>
         <MyReportTabPanel groupName={groupModel.groupName} userId={userId} />
       </TabPanel>
-      {(groupModel?.role === GroupRole.CENSOR.toString() ||
-        groupModel?.role === GroupRole.LEAD.toString() ||
+      {(groupModel?.groupRole === GroupRole.CENSOR.toString() ||
+        groupModel?.groupRole === GroupRole.LEAD.toString() ||
         isAdmin) && (
         <TabPanel value={value} index={3}>
           <CensorTabPanel groupName={groupModel.groupName} />
         </TabPanel>
       )}
-      {(groupModel?.role === GroupRole.LEAD.toString() || isAdmin) && (
+      {(groupModel?.groupRole === GroupRole.LEAD.toString() || isAdmin) && (
         <TabPanel value={value} index={4}>
           <LeaderTabPanel groupName={groupModel.groupName} userId={userId} />
         </TabPanel>

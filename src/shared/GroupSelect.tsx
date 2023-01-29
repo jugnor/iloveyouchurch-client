@@ -32,7 +32,7 @@ export function GroupSelect({
     <div>
       <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id="demo-simple-select-helper-label">
-          Rolle auswählen
+          Auswahl
         </InputLabel>
         <Select
           labelId="demo-simple-select-helper-label"
@@ -45,8 +45,8 @@ export function GroupSelect({
             <em>{translateRoleType('all')}</em>
           </MenuItem>
           {groups?.map((item) => (
-            <MenuItem value={item.subgroupId}>
-              <em>{translateRoleType(item.role)}</em>
+            <MenuItem value={item.subGroupId}>
+              <em>{translateRoleType(item.groupRole)}</em>
             </MenuItem>
           ))}
         </Select>

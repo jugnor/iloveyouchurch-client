@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApi } from './useApi';
-import { MatchMutate } from '../swr';
 import { Reading } from '../models/Reading';
 import { Discipline, UpsertDisciplineRequest } from '../models/Discipline';
 import { ILCError } from '../utils/ErrorCode';

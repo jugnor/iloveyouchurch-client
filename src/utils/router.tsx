@@ -7,7 +7,7 @@ import GroupLayout from '../pages/Group/GroupLayout';
 export enum RouteKey {
   HOME,
   GROUPS,
-  GROUP_ID
+  GROUP
 }
 
 export interface Route {
@@ -28,12 +28,12 @@ export const routes: {
     element: <Groups />,
     path: '/groups'
   },
-  [RouteKey.GROUP_ID]: {
+  [RouteKey.GROUP]: {
     element: <GroupLayout />,
     path: '/groups/:groupId'
   }
 };
 
 export function getGroupPath(group: GroupModel) {
-  return `/groups/${group.subgroupId}`;
+    return `/groups/${group?.subGroupId}`;
 }

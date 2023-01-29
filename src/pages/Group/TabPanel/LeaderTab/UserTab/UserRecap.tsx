@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Suspense, useCallback, useState } from 'react';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
+
 import AddIcon from '@mui/icons-material/Add';
-import { GridActionsCellItem } from '@mui/x-data-grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Button from '@mui/material/Button';
@@ -13,11 +10,10 @@ import useSWR from 'swr';
 
 import { AlertColor } from '@mui/material/Alert';
 
-import { useUserPostbox } from '../../../../../hooks/useUserPostbox';
+import { useUserGroup } from '../../../../../hooks/useUserGroup';
 import { ResultsObject } from '../../../../../models/ResultsObject';
 import {
   InviteUserByMailRequest,
-  UpsertUserRequest,
   UserModel
 } from '../../../../../models/UserModel';
 
@@ -40,7 +36,7 @@ interface UserRecapProps {
 
 export function UserRecap({ groupName }: UserRecapProps) {
   const { insertUserInGroup, removeUserFromGroup, alertMessage } =
-    useUserPostbox(groupName);
+    useUserGroup(groupName);
   const [alert, setAlert] = useState('');
   const [severity, setSeverity] = useState<AlertColor>();
   const [openDialog, setOpenDialog] = useState(false);
@@ -68,7 +64,7 @@ export function UserRecap({ groupName }: UserRecapProps) {
   );
 
   const { data: user, mutate: mutateUserGroup } = useSWR<UserModel>(
-    mode === 'delete' ? `/api/groups/${groupName}/users/${userId}` : null
+    mode === 'delete' ? `/api/groups/${groupName}/users?userId=${userId}` : null
   );
 
   const handleAction = (userId: string, mode: string) => {
@@ -91,10 +87,12 @@ export function UserRecap({ groupName }: UserRecapProps) {
   const handleUserGroupForm = useCallback(
     async (data: InviteUserByMailRequest) => {
       handleInsertUserInGroup(data.email).then((r) => {
-        mutateUserGroupResult(usersInGroupResult, true);
-        setSeverity('success');
-        setAlert('Das User Item wurde erfolgreich gespeichert');
-        setMode('');
+        if(alertMessage===''){
+          mutateUserGroupResult(usersInGroupResult, true);
+          setSeverity('success');
+          setAlert('Das User Item wurde erfolgreich gespeichert');
+          setMode('');
+        }
       });
       if (alertMessage !== '') {
         setAlert(alertMessage);
@@ -108,7 +106,7 @@ export function UserRecap({ groupName }: UserRecapProps) {
 
   const handleDeleteClick = (shouldDelete: boolean) => {
     if (shouldDelete) {
-      removeUserFromGroup(userId, subGroupId).then((r) => {
+      removeUserFromGroup( subGroupId,userId).then((r) => {
         mutateUserGroupResult(undefined, true);
         setMode('');
         setOpenAlert(true);
@@ -146,6 +144,7 @@ export function UserRecap({ groupName }: UserRecapProps) {
               <Button
                 style={{ marginLeft: '10em', marginBottom: '0.7em' }}
                 size="small"
+                disabled={subGroupId==='all'}
                 onClick={() => setMode('add')}
                 color="primary"
                 variant="outlined"

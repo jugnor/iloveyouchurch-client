@@ -1,5 +1,5 @@
 export interface GroupModel {
-  subgroupId: string;
+  subGroupId: string;
   groupName: string;
-  role: string;
+  groupRole: string;
 }

@@ -5,10 +5,10 @@ import { useApi } from './useApi';
 import { ILCError } from '../utils/ErrorCode';
 import { UserModel } from '../models/UserModel';
 
-export function useUserPostbox(groupName: string) {
-  const [alertMessage, setAlertMessage] = useState('');
-  const { makeRequest, makeRequestWithFullResponse, fetcher } = useApi();
+export function useUserGroup(groupName: string) {
+  const { makeRequest, makeRequestWithFullResponse} = useApi();
   const { t } = useTranslation();
+  const [alertMessage, setAlertMessage] = useState<string>("");
 
   const [loading, setLoading] = useState(false);
 
@@ -16,8 +16,10 @@ export function useUserPostbox(groupName: string) {
     async (subGroupId: string, invitedEmail: string) => {
       setLoading(true);
       try {
+        setAlertMessage(subGroupId)
+
         const newUserResponse = await makeRequestWithFullResponse<UserModel>(
-          `/groups/subGroups/${subGroupId}/users?invitedEmail=${invitedEmail}`,
+          `/api/groups/subGroups/${subGroupId}/users?invitedEmail=${invitedEmail}`,
           'PUT'
         );
         setLoading(false);
@@ -27,18 +29,20 @@ export function useUserPostbox(groupName: string) {
         setAlertMessage(
           'Der Server returniert einen Fehler: ' + ilcError.httpStatus
         );
+
+        console.log("arlert"+ilcError.httpStatus,alertMessage)
+
       }
     },
-    [alert, makeRequest, makeRequestWithFullResponse, groupName, t]
+    [ makeRequest, makeRequestWithFullResponse, groupName]
   );
 
   const removeUserFromGroup = useCallback(
     async (subGroupId: string, userId: string) => {
       setLoading(true);
-
       try {
         await makeRequest(
-          `/groups/subGroups/${subGroupId}/users/${userId}`,
+          `/api/groups/subGroups/${subGroupId}/users/${userId}`,
           'DELETE'
         );
         setLoading(false);
@@ -49,7 +53,7 @@ export function useUserPostbox(groupName: string) {
         );
       }
     },
-    [alert, makeRequest, groupName, t]
+    [alertMessage, makeRequest, groupName]
   );
 
   return { insertUserInGroup, removeUserFromGroup, alertMessage };

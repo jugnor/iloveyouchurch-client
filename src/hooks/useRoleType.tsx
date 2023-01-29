@@ -7,8 +7,8 @@ export function useRoleType() {
         return 'Zensor';
       case 'Participant':
         return 'Teilnehmer';
-      case '':
-        return '--Alle--';
+      case 'all':
+        return '-- Alle --';
     }
   };
 

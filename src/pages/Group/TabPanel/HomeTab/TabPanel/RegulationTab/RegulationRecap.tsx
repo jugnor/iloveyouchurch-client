@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Suspense, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Container from '@material-ui/core/Container';
-import { DataGridRows } from '../../../../../../shared/DataGridRows';
 import useSWR from 'swr';
 import { Regulation } from '../../../../../../models/Regulation';
 import { ResultsObject } from '../../../../../../models/ResultsObject';

@@ -23,9 +23,9 @@ export function UserTableHeader({}: UserTableHeaderProps) {
     <TableHead>
       <TableRow>
         <StyledTableCell align="left">Username</StyledTableCell>
-        <StyledTableCell align="right">Emailadresse</StyledTableCell>
-        <StyledTableCell align="right">Vorname</StyledTableCell>
-        <StyledTableCell align="right">Nachname</StyledTableCell>
+        <StyledTableCell width={'40%'}  align="right">Emailadresse</StyledTableCell>
+        <StyledTableCell width={'20%'} align="right">Vorname</StyledTableCell>
+        <StyledTableCell width={'20%'} align="right">Nachname</StyledTableCell>
       </TableRow>
     </TableHead>
   );

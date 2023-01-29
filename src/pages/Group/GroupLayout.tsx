@@ -1,8 +1,11 @@
 import React from 'react';
 import Header from '../../headerFooter/Header';
 import GroupTabPanel from './TabPanel/GroupTabPanel';
+import {useUserProperties} from "../../hooks/useUserProperties";
+import {useParams} from "react-router-dom";
 
 export function GroupLayout() {
+
   return (
     <>
       {' '}
